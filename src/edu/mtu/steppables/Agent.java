@@ -1,12 +1,9 @@
-package steppables;
-
-import java.util.Random;
+package edu.mtu.steppables;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.geo.MasonGeometry;
-import simulation.ForestSim;
-import utilities.LandUseGeomWrapper;
+import edu.mtu.simulation.ForestSim;
+import edu.mtu.utilities.LandUseGeomWrapper;
 
 @SuppressWarnings("serial")
 public class Agent implements Steppable {
@@ -32,7 +29,6 @@ public class Agent implements Steppable {
 	public void step(SimState state) {
 		ForestSim fs = (ForestSim)state;
 		setLandUse(fs.random.nextDouble());
-		//lu.addDoubleAttribute("Land Use", getLandUse());
-		//System.out.println(mg.getAttribute("OWNER"));
+		lu.addDoubleAttribute("Land Use", getLandUse());
 	}
 }

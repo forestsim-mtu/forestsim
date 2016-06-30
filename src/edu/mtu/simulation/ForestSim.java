@@ -1,34 +1,38 @@
-package simulation;
+package edu.mtu.simulation;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
+import edu.mtu.steppables.Agent;
+import edu.mtu.utilities.LandUseGeomWrapper;
 
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
-import sim.util.geo.MasonGeometry;
-import steppables.Agent;
-import utilities.LandUseGeomWrapper;
 
 @SuppressWarnings("serial")
 public class ForestSim extends SimState {
 
-	private final static String inputShapeFile = "";
-	private final static String outputShapeFile = "";
+	private final static String inputShapeFile = "file:shapefiles/NIPF Parcels/UPParcels.shp";
+	private final static String outputShapeFile = "shapefiles/output.shp";
 	
 	private Agent[] agents;
-	
-	private final int gridWidth = 500;
-	private final int gridHeight = 800;
-	
 	public GeomVectorField parcelLayer;
-	public GeomVectorField borderLayer;
 	
+	public GeomVectorField getBorderLayer() {
+		return parcelLayer;
+	}
+	
+	public GeomVectorField getParcelLayer() {
+		return parcelLayer;
+	}
+
+	public void setParcelLayer(GeomVectorField parcelLayer) {
+		this.parcelLayer = parcelLayer;
+	}
+
 	public ForestSim(long seed) {
 		super(seed);
 	}
@@ -46,21 +50,17 @@ public class ForestSim extends SimState {
 	}
 	
 	private void importLayers() {
-		
-		// parcelLayer is used to display the color of the parcel and borderLayer displays the parcel border
 		parcelLayer = new GeomVectorField();
 		
 		Bag desiredAttributes = new Bag();
 		desiredAttributes.add("OWNER");
 		
 		try {
-			ShapeFileImporter.read(new URL(inputShapeFile),parcelLayer,desiredAttributes,LandUseGeomWrapper.class);
+			ShapeFileImporter.read(new URL(inputShapeFile), parcelLayer,desiredAttributes, LandUseGeomWrapper.class);
 		} catch (FileNotFoundException | MalformedURLException e) {
 			System.out.println("Error opening shapefile:" + e);
             System.exit(-1);
 		}
-		
-		borderLayer = parcelLayer;
 	}
 	
 	private void createAgents() {
@@ -68,24 +68,21 @@ public class ForestSim extends SimState {
 		agents = new Agent[parcelGeoms.numObjs];
 		
 		int index = 0;
-		Iterator iter = parcelGeoms.iterator();
-		while(iter.hasNext()) {
-			LandUseGeomWrapper mg = (LandUseGeomWrapper) iter.next();
-			Agent a = new Agent(mg);
+		for (Object mg : parcelGeoms) {
+			Agent a = new Agent((LandUseGeomWrapper)mg);
 			agents[index] = a;
-			schedule.scheduleRepeating(a);
+			schedule.scheduleRepeating(a); 
 			index++;
 		}
-		
 	}
 	
 	public void finish() {
 		super.finish();
 		
-		for(int i=0; i<agents.length; i++) {
-			agents[i].updateShapefile();
+		for (Agent agent : agents) {
+			agent.updateShapefile();
 		}
+		
 		ShapeFileExporter.write(outputShapeFile, parcelLayer);
 	}
-
 }

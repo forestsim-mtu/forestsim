@@ -1,4 +1,4 @@
-package utilities;
+package edu.mtu.utilities;
 
 import sim.util.geo.MasonGeometry;
 

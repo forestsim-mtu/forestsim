@@ -1,4 +1,4 @@
-package simulation;
+package edu.mtu.simulation;
 
 import java.awt.Color;
 
@@ -12,10 +12,13 @@ import sim.engine.SimState;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.util.gui.SimpleColorMap;
-import utilities.AgentPortrayal;
+import edu.mtu.utilities.AgentPortrayal;
 
 public class ForestSimWithUI extends GUIState {
 
+	private final int gridWidth = 500;
+	private final int gridHeight = 800;
+	
 	public ForestSimWithUI(SimState state) {
 		super(state);
 	}
@@ -27,16 +30,15 @@ public class ForestSimWithUI extends GUIState {
 	private Display2D display;
 	private JFrame displayFrame;
 	
-	private GeomVectorFieldPortrayal parcelPortrayal = new GeomVectorFieldPortrayal();
 	private GeomVectorFieldPortrayal borderPortrayal = new GeomVectorFieldPortrayal();
+	private GeomVectorFieldPortrayal parcelPortrayal = new GeomVectorFieldPortrayal();
 	
 	public void init(Controller controller) {
 		super.init(controller);
 		
-		display = new Display2D(500, 800, this);
-		
+		display = new Display2D(gridWidth, gridHeight, this);
 		display.attach(parcelPortrayal, "Parcels Layer");
-		display.attach(borderPortrayal, "Border Layer");
+		display.attach(borderPortrayal, "Borders Layer");
 		
 		displayFrame = display.createFrame();
 		controller.registerFrame(displayFrame);
@@ -50,12 +52,12 @@ public class ForestSimWithUI extends GUIState {
 	
 	private void setupPortrayals() {
 		ForestSim world = (ForestSim)state;
+
+		borderPortrayal.setField(world.getBorderLayer());
+		borderPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY, false));
 		
-		borderPortrayal.setField(world.borderLayer);
-		borderPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLACK, false));
-		
-		parcelPortrayal.setField(world.parcelLayer);
-		parcelPortrayal.setPortrayalForAll(new AgentPortrayal(new SimpleColorMap(0.0,1.0,Color.RED, Color.GREEN)));
+		parcelPortrayal.setField(world.getParcelLayer());
+		parcelPortrayal.setPortrayalForAll(new AgentPortrayal(new SimpleColorMap(0.0, 1.0, Color.RED, Color.GREEN)));	
 		
 		display.reset();
 		display.setBackdrop(Color.WHITE);
