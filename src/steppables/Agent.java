@@ -8,6 +8,7 @@ import sim.util.geo.MasonGeometry;
 import simulation.ForestSim;
 import utilities.LandUseGeomWrapper;
 
+@SuppressWarnings("serial")
 public class Agent implements Steppable {
 	
 	private LandUseGeomWrapper lu;

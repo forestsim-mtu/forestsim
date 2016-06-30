@@ -15,14 +15,11 @@ import sim.util.geo.MasonGeometry;
 import steppables.Agent;
 import utilities.LandUseGeomWrapper;
 
+@SuppressWarnings("serial")
 public class ForestSim extends SimState {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8538114739145990149L;
-
-	//File parcelsFile = new File("...");
+	private final static String inputShapeFile = "";
+	private final static String outputShapeFile = "";
 	
 	private Agent[] agents;
 	
@@ -57,13 +54,10 @@ public class ForestSim extends SimState {
 		desiredAttributes.add("OWNER");
 		
 		try {
-			ShapeFileImporter.read(new URL("file:/Users/mdroulea/Desktop/ForestSimParcels/UPParcels/UPParcels.shp"),parcelLayer,desiredAttributes,LandUseGeomWrapper.class);
-		} catch (FileNotFoundException e) {
+			ShapeFileImporter.read(new URL(inputShapeFile),parcelLayer,desiredAttributes,LandUseGeomWrapper.class);
+		} catch (FileNotFoundException | MalformedURLException e) {
 			System.out.println("Error opening shapefile:" + e);
             System.exit(-1);
-		} catch (MalformedURLException e) {
-			System.out.println("Error processing URL:" + e);
-			System.exit(-1);
 		}
 		
 		borderLayer = parcelLayer;
@@ -91,7 +85,7 @@ public class ForestSim extends SimState {
 		for(int i=0; i<agents.length; i++) {
 			agents[i].updateShapefile();
 		}
-		ShapeFileExporter.write("/Users/mdroulea/Desktop/ForestSimOutput/test", parcelLayer);
+		ShapeFileExporter.write(outputShapeFile, parcelLayer);
 	}
 
 }

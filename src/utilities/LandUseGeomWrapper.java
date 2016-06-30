@@ -2,6 +2,7 @@ package utilities;
 
 import sim.util.geo.MasonGeometry;
 
+@SuppressWarnings("serial")
 public class LandUseGeomWrapper extends MasonGeometry {
 
 	private double landUse;
