@@ -5,10 +5,14 @@ import sim.engine.Steppable;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.LandUseGeomWrapper;
 
+// TODO Impliment an EconomicAgent and an EcosystemsAgent that are responsible for performing the actual step actions
+// TODO Impliment a factory that is responsible for creating agents based upon the probablity passed in
 @SuppressWarnings("serial")
-public class Agent implements Steppable {
+public abstract class Agent implements Steppable {
 	
 	private LandUseGeomWrapper lu;
+	
+	public abstract void step(SimState state);
 	
 	public Agent(LandUseGeomWrapper l) {
 		lu = l;
@@ -24,11 +28,5 @@ public class Agent implements Steppable {
 	
 	public void updateShapefile() {
 		lu.updateShpaefile();
-	}
-	
-	public void step(SimState state) {
-		ForestSim fs = (ForestSim)state;
-		setLandUse(fs.random.nextDouble());
-		lu.addDoubleAttribute("Land Use", getLandUse());
 	}
 }
