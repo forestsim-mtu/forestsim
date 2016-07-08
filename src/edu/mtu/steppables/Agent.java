@@ -1,32 +1,71 @@
 package edu.mtu.steppables;
 
+import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import edu.mtu.simulation.ForestSim;
-import edu.mtu.utilities.LandUseGeomWrapper;
 
-// TODO Impliment an EconomicAgent and an EcosystemsAgent that are responsible for performing the actual step actions
-// TODO Impliment a factory that is responsible for creating agents based upon the probablity passed in
 @SuppressWarnings("serial")
 public abstract class Agent implements Steppable {
 	
-	private LandUseGeomWrapper lu;
+	private LandUseGeomWrapper landUseWrapper;
+		
+	/**
+	 * Report what type of agent is being represented.
+	 */
+	public abstract AgentType getAgentType();
 	
-	public abstract void step(SimState state);
-	
-	public Agent(LandUseGeomWrapper l) {
-		lu = l;
+	/**
+	 * Constructor.
+	 */
+	public Agent(LandUseGeomWrapper landUseWrapper) {
+		this.landUseWrapper = landUseWrapper;
+		setAgentType(getAgentType());
 	}
 	
-	private void setLandUse(double d) {
-		lu.setLandUse(d);
+	/**
+	 * Get the current land use for the agent's parcel.
+	 */
+	public double getLandUse() { return landUseWrapper.getLandUse(); }
+	
+	/**
+	 * Grow the forest.
+	 */
+	protected void growth(SimState state) {
+		// TODO Tie this to the FIA, but for now just use a random growth rate
+		double use = getLandUse();
+		if (use >= 1.0) { return; }
+		double rate = state.random.nextDouble() / 10;		
+		setLandUse(use + rate);
 	}
 	
-	private double getLandUse() {
-		return lu.getLandUse();
+	/**
+	 * Harvest the forest.
+	 */
+	protected void harvest() {
+		setLandUse(0.0);
 	}
 	
+	/**
+	 * Set the agent's type.
+	 */
+	protected void setAgentType(AgentType value) { landUseWrapper.setAgentType(value); }
+	
+	/**
+	 * Set the land use for the agent's parcel.
+	 */
+	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
+	
+	/**
+	 * Allow the agent to perform one step in the simulation, this should be called by inheriting types.
+	 */
+	public void step(SimState state) {
+		growth(state);
+	}
+	
+	/**
+	 * Update the shape file to reflect the agent's attributes.
+	 */
 	public void updateShapefile() {
-		lu.updateShpaefile();
-	}
+		landUseWrapper.updateShpaefile();
+	}	
 }
