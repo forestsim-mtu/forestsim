@@ -1,13 +1,19 @@
 package edu.mtu.steppables;
 
+import java.awt.Point;
+
+import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.field.grid.IntGrid2D;
+import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class Agent implements Steppable {
 	
 	private LandUseGeomWrapper landUseWrapper;
+	private Point[] coverPoints;
 		
 	/**
 	 * Report what type of agent is being represented.
@@ -19,14 +25,17 @@ public abstract class Agent implements Steppable {
 	 */
 	public Agent(LandUseGeomWrapper landUseWrapper) {
 		this.landUseWrapper = landUseWrapper;
+		coverPoints = null;
 		setAgentType(getAgentType());
 	}
+	
+	public LandUseGeomWrapper getGeometry() { return landUseWrapper; }
 	
 	/**
 	 * Get the current land use for the agent's parcel.
 	 */
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
-	
+
 	/**
 	 * Grow the forest.
 	 */
@@ -38,11 +47,20 @@ public abstract class Agent implements Steppable {
 		setLandUse(use + rate);
 	}
 	
+	public void createCoverPoints(IntBag xPos, IntBag yPos) {
+		coverPoints = new Point[xPos.size()];
+		for(int i=0; i<coverPoints.length; i++) {
+			coverPoints[i] = new Point(xPos.get(i), yPos.get(i));
+		}
+	}
+	
 	/**
 	 * Harvest the forest.
-	 */
-	protected void harvest() {
-		setLandUse(0.0);
+	 */	
+	protected Point harvest() {
+		int rand = cern.jet.random.Uniform.staticNextIntFromTo(0, coverPoints.length-1);
+		Point parcelPixel = coverPoints[rand];
+		return parcelPixel;
 	}
 	
 	/**
@@ -55,11 +73,16 @@ public abstract class Agent implements Steppable {
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
 	
-	/**
-	 * Allow the agent to perform one step in the simulation, this should be called by inheriting types.
-	 */
 	public void step(SimState state) {
-		growth(state);
+		ForestSim fs = (ForestSim)state;
+		if(coverPoints != null && coverPoints.length > 0) {
+			Point p = harvest();
+			((IntGrid2D)fs.coverLayer.getGrid()).set(p.x, p.y, 3);
+		}
+		//printPoints();
+		//setLandUse(fs.random.nextDouble());
+		//lu.addDoubleAttribute("Land Use", getLandUse());
+		//System.out.println(mg.getAttribute("OWNER"));
 	}
 	
 	/**
@@ -67,5 +90,5 @@ public abstract class Agent implements Steppable {
 	 */
 	public void updateShapefile() {
 		landUseWrapper.updateShpaefile();
-	}	
+	}
 }

@@ -6,7 +6,7 @@ import sim.util.geo.MasonGeometry;
 @SuppressWarnings("serial")
 public class LandUseGeomWrapper extends MasonGeometry {
 
-	private double landUse;
+	private double landUse = 1.0;
 	private AgentType agentType;
 	
 	/**
