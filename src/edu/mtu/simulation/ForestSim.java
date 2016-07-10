@@ -266,9 +266,9 @@ public class ForestSim extends SimState {
 		agents = new Agent[parcelGeoms.numObjs];
 		int index = 0;
 		for (Object parcelPolygon : parcelGeoms) {
-			Agent aagent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
-			agents[index] = aagent;
-			schedule.scheduleRepeating(aagent);
+			Agent agent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
+			agents[index] = agent;
+			schedule.scheduleRepeating(agent);
 			index++;
 		}
 	}
