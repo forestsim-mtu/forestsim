@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.LandUseGeomWrapper;
+import edu.mtu.utilities.NlcdClassification;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.IntGrid2D;
@@ -15,6 +16,8 @@ public abstract class Agent implements Steppable {
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
 		
+	protected double harvestOdds = 0.0;
+	
 	/**
 	 * Report what type of agent is being represented.
 	 */
@@ -69,6 +72,11 @@ public abstract class Agent implements Steppable {
 	protected void setAgentType(AgentType value) { landUseWrapper.setAgentType(value); }
 	
 	/**
+	 * Set the odds that the agent will harvest once there is full coverage.
+	 */
+	public void setHarvestOdds(double value) { harvestOdds = value; }
+	
+	/**
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
@@ -77,12 +85,8 @@ public abstract class Agent implements Steppable {
 		ForestSim fs = (ForestSim)state;
 		if(coverPoints != null && coverPoints.length > 0) {
 			Point p = harvest();
-			((IntGrid2D)fs.coverLayer.getGrid()).set(p.x, p.y, 3);
+			((IntGrid2D)fs.coverLayer.getGrid()).set(p.x, p.y, NlcdClassification.Barren.getValue());
 		}
-		//printPoints();
-		//setLandUse(fs.random.nextDouble());
-		//lu.addDoubleAttribute("Land Use", getLandUse());
-		//System.out.println(mg.getAttribute("OWNER"));
 	}
 	
 	/**

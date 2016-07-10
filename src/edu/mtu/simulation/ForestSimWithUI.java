@@ -4,25 +4,19 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import edu.mtu.utilities.NlcdClassification;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
+import sim.portrayal.Inspector;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.grid.FastValueGridPortrayal2D;
 import sim.util.gui.SimpleColorMap;
 
 public class ForestSimWithUI extends GUIState {
-
-	public ForestSimWithUI(SimState state) {
-		super(state);
-	}
-	
-	public ForestSimWithUI() {
-		super(new ForestSim(System.currentTimeMillis()));
-	}
 
 	private Display2D display;
 	private JFrame displayFrame;
@@ -32,6 +26,14 @@ public class ForestSimWithUI extends GUIState {
 	
 	// Land cover layer portrayal
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
+	
+	public ForestSimWithUI(SimState state) {
+		super(state);
+	}
+	
+	public ForestSimWithUI() {
+		super(new ForestSim(System.currentTimeMillis()));
+	}
 	
 	public void init(Controller controller) {
 		super.init(controller);
@@ -47,6 +49,20 @@ public class ForestSimWithUI extends GUIState {
 		displayFrame.setVisible(true);
 	}
 	
+	/**
+	 * Prepare a model inspector for the UI. 
+	 */
+	public Inspector getInspector() {
+		Inspector inspector = super.getInspector();
+		inspector.setVolatile(true);
+		return inspector;
+	}
+	
+	/**
+	 * Get a state object for the UI.
+	 */
+	public Object getSimulationInspectedObject() { return state; }
+	
 	public void start() {
 		super.start();
 		setupPortrayals();
@@ -61,20 +77,8 @@ public class ForestSimWithUI extends GUIState {
 		
 		// Portray the current land cover based on the cover type scheme of NLCD
 		coverPortrayal.setField(world.coverLayer.getGrid());
-		Color[] coverColors = new Color[13];
-		coverColors[0] = Color.WHITE;				// No data
-		coverColors[1] = Color.decode("#4169E1");	// Open water
-		coverColors[2] = Color.GRAY;				// Developed
-		coverColors[3] = Color.DARK_GRAY;			// Barren land
-		coverColors[4] = Color.decode("#003300");	// Evergreen forest
-		coverColors[5] = Color.decode("#006600");	// Mixed forest
-		coverColors[6] = Color.decode("#009900");	// Deciduous forest
-		coverColors[7] = Color.decode("#6B8E23");	// Shrub
-		coverColors[8] = Color.decode("#808000");	// Grassland
-		coverColors[9] = Color.decode("#9ACD32");	// Pasture
-		coverColors[10] = Color.decode("#ADFF2F");	// Crops
-		coverColors[11] = Color.decode("#556B2F");	// Woody wetlands
-		coverColors[12] = Color.decode("#8B4513");	// Evergreen wetlands
+		Color[] coverColors = NlcdClassification.getColorMap();
+		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
 		
 		display.reset();

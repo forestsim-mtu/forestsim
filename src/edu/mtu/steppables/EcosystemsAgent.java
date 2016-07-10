@@ -7,9 +7,7 @@ import sim.engine.SimState;
 public class EcosystemsAgent extends Agent {
 
 	private final static AgentType type = AgentType.ECOSYSTEM;
-	
-	private double harvestOdds = 0.0;
-	
+		
 	/**
 	 * Constructor.
 	 */
@@ -23,11 +21,6 @@ public class EcosystemsAgent extends Agent {
 	 */
 	@Override
 	public AgentType getAgentType() { return type; }
-
-	/**
-	 * Set the odds that the agent will harvest once there is full coverage.
-	 */
-	public void setHarvestOdds(double value) { harvestOdds = value; }
 	
 	/**
 	 * Apply the rules for this agent to the current simulation state.
