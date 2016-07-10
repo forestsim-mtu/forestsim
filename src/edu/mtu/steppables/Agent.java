@@ -24,6 +24,11 @@ public abstract class Agent implements Steppable {
 	public abstract AgentType getAgentType();
 	
 	/**
+	 * Allow the agent to perform the rules for the given state.
+	 */
+	public abstract void step(SimState state);
+	
+	/**
 	 * Constructor.
 	 */
 	public Agent(LandUseGeomWrapper landUseWrapper) {
@@ -38,7 +43,7 @@ public abstract class Agent implements Steppable {
 	 * Get the current land use for the agent's parcel.
 	 */
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
-
+	
 	/**
 	 * Grow the forest.
 	 */
@@ -60,10 +65,11 @@ public abstract class Agent implements Steppable {
 	/**
 	 * Harvest the forest.
 	 */	
-	protected Point harvest() {
+	protected Point harvest(SimState state) {
 		int rand = cern.jet.random.Uniform.staticNextIntFromTo(0, coverPoints.length-1);
-		Point parcelPixel = coverPoints[rand];
-		return parcelPixel;
+		Point parcel = coverPoints[rand];
+		((ForestSim)state).getForest().harvest(parcel);
+		return parcel;
 	}
 	
 	/**
@@ -80,14 +86,6 @@ public abstract class Agent implements Steppable {
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
-	
-	public void step(SimState state) {
-		ForestSim fs = (ForestSim)state;
-		if(coverPoints != null && coverPoints.length > 0) {
-			Point p = harvest();
-			((IntGrid2D)fs.coverLayer.getGrid()).set(p.x, p.y, NlcdClassification.Barren.getValue());
-		}
-	}
 	
 	/**
 	 * Update the shape file to reflect the agent's attributes.

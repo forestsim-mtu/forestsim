@@ -5,19 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import edu.mtu.models.Forest;
 import edu.mtu.steppables.Agent;
 import edu.mtu.steppables.EconomicAgent;
 import edu.mtu.steppables.EcosystemsAgent;
+import edu.mtu.steppables.Environment;
 import edu.mtu.utilities.LandUseGeomWrapper;
-import edu.mtu.utilities.NlcdClassification;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -39,13 +37,8 @@ public class ForestSim extends SimState {
 	private static final int gridWidth = 1000;
 	private static final int gridHeight = 900;
 
-	// The set of woody biomass types that we are interested in
-	private final static Set<Integer> woodyBiomass = new HashSet<Integer>(Arrays.asList(new Integer[] { 
-			NlcdClassification.DeciduousForest.getValue(), 
-			NlcdClassification.EvergreenForest.getValue(),
-			NlcdClassification.MixedForest.getValue(),
-			NlcdClassification.WoodyWetlands.getValue()
-	}));
+	// The forest model and associated cover information
+	public Forest forest;
 	
 	// Geometry assigned to assigned to agents to geo-locate their parcel
 	public GeomVectorField parcelLayer;
@@ -108,6 +101,11 @@ public class ForestSim extends SimState {
 	public double getEcosystemsAgentHarvestOdds() {
 		return ecosystemsAgentHarvestOdds;
 	}
+	
+	/**
+	 * Get the model forest that is being used.
+	 */
+	public Forest getForest() { return forest; }
 
 	/**
 	 * Set the target percentage of agents, as a double, that are economic
@@ -143,11 +141,20 @@ public class ForestSim extends SimState {
 		super.start();
 
 		// Import all the GIS layers used in the simulation
-		importRasterLayers();
 		importVectorLayers();
+		importRasterLayers();
+		
+		// Create the forest model
+		forest = new Forest();
+		forest.calculateInitialStandHeight(coverLayer, random);
 
 		// Create the agents and assign one agent to each parcel
 		createAgents();
+		
+		// Create the environment agent
+		Environment agent = new Environment();
+		agent.setForest(forest);
+		schedule.scheduleOnce(agent);
 
 		// Align the MBRs so layers line up in the display
 		Envelope globalMBR = parcelLayer.getMBR();
@@ -238,7 +245,7 @@ public class ForestSim extends SimState {
 				int value = ((IntGrid2D) coverLayer.getGrid()).get(x, y);
 
 				// Move to the next if this pixel is not woody biomass
-				if (!woodyBiomass.contains(value)) {
+				if (!Forest.WoodyBiomass.contains(value)) {
 					continue;
 				}
 

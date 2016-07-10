@@ -21,11 +21,9 @@ public class EconomicAgent extends Agent {
 	 */
 	@Override
 	public void step(SimState state) {
-		super.step(state);
-		
 		// Agent will always harvest as soon as there is full coverage
 		if (getLandUse() >= 1.0) {
-			harvest();
+			harvest(state);
 		}
 	}
 

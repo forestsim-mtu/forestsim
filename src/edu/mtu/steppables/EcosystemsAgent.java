@@ -27,11 +27,9 @@ public class EcosystemsAgent extends Agent {
 	 */
 	@Override
 	public void step(SimState state) {
-		super.step(state);
-		
 		// If there is full coverage, the agent may harvest with low probability
 		if (getLandUse() >= 1.0 && state.random.nextDouble() < harvestOdds) {
-			harvest();
+			harvest(state);
 		}
 	}
 }

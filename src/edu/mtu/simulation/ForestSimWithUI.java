@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import edu.mtu.models.Forest;
 import edu.mtu.utilities.NlcdClassification;
 import sim.display.Console;
 import sim.display.Controller;
@@ -27,6 +28,9 @@ public class ForestSimWithUI extends GUIState {
 	// Land cover layer portrayal
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
 	
+	// Stand height portrayal
+	private FastValueGridPortrayal2D heightPortrayal = new FastValueGridPortrayal2D();
+	
 	public ForestSimWithUI(SimState state) {
 		super(state);
 	}
@@ -40,10 +44,11 @@ public class ForestSimWithUI extends GUIState {
 		
 		display = new Display2D(1000, 900, this);
 		
-		// Attach the land cover layer and then overlay the parcel layer
-		display.attach(coverPortrayal, "Current Land Cover Layer");
+		// Attach the land cover layers and then overlay the parcel layer
+		display.attach(heightPortrayal, "Current Forest Stand Height", false);
+		display.attach(coverPortrayal, "Current Land Cover");
 		display.attach(parcelPortrayal, "Parcels Layer");
-		
+				
 		displayFrame = display.createFrame();
 		controller.registerFrame(displayFrame);
 		displayFrame.setVisible(true);
@@ -72,11 +77,16 @@ public class ForestSimWithUI extends GUIState {
 		ForestSim world = (ForestSim)state;
 		
 		// Portray the parcel as an unfilled polygon with black borders
+		//parcelPortrayal.setField(world.parcelLayer);
 		parcelPortrayal.setField(world.parcelLayer);
 		parcelPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLACK, false));
+
+		// Portray the current stand height
+		heightPortrayal.setField(world.forest.getStandHeight().getGrid());
+		heightPortrayal.setMap(new SimpleColorMap(Forest.InitialHeight, Forest.MaximumHeight, Color.WHITE, Color.DARK_GRAY));
 		
 		// Portray the current land cover based on the cover type scheme of NLCD
-		coverPortrayal.setField(world.coverLayer.getGrid());
+		coverPortrayal.setField(world.forest.getLandCover().getGrid());
 		Color[] coverColors = NlcdClassification.getColorMap();
 		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
