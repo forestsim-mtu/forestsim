@@ -22,7 +22,7 @@ public enum NlcdClassification {
 	
 	// Forest
 	DeciduousForest(41, "Deciduous Forest", new Color(0x85C77E)), 
-	EverreenForest(42, "Evergreen Forest", new Color(0x38814E)), 
+	EvergreenForest(42, "Evergreen Forest", new Color(0x38814E)), 
 	MixedForest(43, "Mixed Forest", new Color(0xD4E7B0)), 
 	
 	// Shrubland
