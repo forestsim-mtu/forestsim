@@ -1,6 +1,7 @@
 package edu.mtu.utilities;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  * This enumeration represents the various NLCD 2011 land use classification types. 
@@ -42,6 +43,9 @@ public enum NlcdClassification {
 	WoodyWetlands(90, "Woody Wetlands", new Color(0xC8E6F8)),
 	EmergentHerbaceousWetlands(95, "Emergent Herbaceous Wetlands", new Color(0x64B3D5));
 	
+	// Used to set the capacity of the color map
+	private final static int HighestValue = 95;
+	
 	private int value;
 	private String name;
 	private Color color;
@@ -61,6 +65,23 @@ public enum NlcdClassification {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns a sparse color map that contains color data for the NLCD values.
+	 */
+	public static Color[] getColorMap() {
+		// Zero the array list
+		ArrayList<Color> colors = new ArrayList<Color>(HighestValue + 1);
+		for (int ndx = 0; ndx < HighestValue + 1; ndx++) {
+			colors.add(null);
+		}
+		
+		// Add the items in a sparse fashion
+		for (NlcdClassification item : values()) {
+			colors.set(item.value, item.color);
+		}
+		return (Color[])colors.toArray(new Color[0]);
 	}
 	
 	public String getName() { return name; }
