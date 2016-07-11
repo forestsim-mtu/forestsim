@@ -6,6 +6,7 @@ import sim.portrayal.DrawInfo2D;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.util.gui.SimpleColorMap;
 
+@SuppressWarnings("serial")
 public class AgentPortrayal extends GeomPortrayal {
 
 	SimpleColorMap colorMap = null;

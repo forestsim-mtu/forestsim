@@ -1,5 +1,7 @@
 package edu.mtu.steppables;
 
+import java.awt.Point;
+
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 
@@ -27,9 +29,16 @@ public class EcosystemsAgent extends Agent {
 	 */
 	@Override
 	public void step(SimState state) {
+		// Get a projected harvest region and profit
+		Point[] stand = createHarvestRegion(minimumHarvest, state);
+		if (stand == null) {
+			return;
+		}
+		double profit = getStandValue(stand, state);
+		
 		// If there is full coverage, the agent may harvest with low probability
-		if (getLandUse() >= 1.0 && state.random.nextDouble() < harvestOdds) {
-			harvest(state);
+		if (profit >= minimumProfit && state.random.nextDouble() < harvestOdds) {
+			harvest(stand, state);
 		}
 	}
 }

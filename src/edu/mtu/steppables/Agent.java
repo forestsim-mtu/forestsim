@@ -1,22 +1,25 @@
 package edu.mtu.steppables;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
+import edu.mtu.models.Economics;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.LandUseGeomWrapper;
-import edu.mtu.utilities.NlcdClassification;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.grid.IntGrid2D;
 import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class Agent implements Steppable {
+		
+	protected final static double minimumProfit = 1000.0;
 	
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
-		
+	
 	protected double harvestOdds = 0.0;
+	protected double minimumHarvest = 40468.0;		// About 10 acres in meters
 	
 	/**
 	 * Report what type of agent is being represented.
@@ -45,6 +48,30 @@ public abstract class Agent implements Steppable {
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
 	
 	/**
+	 * The minimum harvest size, in square meters.
+	 */
+	public double getMinimumHarvest() { return minimumHarvest; }
+	
+	/**
+	 * Get the estimated economic value of the given stand.
+	 * 
+	 * @param stand The pixels that make up the harvest stand.
+	 * @param state The current state of the simulation.
+	 * @return The expected profits for the stand.
+	 */
+	public double getStandValue(Point[] stand, SimState state) {
+		double area = stand.length * ((ForestSim)state).getForest().getPixelArea();
+		
+		// Get the biomass for the region 
+		double biomass = ((ForestSim)state).getForest().getStandBiomass(stand);
+		
+		// Get the profits for the region
+		double cost = Economics.getHarvestCost(area);
+		double profit = Economics.getProfit(cost, biomass);
+		return profit;
+	}
+	
+	/**
 	 * Grow the forest.
 	 */
 	protected void growth(SimState state) {
@@ -55,6 +82,12 @@ public abstract class Agent implements Steppable {
 		setLandUse(use + rate);
 	}
 	
+	/**
+	 * Add the given points to the agents for the parcel that it controls.
+	 * 
+	 * @param xPos The x positions.
+	 * @param yPos The y positions.
+	 */
 	public void createCoverPoints(IntBag xPos, IntBag yPos) {
 		coverPoints = new Point[xPos.size()];
 		for(int i=0; i<coverPoints.length; i++) {
@@ -63,13 +96,45 @@ public abstract class Agent implements Steppable {
 	}
 	
 	/**
+	 * Calculate a harvest region that is greater than or equal to the given area.
+	 * Note that this could allow for disconnected harvest regions.
+	 * 
+	 * @param targetArea The area the harvest must meet.
+	 * @param state The current simulation state.
+	 * @return The pixel coordinates that meet the given area.
+	 */
+	protected Point[] createHarvestRegion(double targetArea, SimState state) {
+		double area = 0;
+		ArrayList<Point> points = new ArrayList<Point>();
+		double pixelArea = ((ForestSim)state).getForest().getPixelArea();
+		for (Point point : coverPoints) {
+			// Continue if the stand height is zero
+			double height = ((ForestSim)state).getForest().getStandHeight(point);
+			if (height == 0) {
+				continue;
+			}
+			
+			// It is, so update the area and points to use
+			area += pixelArea;
+			points.add(point);
+			if (area >= targetArea) {
+				return points.toArray(new Point[0]);
+			}
+		}
+		
+		// Nothing to harvest
+		return null;
+	}
+	
+	/**
 	 * Harvest the forest.
+	 * 
+	 * @param stand The forest stand to be harvested.
+	 * @param state The current simulation state.
+	 * @return The total biomass harvested
 	 */	
-	protected Point harvest(SimState state) {
-		int rand = cern.jet.random.Uniform.staticNextIntFromTo(0, coverPoints.length-1);
-		Point parcel = coverPoints[rand];
-		((ForestSim)state).getForest().harvest(parcel);
-		return parcel;
+	protected double harvest(Point[] stand, SimState state) { 
+		return ((ForestSim)state).getForest().harvest(stand); 
 	}
 	
 	/**
@@ -86,6 +151,11 @@ public abstract class Agent implements Steppable {
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
+	
+	/**
+	 * Set the minimum harvest.
+	 */
+	public void setMinimumHarvest(double value) { minimumHarvest = value; }
 	
 	/**
 	 * Update the shape file to reflect the agent's attributes.
