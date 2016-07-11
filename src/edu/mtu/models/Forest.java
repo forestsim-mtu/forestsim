@@ -36,6 +36,9 @@ public class Forest {
 	 */
 	public Forest() { }
 	
+	/**
+	 * Setup the current model with randomized stand heights.
+	 */
 	public void calculateInitialStandHeight() {
 		// Check for an invalid state
 		if (landCover == null) {
@@ -88,9 +91,37 @@ public class Forest {
 	public GeomGridField getLandCover() { return landCover; }
 	
 	/**
+	 * Get the area, in meters, of the pixels in the model.
+	 */
+	public double getPixelArea() { return landCover.getPixelHeight() * landCover.getPixelWidth(); }
+	
+	/**
+	 * Calculate the biomass in the given stand.
+	 * 
+	 * @param stand The pixels that make up the stand.
+	 * @return The estimated biomass for the stand.
+	 */
+	public double getStandBiomass(Point[] stand) {
+		double biomass = 0;
+		for (Point point : stand) {
+			// TODO Flesh this out with a sourced approximation method, for now assume that height is a proxy for biomass
+			biomass += (getStandHeight(point) * getPixelArea());
+		}
+		return biomass;
+	}
+	
+	/**
 	 * Get the stand height for the NLCD pixels in the forest. 
 	 */
 	public GeomGridField getStandHeight() { return standHeight; }
+	
+	/**
+	 * Get the height of the given stand.
+	 * 
+	 * @param point The point to get the height of.
+	 * @return The current stand height, in meters.
+	 */
+	public double getStandHeight(Point point) {	return ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);	}
 	
 	/**
 	 * Grow the forest stands.
@@ -120,15 +151,16 @@ public class Forest {
 	 * 
 	 * @return The biomass harvested from the stand.
 	 */
-	public double harvest(Point stand) {
-		// Get the current stand height at the given point
-		double height = ((DoubleGrid2D)standHeight.getGrid()).get(stand.x, stand.y);
-		
-		// Update the current height
-		((DoubleGrid2D)standHeight.getGrid()).set(stand.x, stand.y, InitialHeight);
-		
+	public double harvest(Point[] stand) {
+		for (Point point : stand) {
+			// Get the current stand height at the given point
+			double height = ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);
+			
+			// Update the current height
+			((DoubleGrid2D)standHeight.getGrid()).set(point.x, point.y, InitialHeight);
+		}
 		// Return the biomass
-		// TODO Do the approprate math
+		// TODO Do the appropriate math
 		return 0.0;		
 	}
 		
