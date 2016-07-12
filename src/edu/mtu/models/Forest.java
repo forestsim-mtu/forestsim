@@ -139,6 +139,11 @@ public class Forest {
 	}
 	
 	/**
+	 * Get the stand DBH for the NLCD pixels in the forest.
+	 */
+	public GeomGridField getStandDbh() { return standDiameter; }
+	
+	/**
 	 * Get the stand height for the NLCD pixels in the forest. 
 	 */
 	public GeomGridField getStandHeight() { return standHeight; }

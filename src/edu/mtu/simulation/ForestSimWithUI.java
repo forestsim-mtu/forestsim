@@ -22,14 +22,13 @@ public class ForestSimWithUI extends GUIState {
 	private Display2D display;
 	private JFrame displayFrame;
 	
-	// Parcel layer portrayal
+	// Polygon portrayals
 	private GeomVectorFieldPortrayal parcelPortrayal = new GeomVectorFieldPortrayal();
 	
-	// Land cover layer portrayal
+	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
-	
-	// Stand height portrayal
 	private FastValueGridPortrayal2D heightPortrayal = new FastValueGridPortrayal2D();
+	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
 		super(state);
@@ -45,8 +44,9 @@ public class ForestSimWithUI extends GUIState {
 		display = new Display2D(1000, 900, this);
 		
 		// Attach the land cover layers and then overlay the parcel layer
-		display.attach(heightPortrayal, "Current Forest Stand Height", false);
-		display.attach(coverPortrayal, "Current Land Cover");
+		display.attach(coverPortrayal, "Land Cover");
+		display.attach(heightPortrayal, "Forest Stand Height", false);
+		display.attach(dbhPortrayal, "Stand DBH", false);
 		display.attach(parcelPortrayal, "Parcels Layer");
 				
 		displayFrame = display.createFrame();
@@ -77,19 +77,22 @@ public class ForestSimWithUI extends GUIState {
 		ForestSim world = (ForestSim)state;
 		
 		// Portray the parcel as an unfilled polygon with black borders
-		//parcelPortrayal.setField(world.parcelLayer);
 		parcelPortrayal.setField(world.parcelLayer);
 		parcelPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLACK, false));
 
-		// Portray the current stand height
-		heightPortrayal.setField(world.forest.getStandHeight().getGrid());
-		heightPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumHeight(), Color.WHITE, Color.DARK_GRAY));
-		
 		// Portray the current land cover based on the cover type scheme of NLCD
 		coverPortrayal.setField(world.forest.getLandCover().getGrid());
 		Color[] coverColors = NlcdClassification.getColorMap();
 		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
+		
+		// Portray the current stand height
+		heightPortrayal.setField(world.forest.getStandHeight().getGrid());
+		heightPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumHeight(), Color.WHITE, Color.DARK_GRAY));
+
+		// Portray the current stand DBH
+		dbhPortrayal.setField(world.forest.getStandDbh().getGrid());
+		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
 		
 		display.reset();
 		display.setBackdrop(Color.WHITE);
