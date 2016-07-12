@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import edu.mtu.models.Forest;
+import edu.mtu.models.SpeciesParameters;
 import edu.mtu.utilities.NlcdClassification;
 import sim.display.Console;
 import sim.display.Controller;
@@ -83,7 +83,7 @@ public class ForestSimWithUI extends GUIState {
 
 		// Portray the current stand height
 		heightPortrayal.setField(world.forest.getStandHeight().getGrid());
-		heightPortrayal.setMap(new SimpleColorMap(Forest.InitialHeight, Forest.MaximumHeight, Color.WHITE, Color.DARK_GRAY));
+		heightPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumHeight(), Color.WHITE, Color.DARK_GRAY));
 		
 		// Portray the current land cover based on the cover type scheme of NLCD
 		coverPortrayal.setField(world.forest.getLandCover().getGrid());

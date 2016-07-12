@@ -7,12 +7,16 @@ import java.util.Set;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.utilities.NlcdClassification;
+import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
 
 /**
  * This class provides a means of performing calculations based upon the forest data provided. 
+ * 
+ * References:
+ * Kershaw et al. 2008, http://www.nrs.fs.fed.us/pubs/gtr/gtr-p-24%20papers/39kershaw-p-24.pdf
  */
 public class Forest {
 	// The set of woody biomass types that we are interested in
@@ -23,11 +27,12 @@ public class Forest {
 			NlcdClassification.WoodyWetlands.getValue()
 	}));
 		
-	public final static double InitialHeight = 0.0;
-	public final static double MaximumHeight = 48.0;		// Maximum height of Pinus Strobus in northern Michigan, in meters
+	private final static double DbhTakenAt = 1.37;			// Height of a standard DBH measurement in meters
 	private final static double MaximumAnnualGrowth = 1.0;	// Maximum height growth per year for Pinus Strobus in northern Michigan, in meters
+	private final static SpeciesParameters reference = SpeciesParameters.PinusStrobus;
 	
 	private GeomGridField landCover;
+	private GeomGridField standDiameter;
 	private GeomGridField standHeight;
 	private MersenneTwisterFast random;
 	
@@ -48,30 +53,53 @@ public class Forest {
 			throw new IllegalStateException("The random number generator has not been set yet.");
 		}
 		
-		// Start by creating a new grid that matches the land cover grid
-		standHeight = new GeomGridField();
+		// Note the height and width of the grid
 		int height = landCover.getGrid().getHeight();
 		int width = landCover.getGrid().getWidth();
-		standHeight.setGrid(new DoubleGrid2D(width, height, InitialHeight));
-		standHeight.setPixelHeight(landCover.getPixelHeight());
-		standHeight.setPixelWidth(landCover.getPixelWidth());
-		standHeight.setMBR(landCover.getMBR());
 		
-		// Go through the stand and randomly allocate heights
+		// Create a grid with Perlin noise that will act the base of our landscape
+		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
+		
+		// Match the grid the the NLCD data
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
-				// If there is no woody-biomass, then the height is zero
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
-				if (!WoodyBiomass.contains(nlcd)) {
+				if (WoodyBiomass.contains(nlcd)) {
+					continue;
+				}
+				grid.set(ndx, ndy, 0.0);
+ 			}
+		}
+		
+		// Create the stand diameter at breast height (DBH), these will act as the basis for the height estimation
+		standDiameter = new GeomGridField(Perlin.scaleGrid(grid, 0.0, reference.getMaximumDbh()));
+		standDiameter.setPixelHeight(landCover.getPixelHeight());
+		standDiameter.setPixelWidth(landCover.getPixelWidth());
+		standDiameter.setMBR(landCover.getMBR());
+		
+		// Next create the stand height grid, this is derived from the stand DBH
+		grid = new DoubleGrid2D(width, height, 0.0);
+		for (int ndx = 0; ndx < width; ndx++) {
+			for (int ndy = 0; ndy < height; ndy++) {
+				// Get the height (h) and press on if it is zero
+				double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(ndx, ndy);
+				if (dbh == 0) {
 					continue;
 				}
 				
-				// Randomly assign an height between the minimum and the maximum
-				// TODO Improve this by making the value meaningful for the stand type
-				double value = InitialHeight + (MaximumHeight - InitialHeight) * random.nextDouble();
-				((DoubleGrid2D)standHeight.getGrid()).set(ndx, ndy, value);
+				// Since we have the DBH we can estimate the height using the height-diameter equation (Kershaw et al. 2008)
+				// TODO Add lookup for generalized and regional regression constants
+				// TODO Throw some randomness on this as well to account for nature
+				double h = DbhTakenAt + reference.b1 * Math.pow(1 - Math.pow(Math.E, -reference.b2 * dbh), reference.b3);
+				grid.set(ndx, ndy, h);
 			}
 		}
+		
+		// Create the stand height geometry
+		standHeight = new GeomGridField(grid);
+		standHeight.setPixelHeight(landCover.getPixelHeight());
+		standHeight.setPixelWidth(landCover.getPixelWidth());
+		standHeight.setMBR(landCover.getMBR());
 	}
 	
 	/**
@@ -140,7 +168,7 @@ public class Forest {
 				double height = ((DoubleGrid2D)standHeight.getGrid()).get(ndx, ndy);
 				double value = MaximumAnnualGrowth * random.nextDouble();
 				height += value;
-				height = (height <= MaximumHeight) ? height : MaximumHeight;
+				height = (height <= reference.getMaximumHeight()) ? height : reference.getMaximumHeight();
 				((DoubleGrid2D)standHeight.getGrid()).set(ndx, ndy, height);
 			}
 		}
@@ -157,7 +185,7 @@ public class Forest {
 			double height = ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);
 			
 			// Update the current height
-			((DoubleGrid2D)standHeight.getGrid()).set(point.x, point.y, InitialHeight);
+			((DoubleGrid2D)standHeight.getGrid()).set(point.x, point.y, 0.0);
 		}
 		// Return the biomass
 		// TODO Do the appropriate math
