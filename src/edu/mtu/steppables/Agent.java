@@ -108,12 +108,13 @@ public abstract class Agent implements Steppable {
 		ArrayList<Point> points = new ArrayList<Point>();
 		double pixelArea = ((ForestSim)state).getForest().getPixelArea();
 		for (Point point : coverPoints) {
-			// Continue if the stand height is zero
-			double height = ((ForestSim)state).getForest().getStandHeight(point);
-			if (height == 0) {
+			// Continue if the DBH is not at least 5 cm
+			// TODO Make this NLCD pixel specific
+			double dbh = ((ForestSim)state).getForest().getStandDbh(point);
+			if (dbh < 5.0) {
 				continue;
 			}
-			
+						
 			// It is, so update the area and points to use
 			area += pixelArea;
 			points.add(point);

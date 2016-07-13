@@ -14,6 +14,8 @@ import sim.field.grid.IntGrid2D;
 
 /**
  * This class provides a means of performing calculations based upon the forest data provided. 
+ * Note that all of the values supplied are assumed to be averages for a given stand unless 
+ * otherwise noted.
  * 
  * References:
  * Kershaw et al. 2008, http://www.nrs.fs.fed.us/pubs/gtr/gtr-p-24%20papers/39kershaw-p-24.pdf
@@ -144,6 +146,14 @@ public class Forest {
 	public GeomGridField getStandDbh() { return standDiameter; }
 	
 	/**
+	 * Get the DBH of the given stand.
+	 * 
+	 * @param point The point to get the DBH of.
+	 * @return The current stand DBH, in centimeters.
+	 */
+	public double getStandDbh(Point point) { return ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y); }
+	
+	/**
 	 * Get the stand height for the NLCD pixels in the forest. 
 	 */
 	public GeomGridField getStandHeight() { return standHeight; }
@@ -157,22 +167,49 @@ public class Forest {
 	public double getStandHeight(Point point) {	return ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);	}
 	
 	/**
+	 * Get the stocking of the given stand.
+	 * 
+	 * @param point The grid coordinates of the stand to sample.
+	 * @return The percent stocking for the stand.
+	 */
+	public double getStandStocking(Point point) {
+		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
+		double basalArea = 0.00007854 * Math.pow(dbh, 2);		// Basal area per tree in square meters
+		return basalArea;
+	}
+	
+	/**
 	 * Grow the forest stands.
 	 */
+	// TODO Make this species specific and applied to NLCD code
 	public void grow() {
 		for (int ndx = 0; ndx < standHeight.getGridWidth(); ndx++) {
 			for (int ndy = 0; ndy < standHeight.getGridHeight(); ndy++) {
-				// If there is no woody-biomass, then the height is zero
+				// If this is not a woody biomass stand, press on
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
 				if (!WoodyBiomass.contains(nlcd)) {
 					continue;
 				}
-		
+				
+				// Grow the tree trunk, but clamp at the maximum
+				double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(ndx, ndy);
+				if (dbh < reference.getMaximumDbh()) {
+					dbh += reference.getMaximumAnnualDbhGrowth() * random.nextDouble();
+					dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
+					((DoubleGrid2D)standDiameter.getGrid()).set(ndx, ndy, dbh);
+				}
+				
 				// Grow the stand
-				// TODO Improve this by making the value meaningful for the stand type
 				double height = ((DoubleGrid2D)standHeight.getGrid()).get(ndx, ndy);
-				double value = MaximumAnnualGrowth * random.nextDouble();
-				height += value;
+				if (height < reference.getMaximumHeight()) {
+					if (dbh < reference.getMaximumDbh()) {
+						// Use DBH if we haven't reached the maximum yet
+						height = DbhTakenAt + reference.b1 * Math.pow(1 - Math.pow(Math.E, -reference.b2 * dbh), reference.b3);
+					} else {
+						// Grow the tree by the maximum slower rate
+						height +=  MaximumAnnualGrowth * random.nextDouble();
+					}
+				}
 				height = (height <= reference.getMaximumHeight()) ? height : reference.getMaximumHeight();
 				((DoubleGrid2D)standHeight.getGrid()).set(ndx, ndy, height);
 			}
@@ -189,7 +226,8 @@ public class Forest {
 			// Get the current stand height at the given point
 			double height = ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);
 			
-			// Update the current height
+			// Update the current stand
+			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
 			((DoubleGrid2D)standHeight.getGrid()).set(point.x, point.y, 0.0);
 		}
 		// Return the biomass
