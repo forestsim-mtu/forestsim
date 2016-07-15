@@ -40,11 +40,14 @@ public class Forest {
 		growthPatterns = map;
 	}
 	
-	private final static double DbhTakenAt = 1.37;			// Height of a standard DBH measurement in meters
+	private final static double acreInSquareMeters = 4046.86;		// 1 ac in sq m
+	private final static double DbhTakenAt = 1.37;					// Height of a standard DBH measurement in meters
 	
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
 	private GeomGridField standHeight;
+	private GeomGridField stocking;
+	private IntGrid2D treeCount;
 	private MersenneTwisterFast random;
 	
 	/**
@@ -53,9 +56,9 @@ public class Forest {
 	public Forest() { }
 	
 	/**
-	 * Setup the current model with randomized stand heights.
+	 * Setup the current model with randomized stands.
 	 */
-	public void calculateInitialStandHeight() {
+	private void calculateInitialStands() {
 		// Check for an invalid state
 		if (landCover == null) {
 			throw new IllegalStateException("The NLCD land cover has not been set yet.");
@@ -70,6 +73,7 @@ public class Forest {
 		
 		// Create a grid with Perlin noise that will act the base of our landscape
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
+		treeCount = new IntGrid2D(width, height);
 				
 		// Match the grid the the NLCD data and scale the fields to the maximum diameter at breast
 		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
@@ -86,17 +90,22 @@ public class Forest {
 				
 				// Otherwise, scale it to the DBH
 				SpeciesParameters reference = getGrowthPattern(nlcd);
-				double value = reference.getMaximumDbh() * grid.get(ndx, ndy);
-				grid.set(ndx, ndy, value);
+				double dbh = reference.getMaximumDbh() * grid.get(ndx, ndy);
+				grid.set(ndx, ndy, dbh);
+				
+				// Use the DBH to determine the number of trees in the pixel
+				double basalArea = 0.00007854 * Math.pow(dbh, 2);		// Basal area per tree in square meters
+				int count = (int)Math.round((acreInSquareMeters * 0.8) / basalArea);	
+				treeCount.set(ndx, ndy, count);
  			}
 		}
 				
-		// Finish setting up the geometric grid
+		// Finish setting up the geometric grids
 		standDiameter = new GeomGridField(grid);
 		standDiameter.setPixelHeight(landCover.getPixelHeight());
 		standDiameter.setPixelWidth(landCover.getPixelWidth());
 		standDiameter.setMBR(landCover.getMBR());
-		
+						
 		// Next create the stand height grid, this is derived from the stand DBH
 		grid = new DoubleGrid2D(width, height, 0.0);
 		for (int ndx = 0; ndx < width; ndx++) {
@@ -118,12 +127,19 @@ public class Forest {
 				grid.set(ndx, ndy, h);
 			}
 		}
-		
+				
 		// Create the stand height geometry
 		standHeight = new GeomGridField(grid);
 		standHeight.setPixelHeight(landCover.getPixelHeight());
 		standHeight.setPixelWidth(landCover.getPixelWidth());
 		standHeight.setMBR(landCover.getMBR());
+		
+		// Update the stocking
+		stocking = new GeomGridField(new IntGrid2D(width, height, 0));
+		stocking.setPixelHeight(landCover.getPixelHeight());
+		stocking.setPixelWidth(landCover.getPixelWidth());
+		stocking.setMBR(landCover.getMBR());
+		updateStocking();
 	}
 
 	private SpeciesParameters getGrowthPattern(int nlcd) {
@@ -140,14 +156,14 @@ public class Forest {
 	}
 	
 	/**
-	 * Store the land cover provided and use it to calculate the initial stand height.
+	 * Store the land cover provided and use it to calculate the initial stands
 	 * 
 	 * @param landCover The NLCD land cover information to use for the forest.
 	 */
-	public void calculateInitialStandHeight(GeomGridField landCover, MersenneTwisterFast random) {
+	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) {
 		this.landCover = landCover;
 		this.random = random;
-		calculateInitialStandHeight();
+		calculateInitialStands();
 	}
 	
 	/**
@@ -200,6 +216,11 @@ public class Forest {
 	 * @return The current stand height, in meters.
 	 */
 	public double getStandHeight(Point point) {	return ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);	}
+		
+	/**
+	 * Get the stocking for the entire map.
+	 */
+	public GeomGridField getStandStocking() { return stocking; }
 	
 	/**
 	 * Get the stocking of the given stand.
@@ -207,10 +228,17 @@ public class Forest {
 	 * @param point The grid coordinates of the stand to sample.
 	 * @return The percent stocking for the stand.
 	 */
+	// TODO Double check the math being done here to ensure that it is correct
 	public double getStandStocking(Point point) {
 		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
 		double basalArea = 0.00007854 * Math.pow(dbh, 2);		// Basal area per tree in square meters
-		return basalArea;
+		
+		int count = treeCount.get(point.x, point.y);
+		double area = standDiameter.getPixelHeight() * standDiameter.getPixelWidth();
+		double result = 100 * (count * basalArea * (acreInSquareMeters / area)) / acreInSquareMeters;
+		
+		// Clamp the result at the maximum stocking
+		return (result < 120) ? result : 120;
 	}
 	
 	/**
@@ -253,7 +281,7 @@ public class Forest {
 			}
 		}
 	}
-	
+		
 	/**
 	 * Harvest the forest stand and return the biomass.
 	 * 
@@ -288,4 +316,31 @@ public class Forest {
 	 * Set the stand height for the NLCD pixels in the forest.
 	 */
 	public void setStandHeight(GeomGridField value) { standHeight = value; }
+	
+	/**
+	 * Update the current stocking for the map.
+	 */
+	public void updateStocking() {
+		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
+			for (int ndy = 0; ndy < stocking.getGridHeight(); ndy++) {
+				// Get the stocking value for the point
+				double result = getStandStocking(new Point(ndx, ndy));
+				
+				// Assume no stocking
+				int value = StockingCondition.Nonstocked.getValue();
+				if (result > 100) {
+					value = StockingCondition.Overstocked.getValue();
+				} else if (result > 60 ) {
+					value = StockingCondition.Full.getValue();
+				} else if (result > 35) {
+					value = StockingCondition.Moderate.getValue();
+				} else if (result > 10) {
+					value = StockingCondition.Poor.getValue();
+				}
+				
+				// Store the value
+				((IntGrid2D)stocking.getGrid()).set(ndx, ndy, value);
+			}
+		}
+	}
 }

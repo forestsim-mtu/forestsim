@@ -5,6 +5,7 @@ import java.awt.Color;
 import javax.swing.JFrame;
 
 import edu.mtu.models.SpeciesParameters;
+import edu.mtu.models.StockingCondition;
 import edu.mtu.utilities.NlcdClassification;
 import sim.display.Console;
 import sim.display.Controller;
@@ -27,8 +28,9 @@ public class ForestSimWithUI extends GUIState {
 	
 	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
-	private FastValueGridPortrayal2D heightPortrayal = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
+	private FastValueGridPortrayal2D heightPortrayal = new FastValueGridPortrayal2D();
+	private FastValueGridPortrayal2D stockingPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
 		super(state);
@@ -47,6 +49,7 @@ public class ForestSimWithUI extends GUIState {
 		display.attach(coverPortrayal, "Land Cover");
 		display.attach(heightPortrayal, "Forest Stand Height", false);
 		display.attach(dbhPortrayal, "Stand DBH", false);
+		display.attach(stockingPortrayal, "Stocking", false);
 		display.attach(parcelPortrayal, "Parcels Layer");
 				
 		displayFrame = display.createFrame();
@@ -94,6 +97,10 @@ public class ForestSimWithUI extends GUIState {
 		// Portray the current stand DBH
 		dbhPortrayal.setField(world.forest.getStandDbh().getGrid());
 		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
+		
+		// Portray the current stand stocking
+		stockingPortrayal.setField(world.forest.getStandStocking().getGrid());
+		stockingPortrayal.setMap(new SimpleColorMap(StockingCondition.getColorMap()));
 		
 		display.reset();
 		display.setBackdrop(Color.WHITE);

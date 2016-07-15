@@ -28,6 +28,7 @@ public class Environment implements Steppable {
 	@Override
 	public void step(SimState state) {
 		forest.grow();
+		forest.updateStocking();
 		state.schedule.scheduleOnce(this);
 	}
 }

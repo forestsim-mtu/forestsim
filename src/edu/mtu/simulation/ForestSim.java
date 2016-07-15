@@ -172,7 +172,7 @@ public class ForestSim extends SimState {
 		
 		// Create the forest model
 		forest = new Forest();
-		forest.calculateInitialStandHeight(coverLayer, random);
+		forest.calculateInitialStands(coverLayer, random);
 
 		// Create the agents and assign one agent to each parcel
 		createAgents();
