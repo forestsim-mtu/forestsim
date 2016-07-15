@@ -73,6 +73,7 @@ public class ForestSimWithUI extends GUIState {
 		setupPortrayals();
 	}
 	
+	// TODO Update the portryals so they aren't quite so species dependent
 	private void setupPortrayals() {
 		ForestSim world = (ForestSim)state;
 		
@@ -92,7 +93,7 @@ public class ForestSimWithUI extends GUIState {
 
 		// Portray the current stand DBH
 		dbhPortrayal.setField(world.forest.getStandDbh().getGrid());
-		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
+		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
 		
 		display.reset();
 		display.setBackdrop(Color.WHITE);

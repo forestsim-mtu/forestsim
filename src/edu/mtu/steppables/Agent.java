@@ -18,8 +18,9 @@ public abstract class Agent implements Steppable {
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
 	
-	protected double harvestOdds = 0.0;
-	protected double minimumHarvest = 40468.0;		// About 10 acres in meters
+	protected double harvestOdds;
+	protected double minimumHarvest;
+	protected double minimumHarvestDbh;
 	
 	/**
 	 * Report what type of agent is being represented.
@@ -50,7 +51,12 @@ public abstract class Agent implements Steppable {
 	/**
 	 * The minimum harvest size, in square meters.
 	 */
-	public double getMinimumHarvest() { return minimumHarvest; }
+	public double getMinimumHarvestArea() { return minimumHarvest; }
+	
+	/**
+	 * The minimum harvest DBH, in centimeters.
+	 */
+	public double getMinimumHarvestDbh() { return minimumHarvestDbh; }
 	
 	/**
 	 * Get the estimated economic value of the given stand.
@@ -108,10 +114,9 @@ public abstract class Agent implements Steppable {
 		ArrayList<Point> points = new ArrayList<Point>();
 		double pixelArea = ((ForestSim)state).getForest().getPixelArea();
 		for (Point point : coverPoints) {
-			// Continue if the DBH is not at least 5 cm
-			// TODO Make this NLCD pixel specific
+			// Continue if the DBH does not match what has been set
 			double dbh = ((ForestSim)state).getForest().getStandDbh(point);
-			if (dbh < 5.0) {
+			if (dbh < minimumHarvestDbh) {
 				continue;
 			}
 						
@@ -154,9 +159,14 @@ public abstract class Agent implements Steppable {
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
 	
 	/**
-	 * Set the minimum harvest.
+	 * Set the minimum harvest area
 	 */
-	public void setMinimumHarvest(double value) { minimumHarvest = value; }
+	public void setMinimumHarvestArea(double value) { minimumHarvest = value; }
+	
+	/**
+	 * Set the minimum harvest DBH.
+	 */
+	public void setMinimumHarvestDbh(double value) { minimumHarvestDbh = value; }
 	
 	/**
 	 * Update the shape file to reflect the agent's attributes.

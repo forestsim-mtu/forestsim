@@ -49,6 +49,8 @@ public class ForestSim extends SimState {
 	private Agent[] agents; // Array of all agents active in the simulation
 	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
+	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
+	private double minimumHarvestDbh = 20.32;			// Minimum for large pole size
 
 	/**
 	 * Constructor.
@@ -91,16 +93,22 @@ public class ForestSim extends SimState {
 	 * Get the target percentage of agents, as a double, that are economic
 	 * optimizers.
 	 */
-	public double getEconomicAgentPercentage() {
-		return economicAgentPercentage;
-	}
+	public double getEconomicAgentPercentage() { return economicAgentPercentage; }
 
 	/**
 	 * Get the odds that an ecosystems services optimizing agent will harvest.
 	 */
-	public double getEcosystemsAgentHarvestOdds() {
-		return ecosystemsAgentHarvestOdds;
-	}
+	public double getEcosystemsAgentHarvestOdds() { return ecosystemsAgentHarvestOdds; }
+	
+	/**
+	 * Get the minimum harvest area for the agents.
+	 */
+	public double getMinimumHarvestArea() { return minimumHarvestArea; }
+	
+	/**
+	 * Get the minimum harvest DBH for the agents.
+	 */
+	public double getMinimumHarvestDbh() { return minimumHarvestDbh; }
 	
 	/**
 	 * Get the model forest that is being used.
@@ -123,6 +131,24 @@ public class ForestSim extends SimState {
 	public void setEcosystemsAgentHarvestOdds(double value) {
 		if (value >= 0.0 && value <= 1.0) {
 			ecosystemsAgentHarvestOdds = value;
+		}
+	}
+	
+	/**
+	 * Set the minimum harvest area for the agents.
+	 */
+	public void setMinimumHarvestArea(double value) {
+		if (value >= 0.0) {
+			minimumHarvestArea = value;
+		}
+	}
+	
+	/**
+	 * Set the minimum harvest DBH for the agents.
+	 */
+	public void setMinimumHarvestDbh(double value) {
+		if (value >= 0.0) {
+			minimumHarvestDbh = value;
 		}
 	}
 
@@ -210,6 +236,8 @@ public class ForestSim extends SimState {
 		double cover = random.nextDouble();
 		Agent agent = (random.nextDouble() < probablity) ? new EconomicAgent(lu, cover) : new EcosystemsAgent(lu, cover);
 		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
+		agent.setMinimumHarvestArea(minimumHarvestArea);
+		agent.setMinimumHarvestDbh(minimumHarvestDbh);
 		return createAgentParcel(agent);
 	}
 

@@ -2,6 +2,7 @@ package edu.mtu.models;
 
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,9 +30,17 @@ public class Forest {
 			NlcdClassification.WoodyWetlands.getValue()
 	}));
 		
+	// The set of reference plants to use for the growth patterns
+	private final static HashMap<Integer, SpeciesParameters> growthPatterns;
+	static {
+		HashMap<Integer, SpeciesParameters> map = new HashMap<Integer, SpeciesParameters>();
+		map.put(NlcdClassification.DeciduousForest.getValue(), SpeciesParameters.AcerRubrum);
+		map.put(NlcdClassification.EvergreenForest.getValue(), SpeciesParameters.PinusStrobus);
+		map.put(NlcdClassification.WoodyWetlands.getValue(), SpeciesParameters.AcerRubrum);		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
+		growthPatterns = map;
+	}
+	
 	private final static double DbhTakenAt = 1.37;			// Height of a standard DBH measurement in meters
-	private final static double MaximumAnnualGrowth = 1.0;	// Maximum height growth per year for Pinus Strobus in northern Michigan, in meters
-	private final static SpeciesParameters reference = SpeciesParameters.PinusStrobus;
 	
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
@@ -61,20 +70,29 @@ public class Forest {
 		
 		// Create a grid with Perlin noise that will act the base of our landscape
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
-		
-		// Match the grid the the NLCD data
+				
+		// Match the grid the the NLCD data and scale the fields to the maximum diameter at breast
+		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
+		// note that while the NLCD says that the stands should be at least five meters in height, 
+		// we allow the variability since harvests may have occurred.
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
-				if (WoodyBiomass.contains(nlcd)) {
+				// If this is not woody biomass, clear the pixel and move on
+				if (!WoodyBiomass.contains(nlcd)) {
+					grid.set(ndx, ndy, 0.0);
 					continue;
 				}
-				grid.set(ndx, ndy, 0.0);
+				
+				// Otherwise, scale it to the DBH
+				SpeciesParameters reference = getGrowthPattern(nlcd);
+				double value = reference.getMaximumDbh() * grid.get(ndx, ndy);
+				grid.set(ndx, ndy, value);
  			}
 		}
-		
-		// Create the stand diameter at breast height (DBH), these will act as the basis for the height estimation
-		standDiameter = new GeomGridField(Perlin.scaleGrid(grid, 0.0, reference.getMaximumDbh()));
+				
+		// Finish setting up the geometric grid
+		standDiameter = new GeomGridField(grid);
 		standDiameter.setPixelHeight(landCover.getPixelHeight());
 		standDiameter.setPixelWidth(landCover.getPixelWidth());
 		standDiameter.setMBR(landCover.getMBR());
@@ -89,6 +107,10 @@ public class Forest {
 					continue;
 				}
 				
+				// Get the growth reference
+				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
+				SpeciesParameters reference = getGrowthPattern(nlcd);
+				
 				// Since we have the DBH we can estimate the height using the height-diameter equation (Kershaw et al. 2008)
 				// TODO Add lookup for generalized and regional regression constants
 				// TODO Throw some randomness on this as well to account for nature
@@ -102,6 +124,19 @@ public class Forest {
 		standHeight.setPixelHeight(landCover.getPixelHeight());
 		standHeight.setPixelWidth(landCover.getPixelWidth());
 		standHeight.setMBR(landCover.getMBR());
+	}
+
+	private SpeciesParameters getGrowthPattern(int nlcd) {
+		SpeciesParameters reference;
+		if (nlcd == NlcdClassification.MixedForest.getValue()) {
+			// For mixed forest, randomize the growth pattern
+			reference = (random.nextBoolean()) ? 
+					growthPatterns.get(NlcdClassification.DeciduousForest.getValue()) : 
+					growthPatterns.get(NlcdClassification.EvergreenForest.getValue());			
+		} else {
+			reference = growthPatterns.get(nlcd);
+		}
+		return reference;
 	}
 	
 	/**
@@ -191,10 +226,13 @@ public class Forest {
 					continue;
 				}
 				
+				// Get the growth reference to use
+				SpeciesParameters reference = getGrowthPattern(nlcd);
+				
 				// Grow the tree trunk, but clamp at the maximum
 				double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(ndx, ndy);
 				if (dbh < reference.getMaximumDbh()) {
-					dbh += reference.getMaximumAnnualDbhGrowth() * random.nextDouble();
+					dbh += reference.getDbhGrowth() * random.nextDouble();
 					dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 					((DoubleGrid2D)standDiameter.getGrid()).set(ndx, ndy, dbh);
 				}
@@ -207,7 +245,7 @@ public class Forest {
 						height = DbhTakenAt + reference.b1 * Math.pow(1 - Math.pow(Math.E, -reference.b2 * dbh), reference.b3);
 					} else {
 						// Grow the tree by the maximum slower rate
-						height +=  MaximumAnnualGrowth * random.nextDouble();
+						height +=  reference.getHeightGrowth() * random.nextDouble();
 					}
 				}
 				height = (height <= reference.getMaximumHeight()) ? height : reference.getMaximumHeight();
@@ -224,8 +262,9 @@ public class Forest {
 	public double harvest(Point[] stand) {
 		for (Point point : stand) {
 			// Get the current stand height at the given point
+			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
 			double height = ((DoubleGrid2D)standHeight.getGrid()).get(point.x, point.y);
-			
+						
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
 			((DoubleGrid2D)standHeight.getGrid()).set(point.x, point.y, 0.0);
