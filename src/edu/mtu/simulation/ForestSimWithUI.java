@@ -29,7 +29,6 @@ public class ForestSimWithUI extends GUIState {
 	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
-	private FastValueGridPortrayal2D heightPortrayal = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D stockingPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
@@ -47,7 +46,6 @@ public class ForestSimWithUI extends GUIState {
 		
 		// Attach the land cover layers and then overlay the parcel layer
 		display.attach(coverPortrayal, "Land Cover");
-		display.attach(heightPortrayal, "Forest Stand Height", false);
 		display.attach(dbhPortrayal, "Stand DBH", false);
 		display.attach(stockingPortrayal, "Stocking", false);
 		display.attach(parcelPortrayal, "Parcels Layer");
@@ -90,10 +88,6 @@ public class ForestSimWithUI extends GUIState {
 		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
 		
-		// Portray the current stand height
-		heightPortrayal.setField(world.forest.getStandHeight().getGrid());
-		heightPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.PinusStrobus.getMaximumHeight(), Color.WHITE, Color.DARK_GRAY));
-
 		// Portray the current stand DBH
 		dbhPortrayal.setField(world.forest.getStandDbh().getGrid());
 		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
