@@ -1,2 +1,4 @@
-bin/
-shapefiles/
+/bin/
+/shapefiles/
+/target/
+/.settings/

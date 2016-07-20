@@ -1,10 +1,19 @@
 package edu.mtu.models;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.utilities.NlcdClassification;
@@ -38,6 +47,20 @@ public class Forest {
 		map.put(NlcdClassification.EvergreenForest.getValue(), SpeciesParameters.PinusStrobus);
 		map.put(NlcdClassification.WoodyWetlands.getValue(), SpeciesParameters.AcerRubrum);		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
 		growthPatterns = map;
+	}
+	
+	// The set of reference stocking guides for the growth patterns
+	private final static HashMap<SpeciesParameters, List<double[]>> stockingGuides;
+	static {
+		HashMap<SpeciesParameters, List<double[]>> map = new HashMap<SpeciesParameters, List<double[]>>();
+		for (int nlcd : growthPatterns.keySet()) {
+			SpeciesParameters key = growthPatterns.get(nlcd);
+			if (map.containsKey(key)) {
+				continue;
+			}
+			map.put(key, readStockingGuide(key.getDataFile()));
+		}
+		stockingGuides = map;
 	}
 	
 	private final static double acreInSquareMeters = 4046.86;		// 1 ac in sq m
@@ -268,6 +291,32 @@ public class Forest {
 		// Return the biomass
 		// TODO Do the appropriate math
 		return 0.0;		
+	}
+	
+	/**
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	public static List<double[]> readStockingGuide(String fileName) {
+		try {
+			Reader file = new FileReader(fileName);
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(file);
+			List<double[]> stocking = new ArrayList<double[]>();
+			for (CSVRecord record : records) {
+				stocking.add(new double[] { 
+						Double.parseDouble(record.get(0)), 
+						Double.parseDouble(record.get(1)), 
+						Double.parseDouble(record.get(2)) });
+			}
+			return stocking;
+		} catch (FileNotFoundException ex) {
+			System.err.println("The file indicated, '" + fileName + "', was not found");
+			return null;
+		} catch (IOException ex) {
+			System.err.println("An error occured while reading the file, '" + fileName + "'");
+			return null;
+		}
 	}
 		
 	/**

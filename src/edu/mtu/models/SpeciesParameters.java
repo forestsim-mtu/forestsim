@@ -8,11 +8,14 @@ package edu.mtu.models;
  */
 public enum SpeciesParameters {
 	// https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
-	AcerRubrum("Red Maple", 495.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175),			// Height growth is a guess
+	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
+	AcerRubrum("Red Maple", "data/AcerRebrum.csv", 495.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175),			// Height growth is a guess
 	
 	// https://www.na.fs.fed.us/spfo/pubs/silvics_manual/Volume_1/pinus/strobus.htm
-	PinusStrobus("Eastern White Pine", 102.0, 48.0, 0.5, 1.0, 49.071, 0.016, 1);
+	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
+	PinusStrobus("Eastern White Pine", "data/PinusStrobus.csv", 102.0, 48.0, 0.5, 1.0, 49.071, 0.016, 1);
 	
+	private String dataFile;
 	private String name;
 	private double dbhGrowth;
 	private double maximumDbh;
@@ -22,8 +25,9 @@ public enum SpeciesParameters {
 	// Exposed due to their use in equations
 	public double b1, b2, b3;
 	
-	private SpeciesParameters(String name, double maximumDbh, double maximumHeight, double dbhGrowth, double heightGrowth, double b1, double b2, double b3) {
+	private SpeciesParameters(String name, String dataFile, double maximumDbh, double maximumHeight, double dbhGrowth, double heightGrowth, double b1, double b2, double b3) {
 		this.name = name;
+		this.dataFile = dataFile;
 		this.maximumDbh = maximumDbh;
 		this.maximumHeight = maximumHeight;
 		this.dbhGrowth = dbhGrowth;
@@ -32,6 +36,11 @@ public enum SpeciesParameters {
 		this.b2 = b2;
 		this.b3 = b3;
 	}
+	
+	/**
+	 * Returns the data file to use for the species.
+	 */
+	public String getDataFile() { return dataFile; }
 	
 	/**
 	 * Returns the common name of the species.
