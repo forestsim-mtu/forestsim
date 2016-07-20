@@ -33,10 +33,10 @@ public enum StockingCondition {
 	public static Color[] getColorMap() {
 		Color[] color = new Color[5];
 		color[0] = Color.WHITE;
-		color[1] = new Color(0xAF963C);
-		color[2] = new Color(0xDCCA8F);
-		color[3] = new Color(0x85C77E);
-		color[4] = new Color(0x38814E);
+		color[1] = new Color(0xAF963C);		// Brown
+		color[2] = new Color(0xDCCA8F);		// Light brown
+		color[3] = new Color(0x85C77E);		// Light green
+		color[4] = new Color(0x38814E);		// Dark green
 		return color;
 	}
 	

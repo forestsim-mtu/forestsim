@@ -101,6 +101,7 @@ public class Forest {
 		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
 		// note that while the NLCD says that the stands should be at least five meters in height, 
 		// we allow the variability since harvests may have occurred.
+		double multiplier = getPixelAreaMultiplier();
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
@@ -116,8 +117,7 @@ public class Forest {
 				grid.set(ndx, ndy, dbh);
 				
 				// Use the DBH to determine the number of trees in the pixel
-				double basalArea = getBasalArea(dbh);
-				int count = (int)Math.round((acreInSquareMeters * 0.8) / basalArea);	
+				int count = (int)(calculateTargetStocking(reference, dbh) * multiplier);
 				treeCount.set(ndx, ndy, count);
  			}
 		}
@@ -134,6 +134,31 @@ public class Forest {
 		stocking.setPixelWidth(landCover.getPixelWidth());
 		stocking.setMBR(landCover.getMBR());
 		updateStocking();
+	}
+	
+	/**
+	 * Determine the number of trees that a given stand should be seeded with.
+	 * 
+	 * @param species The species to reference.
+	 * @param dbh Mean DBH in cm for the stand.
+	 * @return The number of trees for the stand.
+	 */
+	public int calculateTargetStocking(SpeciesParameters species, double dbh) {
+		// Start by finding the guideline to use
+		List<double[]> stocking = stockingGuides.get(species);
+		int ndx = 0;
+		for (; ndx < stocking.size(); ndx++) {
+			// Scan until we find the break to use
+			if (dbh < stocking.get(ndx)[0]) {
+				break;
+			}
+		}
+
+		// Find the value for fully stocked from the guide and then adjust that by +/-20%
+		int ideal = (int)(ndx > 0 ? stocking.get(ndx - 1)[2] : stocking.get(0)[2]); 
+		double skew = (random.nextInt(41) - 20) / 100.0;
+		int result = (int)(ideal - ideal * skew);
+		return result;
 	}
 	
 	/**
@@ -179,6 +204,19 @@ public class Forest {
 	 * Get the area, in meters, of the pixels in the model.
 	 */
 	public double getPixelArea() { return landCover.getPixelHeight() * landCover.getPixelWidth(); }
+	
+	/**
+	 * Get the multiplier that should be used to convert from pixels to acres / square meters.
+	 * 
+	 * @return The multiplier to be used.
+	 */
+	public double getPixelAreaMultiplier() {
+		double area = landCover.getPixelHeight() * landCover.getPixelWidth();
+		if (area > acreInSquareMeters) {
+			return area / acreInSquareMeters;
+		}
+		return acreInSquareMeters / area;
+	}
 	
 	/**
 	 * Calculate the biomass in the given stand.
@@ -235,17 +273,37 @@ public class Forest {
 	 * @param point The grid coordinates of the stand to sample.
 	 * @return The percent stocking for the stand.
 	 */
-	// TODO Double check the math being done here to ensure that it is correct
 	public double getStandStocking(Point point) {
+		// Bail out if this is not forest
+		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
+		if (!WoodyBiomass.contains(nlcd)) {
+			return 0.0;
+		}
+					
+		// Get the basal average basal area per tree
 		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
 		double basalArea = getBasalArea(dbh);
 		
+		// Get the number of trees per acre, by pixel 
 		int count = treeCount.get(point.x, point.y);
-		double area = standDiameter.getPixelHeight() * standDiameter.getPixelWidth();
-		double result = 100 * (count * basalArea * (acreInSquareMeters / area)) / acreInSquareMeters;
+		count /= getPixelAreaMultiplier();
 		
-		// Clamp the result at the maximum stocking
-		return (result < 120) ? result : 120;
+		// Determine the total basal area
+		basalArea *= count;
+		
+		// Lookup what the ideal basal area per acre (in metric) 
+		List<double[]> stocking = stockingGuides.get(getGrowthPattern(nlcd));
+		for (int ndx = 0; ndx < stocking.size(); ndx++) {
+			// Scan until we find the break to use
+			if (dbh < stocking.get(ndx)[0]) {
+				// Return the ideal number of trees
+				double ideal = ((ndx > 0) ? stocking.get(ndx - 1)[1] : stocking.get(0)[1]);
+				return 100 * (basalArea / ideal);
+			}
+		}
+		
+		// Use the largest value for the return
+		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
 	}
 	
 	/**
@@ -271,6 +329,17 @@ public class Forest {
 					dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 					((DoubleGrid2D)standDiameter.getGrid()).set(ndx, ndy, dbh);
 				}
+				
+				// Check the stocking of the stand, if over stocked, thin the number of trees
+				// TODO Determine what the actual ecological constants are to use for this
+				double stocking = getStandStocking(new Point(ndx, ndy));
+				if (stocking > 160) {
+					// Randomly thin the trees by up to 10%
+					double thinning = random.nextInt(10) / 100.0;
+					int count = treeCount.get(ndx, ndy);
+					count -= count * thinning;
+					treeCount.set(ndx, ndy, count);
+				}
 			}
 		}
 	}
@@ -282,11 +351,15 @@ public class Forest {
 	 */
 	public double harvest(Point[] stand) {
 		for (Point point : stand) {
-			// Get the current stand height at the given point
+			// Get the current stand DBH
 			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
+			int count = treeCount.get(point.x, point.y);
 						
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
+			
+			// Set the stand to 300 seedlings per acre, as per common replanting guidelines in the US
+			treeCount.set(point.x, point.y, (int)(300 * getPixelAreaMultiplier()));
 		}
 		// Return the biomass
 		// TODO Do the appropriate math
@@ -340,11 +413,11 @@ public class Forest {
 				
 				// Assume no stocking
 				int value = StockingCondition.Nonstocked.getValue();
-				if (result > 100) {
+				if (result > 130) {
 					value = StockingCondition.Overstocked.getValue();
-				} else if (result > 60 ) {
+				} else if (result > 100 ) {
 					value = StockingCondition.Full.getValue();
-				} else if (result > 35) {
+				} else if (result > 60) {
 					value = StockingCondition.Moderate.getValue();
 				} else if (result > 10) {
 					value = StockingCondition.Poor.getValue();
