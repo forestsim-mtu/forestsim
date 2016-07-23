@@ -47,7 +47,7 @@ public class ForestSim extends SimState {
 	public GeomGridField coverLayer = new GeomGridField();
 
 	private Agent[] agents; // Array of all agents active in the simulation
-	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
+	private double economicAgentPercentage = 0.0; 		// Initially 50% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
 	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
 	private double minimumHarvestDbh = 20.32;			// Minimum for large pole size

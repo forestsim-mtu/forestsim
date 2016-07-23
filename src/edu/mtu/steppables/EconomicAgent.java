@@ -23,17 +23,19 @@ public class EconomicAgent extends Agent {
 	 */
 	@Override
 	public void step(SimState state) {
-		// Get a projected harvest region and profit
-		Point[] stand = createHarvestRegion(minimumHarvest, state);
-		if (stand == null) {
-			return;
-		}
-		double profit = getStandValue(stand, state);
+		return;
 		
-		// Agent will always harvest as soon as there is full coverage
-		if (profit > minimumProfit) {
-			harvest(stand, state);
-		}
+		// Get a projected harvest region and profit
+//		Point[] stand = createHarvestRegion(minimumHarvest, state);
+//		if (stand == null) {
+//			return;
+//		}
+//		double profit = getStandValue(stand, state);
+//		
+//		// Agent will always harvest as soon as there is full coverage
+//		if (profit > minimumProfit) {
+//			harvest(stand, state);
+//		}
 	}
 
 	/**

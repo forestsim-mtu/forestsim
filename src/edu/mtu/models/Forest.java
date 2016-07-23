@@ -87,7 +87,8 @@ public class Forest {
 	
 	/**
 	 * Setup the current model with randomized stands.
-	 * @throws InterruptedException 
+	 * 
+	 * @throws InterruptedException Thrown when on of the threads are interrupted.
 	 */
 	private void calculateInitialStands() throws InterruptedException {
 		// Check for an invalid state
@@ -184,9 +185,10 @@ public class Forest {
 	}
 
 	/**
+	 * Get the growth pattern for the NLCD grid code.
 	 * 
-	 * @param nlcd
-	 * @return
+	 * @param nlcd NLCD grid code to get the pattern for.
+	 * @return The growth pattern to use when growing the forest.
 	 */
 	private SpeciesParameters getGrowthPattern(int nlcd) {
 		SpeciesParameters reference;
@@ -334,7 +336,7 @@ public class Forest {
 	}
 	
 	/**
-	 * Grow the forest stands, limit things to the height provided.
+	 * Grow the forest stands, limit things to the grid height provided.
 	 * 
 	 * @param start Start of the height range to grow.
 	 * @param end End of the height range to grow.
@@ -390,13 +392,14 @@ public class Forest {
 			// Set the stand to 300 seedlings per acre, as per common replanting guidelines in the US
 			treeCount.set(point.x, point.y, (int)(300 * getPixelAreaMultiplier()));
 		}
+		
 		// Return the biomass
 		// TODO Do the appropriate math
 		return 0.0;		
 	}
 	
 	/**
-	 * 
+	 * Prepare the threads that are used to grow the forest and determine the stocking.
 	 */
 	private void prepareThreads() {
 		// Prepare a list of for the grow method
@@ -424,9 +427,10 @@ public class Forest {
 	}
 	
 	/**
+	 * Read the stocking guide for the species.
 	 * 
-	 * @param fileName
-	 * @return
+	 * @param fileName The path to the stocking guide for the species. 
+	 * @return A matrix containing the stocking guide.
 	 */
 	public static List<double[]> readStockingGuide(String fileName) {
 		try {
@@ -460,17 +464,45 @@ public class Forest {
 	public void setRandom(MersenneTwisterFast value) { random = value; }
 	
 	/**
+	 * Thin the stand by the percentage provided and return the harvested biomass.
+	 * 
+	 * @param stand The stand to be thinned.
+	 * @param percentage The percentage of the stand to be thinned.
+	 * @return The harvested biomass.
+	 */
+	public double thin(Point[] stand, double percentage) {
+		double biomass = 0.0;
+		for (Point point : stand) {
+			// Get the current stand DBH
+			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
+			int count = treeCount.get(point.x, point.y);
+			
+			// Thin the stand
+			int harvest = (int)(count * percentage);
+			treeCount.set(point.x, point.y, count - harvest);
+		
+			// Calculate the biomass
+			// TODO Do the appropriate math
+		}
+				
+		// Return the biomass
+		return biomass;
+	}
+	
+	/**
 	 * Update the current stocking for the map.
-	 * @throws InterruptedException 
+	 * 
+	 * @throws InterruptedException Thrown when on of the threads are interrupted. 
 	 */
 	public void updateStocking() throws InterruptedException {
 		service.invokeAll(stockingThreads);
 	}
 	
 	/**
+	 * Update the stocking for the stands, limit things to the grid height provided.
 	 * 
-	 * @param start
-	 * @param end
+	 * @param start Start of the range to update.
+	 * @param end End of the range to update.
 	 */
 	private void updateStocking(int start, int end) {
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {

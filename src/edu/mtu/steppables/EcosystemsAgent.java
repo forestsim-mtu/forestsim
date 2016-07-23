@@ -29,16 +29,18 @@ public class EcosystemsAgent extends Agent {
 	 */
 	@Override
 	public void step(SimState state) {
-		// Get a projected harvest region and profit
-		Point[] stand = createHarvestRegion(minimumHarvest, state);
-		if (stand == null) {
-			return;
-		}
-		double profit = getStandValue(stand, state);
+		return;
 		
-		// If there is full coverage, the agent may harvest with low probability
-		if (profit >= minimumProfit && state.random.nextDouble() < harvestOdds) {
-			harvest(stand, state);
-		}
+		// Get a projected harvest region and profit
+//		Point[] stand = createHarvestRegion(minimumHarvest, state);
+//		if (stand == null) {
+//			return;
+//		}
+//		double profit = getStandValue(stand, state);
+//		
+//		// If there is full coverage, the agent may harvest with low probability
+//		if (profit >= minimumProfit && state.random.nextDouble() < harvestOdds) {
+//			harvest(stand, state);
+//		}
 	}
 }
