@@ -172,7 +172,12 @@ public class ForestSim extends SimState {
 		
 		// Create the forest model
 		forest = new Forest();
-		forest.calculateInitialStands(coverLayer, random);
+		try {
+			forest.calculateInitialStands(coverLayer, random);
+		} catch (InterruptedException ex) {
+			System.err.println("An error occured generating the forest: " + ex);
+			System.exit(-1);
+		}
 
 		// Create the agents and assign one agent to each parcel
 		createAgents();
@@ -314,6 +319,7 @@ public class ForestSim extends SimState {
 	public void finish() {
 		super.finish();
 
+		// Allow the agents to update shape file
 		for (Agent agent : agents) {
 			agent.updateShapefile();
 		}

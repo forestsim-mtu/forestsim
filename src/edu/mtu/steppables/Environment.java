@@ -27,8 +27,12 @@ public class Environment implements Steppable {
 	 */
 	@Override
 	public void step(SimState state) {
-		forest.grow();
-		forest.updateStocking();
-		state.schedule.scheduleOnce(this);
+		try {
+			forest.grow();
+			forest.updateStocking();
+			state.schedule.scheduleOnce(this);
+		} catch (InterruptedException ex) {
+			System.err.println("Unhandled error occred: " + ex);
+		}
 	}
 }

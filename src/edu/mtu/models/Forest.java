@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -66,9 +69,14 @@ public class Forest {
 	private final static double acreInSquareMeters = 4046.86;		// 1 ac in sq m
 	private final static double DbhTakenAt = 1.37;					// Height of a standard DBH measurement in meters
 	
+	private final int threadCount = Runtime.getRuntime().availableProcessors();
+	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
+		
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
 	private GeomGridField stocking;
+	private List<Callable<Void>> growthThreads;
+	private List<Callable<Void>> stockingThreads;
 	private IntGrid2D treeCount;
 	private MersenneTwisterFast random;
 	
@@ -79,8 +87,9 @@ public class Forest {
 	
 	/**
 	 * Setup the current model with randomized stands.
+	 * @throws InterruptedException 
 	 */
-	private void calculateInitialStands() {
+	private void calculateInitialStands() throws InterruptedException {
 		// Check for an invalid state
 		if (landCover == null) {
 			throw new IllegalStateException("The NLCD land cover has not been set yet.");
@@ -133,6 +142,9 @@ public class Forest {
 		stocking.setPixelHeight(landCover.getPixelHeight());
 		stocking.setPixelWidth(landCover.getPixelWidth());
 		stocking.setMBR(landCover.getMBR());
+				
+		// Prepare the threads and update the stocking
+		prepareThreads();
 		updateStocking();
 	}
 	
@@ -171,6 +183,11 @@ public class Forest {
 		return 0.00007854 * Math.pow(dbh, 2);
 	}
 
+	/**
+	 * 
+	 * @param nlcd
+	 * @return
+	 */
 	private SpeciesParameters getGrowthPattern(int nlcd) {
 		SpeciesParameters reference;
 		if (nlcd == NlcdClassification.MixedForest.getValue()) {
@@ -188,8 +205,9 @@ public class Forest {
 	 * Store the land cover provided and use it to calculate the initial stands
 	 * 
 	 * @param landCover The NLCD land cover information to use for the forest.
+	 * @throws InterruptedException 
 	 */
-	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) {
+	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) throws InterruptedException {
 		this.landCover = landCover;
 		this.random = random;
 		calculateInitialStands();
@@ -308,11 +326,22 @@ public class Forest {
 	
 	/**
 	 * Grow the forest stands.
+	 * 
+	 * @throws InterruptedException Throw in the the threads are interrupted.
 	 */
-	// TODO Make this species specific and applied to NLCD code
-	public void grow() {
+	public void grow() throws InterruptedException {
+		service.invokeAll(growthThreads);		
+	}
+	
+	/**
+	 * Grow the forest stands, limit things to the height provided.
+	 * 
+	 * @param start Start of the height range to grow.
+	 * @param end End of the height range to grow.
+	 */
+	private void grow(int start, int end) {
 		for (int ndx = 0; ndx < standDiameter.getGridWidth(); ndx++) {
-			for (int ndy = 0; ndy < standDiameter.getGridHeight(); ndy++) {
+			for (int ndy = start; ndy < end; ndy++) {
 				// If this is not a woody biomass stand, press on
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
 				if (!WoodyBiomass.contains(nlcd)) {
@@ -368,6 +397,34 @@ public class Forest {
 	
 	/**
 	 * 
+	 */
+	private void prepareThreads() {
+		// Prepare a list of for the grow method
+		final int range = standDiameter.getGridHeight() / threadCount;
+		growthThreads = new ArrayList<Callable<Void>>();
+		stockingThreads = new ArrayList<Callable<Void>>();
+		for (int ndx = 0; ndx < threadCount; ndx++) {
+			final int start = ndx * range;
+			final int end = (ndx < threadCount - 1) ? (ndx + 1) * range : standDiameter.getGridHeight();
+			growthThreads.add(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					grow(start, end);
+					return null;
+				}	
+			});
+			stockingThreads.add(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					updateStocking(start, end);
+					return null;
+				}
+			});
+		}
+	}
+	
+	/**
+	 * 
 	 * @param fileName
 	 * @return
 	 */
@@ -404,10 +461,20 @@ public class Forest {
 	
 	/**
 	 * Update the current stocking for the map.
+	 * @throws InterruptedException 
 	 */
-	public void updateStocking() {
+	public void updateStocking() throws InterruptedException {
+		service.invokeAll(stockingThreads);
+	}
+	
+	/**
+	 * 
+	 * @param start
+	 * @param end
+	 */
+	private void updateStocking(int start, int end) {
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
-			for (int ndy = 0; ndy < stocking.getGridHeight(); ndy++) {
+			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
 				double result = getStandStocking(new Point(ndx, ndy));
 				
