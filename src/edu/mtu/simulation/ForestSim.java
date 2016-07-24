@@ -15,6 +15,9 @@ import edu.mtu.steppables.Agent;
 import edu.mtu.steppables.EconomicAgent;
 import edu.mtu.steppables.EcosystemsAgent;
 import edu.mtu.steppables.Environment;
+import edu.mtu.steppables.management.ManagementPlan;
+import edu.mtu.steppables.management.ManagementPlanFactory;
+import edu.mtu.steppables.management.NaturalManagment;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
@@ -238,11 +241,10 @@ public class ForestSim extends SimState {
 	 * @return The constructed agent.
 	 */
 	private Agent createAgent(LandUseGeomWrapper lu, double probablity) {
-		double cover = random.nextDouble();
-		Agent agent = (random.nextDouble() < probablity) ? new EconomicAgent(lu, cover) : new EcosystemsAgent(lu, cover);
+		Agent agent = (random.nextDouble() < probablity) ? new EconomicAgent(lu) : new EcosystemsAgent(lu);
+		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(NaturalManagment.class.getName(), agent);		
 		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
-		agent.setMinimumHarvestArea(minimumHarvestArea);
-		agent.setMinimumHarvestDbh(minimumHarvestDbh);
+		agent.setManagementPlan(plan);
 		return createAgentParcel(agent);
 	}
 
@@ -301,6 +303,12 @@ public class ForestSim extends SimState {
 	 * Create all of the agents that are used in the model.
 	 */
 	private void createAgents() {
+		// Prepare the management plan factory
+		ManagementPlanFactory factory = ManagementPlanFactory.getInstance();
+		factory.setMinimumHarvestArea(minimumHarvestArea);
+		factory.setMinimumHarvestDbh(minimumHarvestDbh);
+		factory.setRadom(random);
+		
 		// Assign one agent to each parcel and then schedule the agent
 		Bag parcelGeoms = parcelLayer.getGeometries();
 		agents = new Agent[parcelGeoms.numObjs];

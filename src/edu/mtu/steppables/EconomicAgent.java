@@ -13,9 +13,8 @@ public class EconomicAgent extends Agent {
 	/**
 	 * Constructor.
 	 */
-	public EconomicAgent(LandUseGeomWrapper landUseWrapper, double cover) {
+	public EconomicAgent(LandUseGeomWrapper landUseWrapper) {
 		super(landUseWrapper);
-		setLandUse(cover);
 	}
 	
 	/**

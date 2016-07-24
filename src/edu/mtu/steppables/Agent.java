@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import edu.mtu.models.Economics;
 import edu.mtu.simulation.ForestSim;
+import edu.mtu.steppables.management.ManagementPlan;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -19,8 +20,7 @@ public abstract class Agent implements Steppable {
 	private Point[] coverPoints;
 	
 	protected double harvestOdds;
-	protected double minimumHarvest;
-	protected double minimumHarvestDbh;
+	protected ManagementPlan plan;
 	
 	/**
 	 * Report what type of agent is being represented.
@@ -49,16 +49,6 @@ public abstract class Agent implements Steppable {
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
 	
 	/**
-	 * The minimum harvest size, in square meters.
-	 */
-	public double getMinimumHarvestArea() { return minimumHarvest; }
-	
-	/**
-	 * The minimum harvest DBH, in centimeters.
-	 */
-	public double getMinimumHarvestDbh() { return minimumHarvestDbh; }
-	
-	/**
 	 * Get the estimated economic value of the given stand.
 	 * 
 	 * @param stand The pixels that make up the harvest stand.
@@ -75,17 +65,6 @@ public abstract class Agent implements Steppable {
 		double cost = Economics.getHarvestCost(area);
 		double profit = Economics.getProfit(cost, biomass);
 		return profit;
-	}
-	
-	/**
-	 * Grow the forest.
-	 */
-	protected void growth(SimState state) {
-		// TODO Tie this to the FIA, but for now just use a random growth rate
-		double use = getLandUse();
-		if (use >= 1.0) { return; }
-		double rate = state.random.nextDouble() / 10;		
-		setLandUse(use + rate);
 	}
 	
 	/**
@@ -116,7 +95,7 @@ public abstract class Agent implements Steppable {
 		for (Point point : coverPoints) {
 			// Continue if the DBH does not match what has been set
 			double dbh = ((ForestSim)state).getForest().getStandDbh(point);
-			if (dbh < minimumHarvestDbh) {
+			if (dbh < plan.getMinimumHarvestDbh()) {
 				continue;
 			}
 						
@@ -154,19 +133,14 @@ public abstract class Agent implements Steppable {
 	public void setHarvestOdds(double value) { harvestOdds = value; }
 	
 	/**
+	 * Set the management plan to be used by the agent.
+	 */
+	public void setManagementPlan(ManagementPlan value) { plan = value; }
+	
+	/**
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
-	
-	/**
-	 * Set the minimum harvest area
-	 */
-	public void setMinimumHarvestArea(double value) { minimumHarvest = value; }
-	
-	/**
-	 * Set the minimum harvest DBH.
-	 */
-	public void setMinimumHarvestDbh(double value) { minimumHarvestDbh = value; }
 	
 	/**
 	 * Update the shape file to reflect the agent's attributes.
