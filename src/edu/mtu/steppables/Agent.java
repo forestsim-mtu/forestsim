@@ -1,10 +1,9 @@
 package edu.mtu.steppables;
 
 import java.awt.Point;
-import java.util.ArrayList;
 
 import edu.mtu.models.Economics;
-import edu.mtu.simulation.ForestSim;
+import edu.mtu.models.Forest;
 import edu.mtu.steppables.management.ManagementPlan;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
@@ -41,6 +40,14 @@ public abstract class Agent implements Steppable {
 		setAgentType(getAgentType());
 	}
 	
+	/**
+	 * Get the cover points that this agent is responsible for.
+	 */
+	public Point[] getCoverPoints() { return coverPoints; }
+	
+	/**
+	 * Get the geometry that this agent is responsible for.
+	 */
 	public LandUseGeomWrapper getGeometry() { return landUseWrapper; }
 	
 	/**
@@ -56,10 +63,10 @@ public abstract class Agent implements Steppable {
 	 * @return The expected profits for the stand.
 	 */
 	public double getStandValue(Point[] stand, SimState state) {
-		double area = stand.length * ((ForestSim)state).getForest().getPixelArea();
+		double area = stand.length * Forest.getInstance().getPixelArea();
 		
 		// Get the biomass for the region 
-		double biomass = ((ForestSim)state).getForest().getStandBiomass(stand);
+		double biomass = Forest.getInstance().getStandBiomass(stand);
 		
 		// Get the profits for the region
 		double cost = Economics.getHarvestCost(area);
@@ -81,37 +88,6 @@ public abstract class Agent implements Steppable {
 	}
 	
 	/**
-	 * Calculate a harvest region that is greater than or equal to the given area.
-	 * Note that this could allow for disconnected harvest regions.
-	 * 
-	 * @param targetArea The area the harvest must meet.
-	 * @param state The current simulation state.
-	 * @return The pixel coordinates that meet the given area.
-	 */
-	protected Point[] createHarvestRegion(double targetArea, SimState state) {
-		double area = 0;
-		ArrayList<Point> points = new ArrayList<Point>();
-		double pixelArea = ((ForestSim)state).getForest().getPixelArea();
-		for (Point point : coverPoints) {
-			// Continue if the DBH does not match what has been set
-			double dbh = ((ForestSim)state).getForest().getStandDbh(point);
-			if (dbh < plan.getMinimumHarvestDbh()) {
-				continue;
-			}
-						
-			// It is, so update the area and points to use
-			area += pixelArea;
-			points.add(point);
-			if (area >= targetArea) {
-				return points.toArray(new Point[0]);
-			}
-		}
-		
-		// Nothing to harvest
-		return null;
-	}
-	
-	/**
 	 * Harvest the forest.
 	 * 
 	 * @param stand The forest stand to be harvested.
@@ -119,7 +95,7 @@ public abstract class Agent implements Steppable {
 	 * @return The total biomass harvested
 	 */	
 	protected double harvest(Point[] stand, SimState state) { 
-		return ((ForestSim)state).getForest().harvest(stand); 
+		return Forest.getInstance().harvest(stand); 
 	}
 	
 	/**
@@ -141,6 +117,17 @@ public abstract class Agent implements Steppable {
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
+	
+	/**
+	 * 
+	 * @param stands
+	 * @param percentage
+	 * @param state
+	 * @return
+	 */
+	protected double thin(Point[] stands, double percentage, SimState state) {
+		return Forest.getInstance().thin(stands, percentage);
+	}
 	
 	/**
 	 * Update the shape file to reflect the agent's attributes.

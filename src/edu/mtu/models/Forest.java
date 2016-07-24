@@ -71,7 +71,9 @@ public class Forest {
 	
 	private final int threadCount = Runtime.getRuntime().availableProcessors();
 	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
-		
+	
+	private static Forest instance = new Forest();
+	
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
 	private GeomGridField stocking;
@@ -83,7 +85,7 @@ public class Forest {
 	/**
 	 * Constructor.
 	 */
-	public Forest() { }
+	private Forest() { }
 	
 	/**
 	 * Setup the current model with randomized stands.
@@ -150,6 +152,18 @@ public class Forest {
 	}
 	
 	/**
+	 * Store the land cover provided and use it to calculate the initial stands
+	 * 
+	 * @param landCover The NLCD land cover information to use for the forest.
+	 * @throws InterruptedException 
+	 */
+	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) throws InterruptedException {
+		this.landCover = landCover;
+		this.random = random;
+		calculateInitialStands();
+	}
+	
+	/**
 	 * Determine the number of trees that a given stand should be seeded with.
 	 * 
 	 * @param species The species to reference.
@@ -204,16 +218,9 @@ public class Forest {
 	}
 	
 	/**
-	 * Store the land cover provided and use it to calculate the initial stands
-	 * 
-	 * @param landCover The NLCD land cover information to use for the forest.
-	 * @throws InterruptedException 
+	 * Get an instance of the forest object.
 	 */
-	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) throws InterruptedException {
-		this.landCover = landCover;
-		this.random = random;
-		calculateInitialStands();
-	}
+	public static Forest getInstance() { return instance; }
 	
 	/**
 	 * Get the NLCD land cover that applies to the forest.

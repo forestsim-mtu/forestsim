@@ -18,6 +18,7 @@ import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.management.ManagementPlan;
 import edu.mtu.steppables.management.ManagementPlanFactory;
 import edu.mtu.steppables.management.NaturalManagment;
+import edu.mtu.steppables.management.SawtimberHarvest;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
@@ -39,9 +40,6 @@ public class ForestSim extends SimState {
 	// Display width and height
 	private static final int gridWidth = 1000;
 	private static final int gridHeight = 900;
-
-	// The forest model and associated cover information
-	public Forest forest;
 	
 	// Geometry assigned to assigned to agents to geo-locate their parcel
 	public GeomVectorField parcelLayer;
@@ -50,10 +48,9 @@ public class ForestSim extends SimState {
 	public GeomGridField coverLayer = new GeomGridField();
 
 	private Agent[] agents; // Array of all agents active in the simulation
-	private double economicAgentPercentage = 0.0; 		// Initially 50% of the agents should be economic optimizers
+	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
 	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
-	private double minimumHarvestDbh = 20.32;			// Minimum for large pole size
 
 	/**
 	 * Constructor.
@@ -107,16 +104,6 @@ public class ForestSim extends SimState {
 	 * Get the minimum harvest area for the agents.
 	 */
 	public double getMinimumHarvestArea() { return minimumHarvestArea; }
-	
-	/**
-	 * Get the minimum harvest DBH for the agents.
-	 */
-	public double getMinimumHarvestDbh() { return minimumHarvestDbh; }
-	
-	/**
-	 * Get the model forest that is being used.
-	 */
-	public Forest getForest() { return forest; }
 
 	/**
 	 * Set the target percentage of agents, as a double, that are economic
@@ -145,15 +132,6 @@ public class ForestSim extends SimState {
 			minimumHarvestArea = value;
 		}
 	}
-	
-	/**
-	 * Set the minimum harvest DBH for the agents.
-	 */
-	public void setMinimumHarvestDbh(double value) {
-		if (value >= 0.0) {
-			minimumHarvestDbh = value;
-		}
-	}
 
 	/**
 	 * Main entry point for the model.
@@ -173,10 +151,9 @@ public class ForestSim extends SimState {
 		importVectorLayers();
 		importRasterLayers();
 		
-		// Create the forest model
-		forest = new Forest();
 		try {
-			forest.calculateInitialStands(coverLayer, random);
+			// Create the forest model
+			Forest.getInstance().calculateInitialStands(coverLayer, random);
 		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
 			System.exit(-1);
@@ -187,7 +164,6 @@ public class ForestSim extends SimState {
 		
 		// Create the environment agent
 		Environment agent = new Environment();
-		agent.setForest(forest);
 		schedule.scheduleOnce(agent);
 
 		// Align the MBRs so layers line up in the display
@@ -242,7 +218,8 @@ public class ForestSim extends SimState {
 	 */
 	private Agent createAgent(LandUseGeomWrapper lu, double probablity) {
 		Agent agent = (random.nextDouble() < probablity) ? new EconomicAgent(lu) : new EcosystemsAgent(lu);
-		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(NaturalManagment.class.getName(), agent);		
+		String planName = (agent instanceof EcosystemsAgent) ? NaturalManagment.class.getName() : SawtimberHarvest.class.getName();
+		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(planName, agent);		
 		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
 		agent.setManagementPlan(plan);
 		return createAgentParcel(agent);
@@ -306,7 +283,6 @@ public class ForestSim extends SimState {
 		// Prepare the management plan factory
 		ManagementPlanFactory factory = ManagementPlanFactory.getInstance();
 		factory.setMinimumHarvestArea(minimumHarvestArea);
-		factory.setMinimumHarvestDbh(minimumHarvestDbh);
 		factory.setRadom(random);
 		
 		// Assign one agent to each parcel and then schedule the agent

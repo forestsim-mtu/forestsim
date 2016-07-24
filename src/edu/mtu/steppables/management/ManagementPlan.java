@@ -15,17 +15,17 @@ public abstract class ManagementPlan {
 	private MersenneTwisterFast random;
 	
 	protected Agent agent;
-	protected double minimumHarvestDbh;
 	protected double minimumHarvest;
-		
+	
 	public abstract Point[] createHarvestPlan();
+	
+	public abstract Point[] createThinningPlan();
+	
+	public abstract double thinningPrecentage();
 	
 	public abstract boolean shouldHarvest();
 	
-	/**
-	 * The minimum harvest DBH, in centimeters.
-	 */
-	public double getMinimumHarvestDbh() { return minimumHarvestDbh; }
+	public abstract boolean shouldThin();
 	
 	/**
 	 * The minimum harvest size, in square meters.
@@ -41,11 +41,6 @@ public abstract class ManagementPlan {
 	 * Set the minimum harvest area
 	 */
 	public void setMinimumHarvestArea(double value) { minimumHarvest = value; }
-	
-	/**
-	 * Set the minimum harvest DBH.
-	 */
-	public void setMinimumHarvestDbh(double value) { minimumHarvestDbh = value; }
 	
 	/**
 	 * Set the randomization object to use.

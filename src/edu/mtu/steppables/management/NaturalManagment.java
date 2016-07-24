@@ -21,4 +21,28 @@ public class NaturalManagment extends ManagementPlan {
 	public Point[] createHarvestPlan() {
 		return null;
 	}
+
+	/**
+	 * Thinning plans will never be used.
+	 */
+	@Override
+	public Point[] createThinningPlan() {
+		return null;
+	}
+
+	/**
+	 * Thinning plans will never be used.
+	 */
+	@Override
+	public double thinningPrecentage() {
+		return 0;
+	}
+
+	/**
+	 * The basic rule is to never thin.
+	 */
+	@Override
+	public boolean shouldThin() {
+		return false;
+	}
 }

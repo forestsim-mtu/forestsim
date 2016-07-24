@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import edu.mtu.models.Forest;
 import edu.mtu.models.SpeciesParameters;
 import edu.mtu.models.StockingCondition;
 import edu.mtu.utilities.NlcdClassification;
@@ -83,17 +84,17 @@ public class ForestSimWithUI extends GUIState {
 		parcelPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLACK, false));
 
 		// Portray the current land cover based on the cover type scheme of NLCD
-		coverPortrayal.setField(world.forest.getLandCover().getGrid());
+		coverPortrayal.setField(Forest.getInstance().getLandCover().getGrid());
 		Color[] coverColors = NlcdClassification.getColorMap();
 		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
 		
 		// Portray the current stand DBH
-		dbhPortrayal.setField(world.forest.getStandDbh().getGrid());
+		dbhPortrayal.setField(Forest.getInstance().getStandDbh().getGrid());
 		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
 		
 		// Portray the current stand stocking
-		stockingPortrayal.setField(world.forest.getStandStocking().getGrid());
+		stockingPortrayal.setField(Forest.getInstance().getStandStocking().getGrid());
 		stockingPortrayal.setMap(new SimpleColorMap(StockingCondition.getColorMap()));
 		
 		display.reset();

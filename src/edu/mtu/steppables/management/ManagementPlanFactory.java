@@ -7,7 +7,6 @@ public class ManagementPlanFactory {
 	
 	private static ManagementPlanFactory instance = new ManagementPlanFactory();
 	
-	private double minimumHarvestDbh;
 	private double minimumHarvest;
 	private MersenneTwisterFast random;
 	
@@ -30,7 +29,6 @@ public class ManagementPlanFactory {
 		
 		plan.setAgent(agent);
 		plan.setMinimumHarvestArea(minimumHarvest);
-		plan.setMinimumHarvestDbh(minimumHarvestDbh);
 		plan.setRadom(random);
 		return plan;
 	}
@@ -41,11 +39,6 @@ public class ManagementPlanFactory {
 	 * Set the minimum harvest area
 	 */
 	public void setMinimumHarvestArea(double value) { minimumHarvest = value; }
-	
-	/**
-	 * Set the minimum harvest DBH.
-	 */
-	public void setMinimumHarvestDbh(double value) { minimumHarvestDbh = value; }
 	
 	/**
 	 * Set the randomization object to use.
