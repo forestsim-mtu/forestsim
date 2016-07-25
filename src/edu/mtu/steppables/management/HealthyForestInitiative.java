@@ -8,13 +8,13 @@ import edu.mtu.models.StockingCondition;
 
 /**
  * This ecosystem services plan allows for basic thining of the tree stands from 
- * over stocked to fully stocked, roughly as per the guidleines of the Healthy
- * Forest Initative.
+ * over stocked to fully stocked, roughly as per the guidelines of the Healthy
+ * Forest Initiative.
  * 
  * http://www.sbcounty.gov/calmast/sbc/html/healthy_forest.asp
  * http://www.fs.fed.us/projects/hfi/
  */
-public class EcosystemThinningPlan extends ManagementPlan {
+public class HealthyForestInitiative extends ManagementPlan {
 	
 	private final static double acreInSquareMeters = 4046.86;
 	private final static double minimumDbh = 33.02;				// High end of chip-n-saw timber size, in cm.

@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import edu.mtu.models.Forest;
+import edu.mtu.models.StockingCondition;
 
 /**
  * This management plan is simple and limits havesting activity to sawtimber or better.
@@ -13,9 +14,10 @@ public class SawtimberHarvest extends ManagementPlan {
 	private final static double sawtimberDbh = 35.56;
 	
 	private Point[] harvestPlan;
+	private double[] percentagePlan;
 	
 	/**
-	 * 
+	 * Create a harvest plan that is based upon 
 	 */
 	@Override
 	public Point[] createHarvestPlan() {
@@ -28,6 +30,12 @@ public class SawtimberHarvest extends ManagementPlan {
 		ArrayList<Point> points = new ArrayList<Point>();
 		double pixelArea = Forest.getInstance().getPixelArea();
 		for (Point point : agent.getCoverPoints()) {
+			// Only harvest fully stocked or better
+			int stocking = Forest.getInstance().getStandStocking(point);
+			if (stocking < StockingCondition.Full.getValue()) {
+				continue;
+			}
+			
 			// Continue if the DBH does not match what has been set
 			double dbh = Forest.getInstance().getStandDbh(point);
 			if (dbh < sawtimberDbh) {
