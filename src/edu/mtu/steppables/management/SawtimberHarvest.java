@@ -10,7 +10,6 @@ import edu.mtu.models.Forest;
  */
 public class SawtimberHarvest extends ManagementPlan {
 	
-	//
 	private final static double sawtimberDbh = 35.56;
 	
 	private Point[] harvestPlan;

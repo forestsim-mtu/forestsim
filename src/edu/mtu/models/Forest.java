@@ -164,6 +164,44 @@ public class Forest {
 	}
 	
 	/**
+	 * 
+	 * @param point
+	 * @return
+	 */
+	private double calculateStandStocking(Point point) {
+		// Bail out if this is not forest
+		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
+		if (!WoodyBiomass.contains(nlcd)) {
+			return 0.0;
+		}
+					
+		// Get the basal average basal area per tree
+		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
+		double basalArea = getBasalArea(dbh);
+		
+		// Get the number of trees per acre, by pixel 
+		int count = treeCount.get(point.x, point.y);
+		count /= getPixelAreaMultiplier();
+		
+		// Determine the total basal area
+		basalArea *= count;
+		
+		// Lookup what the ideal basal area per acre (in metric) 
+		List<double[]> stocking = stockingGuides.get(getGrowthPattern(nlcd));
+		for (int ndx = 0; ndx < stocking.size(); ndx++) {
+			// Scan until we find the break to use
+			if (dbh < stocking.get(ndx)[0]) {
+				// Return the ideal number of trees
+				double ideal = ((ndx > 0) ? stocking.get(ndx - 1)[1] : stocking.get(0)[1]);
+				return 100 * (basalArea / ideal);
+			}
+		}
+		
+		// Use the largest value for the return
+		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
+	}
+	
+	/**
 	 * Determine the number of trees that a given stand should be seeded with.
 	 * 
 	 * @param species The species to reference.
@@ -300,37 +338,8 @@ public class Forest {
 	 * @param point The grid coordinates of the stand to sample.
 	 * @return The percent stocking for the stand.
 	 */
-	public double getStandStocking(Point point) {
-		// Bail out if this is not forest
-		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
-		if (!WoodyBiomass.contains(nlcd)) {
-			return 0.0;
-		}
-					
-		// Get the basal average basal area per tree
-		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-		double basalArea = getBasalArea(dbh);
-		
-		// Get the number of trees per acre, by pixel 
-		int count = treeCount.get(point.x, point.y);
-		count /= getPixelAreaMultiplier();
-		
-		// Determine the total basal area
-		basalArea *= count;
-		
-		// Lookup what the ideal basal area per acre (in metric) 
-		List<double[]> stocking = stockingGuides.get(getGrowthPattern(nlcd));
-		for (int ndx = 0; ndx < stocking.size(); ndx++) {
-			// Scan until we find the break to use
-			if (dbh < stocking.get(ndx)[0]) {
-				// Return the ideal number of trees
-				double ideal = ((ndx > 0) ? stocking.get(ndx - 1)[1] : stocking.get(0)[1]);
-				return 100 * (basalArea / ideal);
-			}
-		}
-		
-		// Use the largest value for the return
-		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
+	public int getStandStocking(Point point) {
+		return ((IntGrid2D)stocking.getGrid()).get(point.x, point.y);
 	}
 	
 	/**
@@ -515,7 +524,7 @@ public class Forest {
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
-				double result = getStandStocking(new Point(ndx, ndy));
+				double result = calculateStandStocking(new Point(ndx, ndy));
 				
 				// Assume no stocking
 				int value = StockingCondition.Nonstocked.getValue();
