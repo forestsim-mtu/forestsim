@@ -168,7 +168,7 @@ public class Forest {
 	 * @param point
 	 * @return
 	 */
-	private double calculateStandStocking(Point point) {
+	public double calculateStandStocking(Point point) {
 		// Bail out if this is not forest
 		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
 		if (!WoodyBiomass.contains(nlcd)) {
@@ -526,6 +526,8 @@ public class Forest {
 	 * @param end End of the range to update.
 	 */
 	private void updateStocking(int start, int end) {
+		int count = 0;
+		double sum = 0;
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
@@ -542,7 +544,7 @@ public class Forest {
 				} else if (result > 10) {
 					value = StockingCondition.Poor.getValue();
 				}
-				
+
 				// Store the value
 				((IntGrid2D)stocking.getGrid()).set(ndx, ndy, value);
 			}

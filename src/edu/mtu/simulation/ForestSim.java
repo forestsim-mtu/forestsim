@@ -74,21 +74,20 @@ public class ForestSim extends SimState {
 	}
 
 	/**
-	 * Get the current average forest cover for the model.
+	 * Return the average NIPF stocking for the model.
 	 */
-	public double getAverageCoverage() {
-		// Return if there is nothing to do
-		if (agents == null || agents.length == 0) {
-			return 0.0;
-		}
-
-		double total = 0.0;
+	public double getAverageNipfStocking() { 
+		double sum = 0;
+		int count = 0;
 		for (Agent agent : agents) {
-			total += agent.getLandUse();
+			for (java.awt.Point point : agent.getCoverPoints()) {
+				sum += Forest.getInstance().calculateStandStocking(point);
+				count++;
+			}
 		}
-		return total / agents.length;
+		return sum / count; 
 	}
-
+	
 	/**
 	 * Get the target percentage of agents, as a double, that are economic
 	 * optimizers.
