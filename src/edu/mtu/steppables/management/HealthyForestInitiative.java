@@ -2,8 +2,10 @@ package edu.mtu.steppables.management;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.mtu.models.Forest;
+import edu.mtu.models.StandThinning;
 import edu.mtu.models.StockingCondition;
 
 /**
@@ -16,11 +18,10 @@ import edu.mtu.models.StockingCondition;
  */
 public class HealthyForestInitiative extends ManagementPlan {
 	
-	private final static double acreInSquareMeters = 4046.86;
 	private final static double minimumDbh = 33.02;				// High end of chip-n-saw timber size, in cm.
 	private final static int targetTreesPerAcre = 60;			// High end of the healthy forest range
 	
-	private Point[] thinningPlan;
+	private List<StandThinning> thinningPlan;
 	private double thinningPercentage;
 		
 	/**
@@ -35,14 +36,16 @@ public class HealthyForestInitiative extends ManagementPlan {
 	 * 
 	 */
 	@Override
-	public Point[] createThinningPlan() {
+	public List<StandThinning> createThinningPlan() {
 		// Return the plan if it already exists
 		if (thinningPlan != null) {
 			return thinningPlan;
 		}
 		
-		ArrayList<Point> points = new ArrayList<Point>();
-		double pixelArea = Forest.getInstance().getPixelArea();
+		// Note the target number of trees
+		int target = (int)(targetTreesPerAcre / Forest.getInstance().getPixelAreaMultiplier());
+		
+		List<StandThinning> plans = new ArrayList<StandThinning>();
 		for (Point point : agent.getCoverPoints()) {
 			// Check to see if the stand is overstocked
 			int stocking = Forest.getInstance().getStandStocking(point);
@@ -55,13 +58,25 @@ public class HealthyForestInitiative extends ManagementPlan {
 			if (dbh < minimumDbh) {
 				continue;
 			}
+			
+			// Continue if the stockin does not exceed the guidelines
+			int trees = Forest.getInstance().getStandTreeCount(point);
+			trees /= Forest.getInstance().getPixelAreaMultiplier();
+			if (trees <= target) {
+				continue;
+			}
+			
+			// Determine how much to thin by
+			StandThinning thinning = new StandThinning();
+			thinning.point = point;
+			thinning.percentage = target / trees;
 						
 			// It is, so update the area and points to use
-			points.add(point);
+			plans.add(thinning);
 		}
 		
 		// Return the points we found
-		return (Point[])points.toArray();
+		return plans;
 	}
 
 	@Override
@@ -86,8 +101,8 @@ public class HealthyForestInitiative extends ManagementPlan {
 		thinningPlan = null;
 		
 		// Create a new one
-		Point[] plan = createHarvestPlan();
-		if (plan != null && plan.length > 0) {
+		List<StandThinning> plan = createThinningPlan();
+		if (plan != null && plan.size() > 0) {
 			// Cache the harvest plan and return;
 			thinningPlan = plan;
 			return true;
