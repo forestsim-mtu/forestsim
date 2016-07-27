@@ -18,12 +18,14 @@ import java.util.concurrent.Executors;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import cern.jet.random.engine.RandomEngine;
 import ec.util.MersenneTwisterFast;
 import edu.mtu.utilities.NlcdClassification;
 import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
+import sim.util.distribution.Exponential;
 
 /**
  * This class provides a means of performing calculations based upon the forest data provided. 
@@ -100,7 +102,7 @@ public class Forest {
 		if (random == null) {
 			throw new IllegalStateException("The random number generator has not been set yet.");
 		}
-		
+				
 		// Note the height and width of the grid
 		int height = landCover.getGrid().getHeight();
 		int width = landCover.getGrid().getWidth();
@@ -282,7 +284,7 @@ public class Forest {
 		}
 		return acreInSquareMeters / area;
 	}
-	
+		
 	/**
 	 * Calculate the biomass in the given stand.
 	 * 
@@ -358,6 +360,9 @@ public class Forest {
 	 * @param end End of the height range to grow.
 	 */
 	private void grow(int start, int end) {
+		// Prepare the random number generator, if better randomness is needed this is where to start
+		Exponential generator = new Exponential(1, random);
+				
 		for (int ndx = 0; ndx < standDiameter.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// If this is not a woody biomass stand, press on
@@ -369,10 +374,13 @@ public class Forest {
 				// Get the growth reference to use
 				SpeciesParameters reference = getGrowthPattern(nlcd);
 				
+				// Update the lambda
+				generator.setState(reference.getDbhGrowth());
+								
 				// Grow the tree trunk, but clamp at the maximum
 				double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(ndx, ndy);
 				if (dbh < reference.getMaximumDbh()) {
-					dbh += reference.getDbhGrowth() * random.nextDouble();
+					dbh += reference.getDbhGrowth() * generator.nextDouble(reference.getDbhGrowth());
 					dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 					((DoubleGrid2D)standDiameter.getGrid()).set(ndx, ndy, dbh);
 				}
@@ -478,7 +486,7 @@ public class Forest {
 	 * Set the random number generator to use.
 	 */
 	public void setRandom(MersenneTwisterFast value) { random = value; }
-	
+		
 	/**
 	 * Thin the stand by the percentage provided and return the harvested biomass.
 	 * 
