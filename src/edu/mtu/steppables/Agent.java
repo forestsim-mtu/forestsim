@@ -1,9 +1,11 @@
 package edu.mtu.steppables;
 
 import java.awt.Point;
+import java.util.List;
 
 import edu.mtu.models.Economics;
 import edu.mtu.models.Forest;
+import edu.mtu.models.StandThinning;
 import edu.mtu.steppables.management.ManagementPlan;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
@@ -125,8 +127,8 @@ public abstract class Agent implements Steppable {
 	 * @param state
 	 * @return
 	 */
-	protected double thin(Point[] stands, double percentage, SimState state) {
-		return Forest.getInstance().thin(stands, percentage);
+	protected double thin(List<StandThinning> plans, SimState state) {
+		return Forest.getInstance().thin(plans);
 	}
 	
 	/**

@@ -2,8 +2,10 @@ package edu.mtu.steppables.management;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.mtu.models.Forest;
+import edu.mtu.models.StandThinning;
 import edu.mtu.models.StockingCondition;
 
 /**
@@ -77,7 +79,7 @@ public class SawtimberHarvest extends ManagementPlan {
 	 * Thinning is not done for plan.
 	 */
 	@Override
-	public Point[] createThinningPlan() {
+	public List<StandThinning> createThinningPlan() {
 		return null;
 	}
 

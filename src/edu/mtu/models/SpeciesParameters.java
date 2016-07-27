@@ -7,10 +7,12 @@ package edu.mtu.models;
  * Note that the b1, b2, and b3 parameters are for Chapman-Richards function as described here: http://www.nrs.fs.fed.us/pubs/gtr/gtr-p-24%20papers/39kershaw-p-24.pdf
  */
 public enum SpeciesParameters {
+	// Note that Red Maple should be ready for harvest at sawtimber in about 60 years from seeding
+	// 
 	// https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
 	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
 	AcerRubrum("Red Maple", "data/AcerRebrum.csv", 76.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175),			// Height growth is a guess
-	
+		
 	// https://www.na.fs.fed.us/spfo/pubs/silvics_manual/Volume_1/pinus/strobus.htm
 	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
 	PinusStrobus("Eastern White Pine", "data/PinusStrobus.csv", 102.0, 48.0, 0.5, 1.0, 49.071, 0.016, 1);

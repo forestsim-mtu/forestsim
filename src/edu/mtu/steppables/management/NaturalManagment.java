@@ -1,6 +1,9 @@
 package edu.mtu.steppables.management;
 
 import java.awt.Point;
+import java.util.List;
+
+import edu.mtu.models.StandThinning;
 
 /**
  * This management plan encapsulates the concept of "let nature take it's course."
@@ -26,7 +29,7 @@ public class NaturalManagment extends ManagementPlan {
 	 * Thinning plans will never be used.
 	 */
 	@Override
-	public Point[] createThinningPlan() {
+	public List<StandThinning> createThinningPlan() {
 		return null;
 	}
 

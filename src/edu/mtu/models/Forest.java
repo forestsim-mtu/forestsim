@@ -170,7 +170,7 @@ public class Forest {
 	 * @param point
 	 * @return
 	 */
-	private double calculateStandStocking(Point point) {
+	public double calculateStandStocking(Point point) {
 		// Bail out if this is not forest
 		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
 		if (!WoodyBiomass.contains(nlcd)) {
@@ -202,7 +202,7 @@ public class Forest {
 		// Use the largest value for the return
 		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
 	}
-	
+		
 	/**
 	 * Determine the number of trees that a given stand should be seeded with.
 	 * 
@@ -343,6 +343,11 @@ public class Forest {
 	public int getStandStocking(Point point) {
 		return ((IntGrid2D)stocking.getGrid()).get(point.x, point.y);
 	}
+	
+	/**
+	 * Get the number of trees that are in the stand.
+	 */
+	public int getStandTreeCount(Point point) { return treeCount.get(point.x, point.y); }
 	
 	/**
 	 * Grow the forest stands.
@@ -494,16 +499,16 @@ public class Forest {
 	 * @param percentage The percentage of the stand to be thinned.
 	 * @return The harvested biomass.
 	 */
-	public double thin(Point[] stand, double percentage) {
+	public double thin(List<StandThinning> plans) {
 		double biomass = 0.0;
-		for (Point point : stand) {
+		for (StandThinning plan : plans) {
 			// Get the current stand DBH
-			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-			int count = treeCount.get(point.x, point.y);
+			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(plan.point.x, plan.point.y);
+			int count = treeCount.get(plan.point.x, plan.point.y);
 			
 			// Thin the stand
-			int harvest = (int)(count * percentage);
-			treeCount.set(point.x, point.y, count - harvest);
+			int harvest = (int)(count * plan.percentage);
+			treeCount.set(plan.point.x, plan.point.y, count - harvest);
 		
 			// Calculate the biomass
 			// TODO Do the appropriate math
@@ -529,6 +534,8 @@ public class Forest {
 	 * @param end End of the range to update.
 	 */
 	private void updateStocking(int start, int end) {
+		int count = 0;
+		double sum = 0;
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
@@ -545,7 +552,7 @@ public class Forest {
 				} else if (result > 10) {
 					value = StockingCondition.Poor.getValue();
 				}
-				
+
 				// Store the value
 				((IntGrid2D)stocking.getGrid()).set(ndx, ndy, value);
 			}

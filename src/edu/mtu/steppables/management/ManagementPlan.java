@@ -1,8 +1,10 @@
 package edu.mtu.steppables.management;
 
 import java.awt.Point;
+import java.util.List;
 
 import ec.util.MersenneTwisterFast;
+import edu.mtu.models.StandThinning;
 import edu.mtu.steppables.Agent;
 
 /**
@@ -19,7 +21,7 @@ public abstract class ManagementPlan {
 	
 	public abstract Point[] createHarvestPlan();
 	
-	public abstract Point[] createThinningPlan();
+	public abstract List<StandThinning> createThinningPlan();
 	
 	public abstract double thinningPrecentage();
 	
