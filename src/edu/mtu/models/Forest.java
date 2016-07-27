@@ -26,6 +26,7 @@ import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
 import sim.util.distribution.Exponential;
+import sim.util.distribution.Normal;
 
 /**
  * This class provides a means of performing calculations based upon the forest data provided. 
@@ -366,7 +367,7 @@ public class Forest {
 	 */
 	private void grow(int start, int end) {
 		// Prepare the random number generator, if better randomness is needed this is where to start
-		Exponential generator = new Exponential(1, random);
+		Normal generator = new Normal(0, 0, random);
 				
 		for (int ndx = 0; ndx < standDiameter.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
@@ -378,14 +379,15 @@ public class Forest {
 				
 				// Get the growth reference to use
 				SpeciesParameters reference = getGrowthPattern(nlcd);
-				
-				// Update the lambda
-				generator.setState(reference.getDbhGrowth());
 								
 				// Grow the tree trunk, but clamp at the maximum
 				double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(ndx, ndy);
 				if (dbh < reference.getMaximumDbh()) {
-					dbh += reference.getDbhGrowth() * generator.nextDouble(reference.getDbhGrowth());
+					// Assume +/- 10% for the standard deviation
+					double mean = reference.getDbhGrowth();
+					double value = generator.nextDouble(mean, mean * 0.1);
+					
+					dbh += value;
 					dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 					((DoubleGrid2D)standDiameter.getGrid()).set(ndx, ndy, dbh);
 				}

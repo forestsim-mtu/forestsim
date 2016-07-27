@@ -77,6 +77,10 @@ public class ForestSim extends SimState {
 	 * Return the average NIPF stocking for the model.
 	 */
 	public double getAverageNipfStocking() { 
+		if (agents == null) {
+			return 0;
+		}
+		
 		double sum = 0;
 		int count = 0;
 		for (Agent agent : agents) {

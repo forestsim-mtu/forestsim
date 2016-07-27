@@ -10,6 +10,7 @@ public enum SpeciesParameters {
 	// Note that Red Maple should be ready for harvest at sawtimber in about 60 years from seeding
 	// 
 	// https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
+	// http://www.nrs.fs.fed.us/pubs/rp/rp_nc257.pdf 
 	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
 	AcerRubrum("Red Maple", "data/AcerRebrum.csv", 76.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175),			// Height growth is a guess
 		
