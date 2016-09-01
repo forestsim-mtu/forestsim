@@ -1,4 +1,4 @@
-package edu.mtu.steppables;
+package edu.mtu.steppables.nipf;
 
 /**
  * This enumeration is used to encapsulate the agents that are supported by the model and their basic attributes. 

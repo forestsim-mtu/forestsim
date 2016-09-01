@@ -1,4 +1,4 @@
-package edu.mtu.steppables.management;
+package edu.mtu.management;
 
 import java.awt.Point;
 import java.util.List;

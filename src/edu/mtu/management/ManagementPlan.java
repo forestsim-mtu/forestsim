@@ -1,11 +1,11 @@
-package edu.mtu.steppables.management;
+package edu.mtu.management;
 
 import java.awt.Point;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.models.StandThinning;
-import edu.mtu.steppables.Agent;
+import edu.mtu.steppables.nipf.Agent;
 
 /**
  * This class is the base for the various forest management plans that are being 

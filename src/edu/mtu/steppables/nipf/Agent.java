@@ -1,12 +1,12 @@
-package edu.mtu.steppables;
+package edu.mtu.steppables.nipf;
 
 import java.awt.Point;
 import java.util.List;
 
+import edu.mtu.management.ManagementPlan;
 import edu.mtu.models.Economics;
 import edu.mtu.models.Forest;
 import edu.mtu.models.StandThinning;
-import edu.mtu.steppables.management.ManagementPlan;
 import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.engine.Steppable;

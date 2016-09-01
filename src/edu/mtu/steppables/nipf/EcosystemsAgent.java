@@ -1,4 +1,4 @@
-package edu.mtu.steppables;
+package edu.mtu.steppables.nipf;
 
 import java.awt.Point;
 import java.util.List;

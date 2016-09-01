@@ -1,7 +1,7 @@
-package edu.mtu.steppables.management;
+package edu.mtu.management;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.steppables.Agent;
+import edu.mtu.steppables.nipf.Agent;
 
 public class ManagementPlanFactory {
 	

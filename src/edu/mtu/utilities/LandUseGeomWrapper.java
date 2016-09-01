@@ -1,6 +1,6 @@
 package edu.mtu.utilities;
 
-import edu.mtu.steppables.AgentType;
+import edu.mtu.steppables.nipf.AgentType;
 import sim.util.geo.MasonGeometry;
 
 @SuppressWarnings("serial")
