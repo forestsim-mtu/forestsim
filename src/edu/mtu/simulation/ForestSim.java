@@ -33,9 +33,9 @@ import sim.util.IntBag;
 @SuppressWarnings("serial")
 public class ForestSim extends SimState {
 
-	// Path to GIS files used in the simulation
-	private static final String coverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
-	private static final String parcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
+	// Path to default GIS files used in the simulation
+	private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
+	private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
 
 	// Display width and height
 	private static final int gridWidth = 1000;
@@ -51,6 +51,8 @@ public class ForestSim extends SimState {
 	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
 	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
+	private String coverFile = defaultCoverFile;
+	private String parcelFile = defaultParcelFile;
 
 	/**
 	 * Constructor.
@@ -93,6 +95,11 @@ public class ForestSim extends SimState {
 	}
 	
 	/**
+	 * Get the cover file path that is used by the simulation.
+	 */
+	public String getCoverFilePath() { return coverFile; }
+	
+	/**
 	 * Get the target percentage of agents, as a double, that are economic
 	 * optimizers.
 	 */
@@ -107,7 +114,18 @@ public class ForestSim extends SimState {
 	 * Get the minimum harvest area for the agents.
 	 */
 	public double getMinimumHarvestArea() { return minimumHarvestArea; }
+	
+	/**
+	 * Get the parcel file path that is used by the simulation.
+	 * @return
+	 */
+	public String getParcelFilePath() { return parcelFile; }
 
+	/**
+	 * Set the cover file path to use for the simulation.
+	 */
+	public void setCoverFilePath(String value) { coverFile = value; }
+	
 	/**
 	 * Set the target percentage of agents, as a double, that are economic
 	 * optimizers.
@@ -136,6 +154,11 @@ public class ForestSim extends SimState {
 		}
 	}
 
+	/**
+	 * Set the parcel file path to use for the simulation.
+	 */
+	public void setParcelFilePath(String value) { parcelFile = value; } 
+	
 	/**
 	 * Main entry point for the model.
 	 */
