@@ -7,5 +7,12 @@ ForestSim is an agent-based model (ABM) that is intended for research into the p
 - Logging companies
 - Biorefinary or bioenery plant
 
-# VIP Branch
+ForestSim is primarly a Java aplication that makes use of the [MASON Multiagent Simulaiton Toolkt](http://cs.gmu.edu/~eclab/projects/mason/) to manage to simulation and GeoMASON to support GIS data.
+
+## Development Enviroment
+
+The follwoing is the development enviorment
+
+# Branches
+## VIP Branch
 The VIP branch is focused on the testing of voluntary incentive programs (VIPs) and testing for sustanable outcomes.
