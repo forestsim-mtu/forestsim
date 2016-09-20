@@ -11,7 +11,12 @@ ForestSim is primarly a Java aplication that makes use of the [MASON Multiagent 
 
 ## Development Enviroment
 
-The follwoing is the development enviorment
+The following is the development enviorment:
+
+- Eclipse IDE Neon Release (4.6.0)
+- Java SE SDK 7 (JavaSE-1.7)
+
+A number of JAR files are included in the repository that are dependencies of MASON and GeoMASON, additional project libraries not included are managed using the MAVEN POM file.
 
 # Branches
 ## VIP Branch
