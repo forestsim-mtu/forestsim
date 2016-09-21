@@ -20,8 +20,8 @@ import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
 import edu.mtu.steppables.nipf.EcosystemsAgent;
 import edu.mtu.steppables.nipf.LandUseGeomWrapper;
+import landuse.Nlcd;
 import sim.engine.SimState;
-import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.IntGrid2D;
@@ -45,7 +45,7 @@ public class ForestSim extends SimState {
 	public GeomVectorField parcelLayer;
 
 	// Geometry representing current land cover at high resolution
-	public GeomGridField coverLayer = new GeomGridField();
+	public Nlcd coverLayer = new Nlcd();
 
 	private Agent[] agents; // Array of all agents active in the simulation
 	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
@@ -177,6 +177,10 @@ public class ForestSim extends SimState {
 		importVectorLayers();
 		importRasterLayers();
 		
+		// Apply any knock-outs to the NLCD as needed
+		// TODO Refine this to check what should be done
+		// coverLayer.clearMapOutsideParcels(parcelLayer);
+		
 		try {
 			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, random);
@@ -272,7 +276,7 @@ public class ForestSim extends SimState {
 		IntBag yPos = new IntBag();
 
 		// Search all the pixels in the agent's parcel's bounding rectangle
-		for (int x = xMin; x <= xMax; x++)
+		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMax; y <= yMin; y++) {
 				// Skip ahead if the index is negative (no pixels here)
 				if (x < 0 || y < 0) {
@@ -295,6 +299,7 @@ public class ForestSim extends SimState {
 					yPos.add(y);
 				}
 			}
+		}
 
 		// Pass the agent the indexes of the pixels the agent's parcel
 		// covers

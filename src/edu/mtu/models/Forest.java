@@ -20,8 +20,9 @@ import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.utilities.Perlin;
+import landuse.Nlcd;
+import landuse.NlcdClassification;
 import sim.field.geo.GeomGridField;
-import sim.field.geo.GeomVectorField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
 import sim.util.distribution.Normal;
@@ -32,9 +33,8 @@ import sim.util.distribution.Normal;
  * otherwise noted.
  * 
  * Note that when the model is running it assumes that it needs to calculate the changes to the
- * forest for the entire map. If this is not needed filters should be applied through the 
- * limitGrowthToParcelsFilter or through the knockOutParcelsFilter methods. These will update the forest
- * to include regions that are skipped during regrowth which should improve performs.
+ * forest for the entire map. If this is not needed filters should be applied to the NLCD data 
+ * before the forest is initialized.
  * 
  * References:
  * Kershaw et al. 2008, http://www.nrs.fs.fed.us/pubs/gtr/gtr-p-24%20papers/39kershaw-p-24.pdf
@@ -80,7 +80,7 @@ public class Forest {
 	private final int threadCount = Runtime.getRuntime().availableProcessors();
 	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
 	
-	private GeomGridField landCover;
+	private Nlcd landCover;
 	private GeomGridField standDiameter;
 	private GeomGridField stocking;
 	private List<Callable<Void>> growthThreads;
@@ -163,7 +163,7 @@ public class Forest {
 	 * @param landCover The NLCD land cover information to use for the forest.
 	 * @throws InterruptedException 
 	 */
-	public void calculateInitialStands(GeomGridField landCover, MersenneTwisterFast random) throws InterruptedException {
+	public void calculateInitialStands(Nlcd landCover, MersenneTwisterFast random) throws InterruptedException {
 		this.landCover = landCover;
 		this.random = random;
 		calculateInitialStands();
@@ -431,24 +431,6 @@ public class Forest {
 		// TODO Do the appropriate math
 		return 0.0;		
 	}
-	
-	/**
-	 * Limit the forest growth to the parcel layer indicated.
-	 * 
-	 * @param parcels To use when applying the filter.
-	 */
-	public void limitGrowthToParcelsFilter(GeomVectorField parcels) {
-		// TODO Write this method
-	}
-	
-	/**
-	 * Remove the parcels in the given layers from the forest growth model.
-	 * 
-	 * @param parcels A list of parcel layers to be excleded.
-	 */
-	public void knockOutParcelsFilter(List<GeomVectorField> parcels) {
-		// TODO Write this method
-	}
 		
 	/**
 	 * Prepare the threads that are used to grow the forest and determine the stocking.
@@ -508,7 +490,7 @@ public class Forest {
 	/**
 	 * Set the NLCD land cover that applies to the forest.
 	 */
-	public void setLandCover(GeomGridField value) { landCover = value; }
+	public void setLandCover(Nlcd value) { landCover = value; }
 	
 	/**
 	 * Set the random number generator to use.

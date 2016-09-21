@@ -1,4 +1,4 @@
-package edu.mtu.models;
+package landuse;
 
 import java.awt.Color;
 import java.util.ArrayList;
