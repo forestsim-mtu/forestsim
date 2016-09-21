@@ -19,7 +19,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.utilities.NlcdClassification;
 import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;
@@ -76,10 +75,10 @@ public class Forest {
 	private final static double acreInSquareMeters = 4046.86;		// 1 ac in sq m
 	private final static double DbhTakenAt = 1.37;					// Height of a standard DBH measurement in meters
 	
+	private static Forest instance = new Forest();
+	
 	private final int threadCount = Runtime.getRuntime().availableProcessors();
 	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
-	
-	private static Forest instance = new Forest();
 	
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
@@ -450,7 +449,7 @@ public class Forest {
 	public void knockOutParcelsFilter(List<GeomVectorField> parcels) {
 		// TODO Write this method
 	}
-	
+		
 	/**
 	 * Prepare the threads that are used to grow the forest and determine the stocking.
 	 */

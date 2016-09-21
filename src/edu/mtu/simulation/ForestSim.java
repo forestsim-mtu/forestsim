@@ -19,7 +19,7 @@ import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
 import edu.mtu.steppables.nipf.EcosystemsAgent;
-import edu.mtu.utilities.LandUseGeomWrapper;
+import edu.mtu.steppables.nipf.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;

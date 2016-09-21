@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.List;
 
 import edu.mtu.models.StandThinning;
-import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 
 @SuppressWarnings("serial")

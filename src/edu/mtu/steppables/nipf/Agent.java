@@ -7,7 +7,6 @@ import edu.mtu.management.ManagementPlan;
 import edu.mtu.models.Economics;
 import edu.mtu.models.Forest;
 import edu.mtu.models.StandThinning;
-import edu.mtu.utilities.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.IntBag;
