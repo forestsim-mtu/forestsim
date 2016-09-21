@@ -18,20 +18,24 @@ import java.util.concurrent.Executors;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
-import cern.jet.random.engine.RandomEngine;
 import ec.util.MersenneTwisterFast;
 import edu.mtu.utilities.NlcdClassification;
 import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomVectorField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
-import sim.util.distribution.Exponential;
 import sim.util.distribution.Normal;
 
 /**
  * This class provides a means of performing calculations based upon the forest data provided. 
  * Note that all of the values supplied are assumed to be averages for a given stand unless 
  * otherwise noted.
+ * 
+ * Note that when the model is running it assumes that it needs to calculate the changes to the
+ * forest for the entire map. If this is not needed filters should be applied through the 
+ * limitGrowthToParcelsFilter or through the knockOutParcelsFilter methods. These will update the forest
+ * to include regions that are skipped during regrowth which should improve performs.
  * 
  * References:
  * Kershaw et al. 2008, http://www.nrs.fs.fed.us/pubs/gtr/gtr-p-24%20papers/39kershaw-p-24.pdf
@@ -89,7 +93,7 @@ public class Forest {
 	 * Constructor.
 	 */
 	private Forest() { }
-	
+		
 	/**
 	 * Setup the current model with randomized stands.
 	 * 
@@ -430,6 +434,24 @@ public class Forest {
 	}
 	
 	/**
+	 * Limit the forest growth to the parcel layer indicated.
+	 * 
+	 * @param parcels To use when applying the filter.
+	 */
+	public void limitGrowthToParcelsFilter(GeomVectorField parcels) {
+		// TODO Write this method
+	}
+	
+	/**
+	 * Remove the parcels in the given layers from the forest growth model.
+	 * 
+	 * @param parcels A list of parcel layers to be excleded.
+	 */
+	public void knockOutParcelsFilter(List<GeomVectorField> parcels) {
+		// TODO Write this method
+	}
+	
+	/**
 	 * Prepare the threads that are used to grow the forest and determine the stocking.
 	 */
 	private void prepareThreads() {
@@ -536,8 +558,6 @@ public class Forest {
 	 * @param end End of the range to update.
 	 */
 	private void updateStocking(int start, int end) {
-		int count = 0;
-		double sum = 0;
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
