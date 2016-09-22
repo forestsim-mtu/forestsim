@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import edu.mtu.landuse.Nlcd;
 import edu.mtu.management.ManagementPlan;
 import edu.mtu.management.ManagementPlanFactory;
 import edu.mtu.management.NaturalManagment;
@@ -20,7 +21,6 @@ import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
 import edu.mtu.steppables.nipf.EcosystemsAgent;
 import edu.mtu.steppables.nipf.LandUseGeomWrapper;
-import landuse.Nlcd;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomVectorField;

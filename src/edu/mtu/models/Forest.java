@@ -19,9 +19,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
+import edu.mtu.landuse.Nlcd;
+import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.utilities.Perlin;
-import landuse.Nlcd;
-import landuse.NlcdClassification;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;

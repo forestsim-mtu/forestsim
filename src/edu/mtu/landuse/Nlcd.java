@@ -1,4 +1,4 @@
-package landuse;
+package edu.mtu.landuse;
 
 import java.util.List;
 

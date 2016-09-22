@@ -4,10 +4,10 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.models.Forest;
 import edu.mtu.models.SpeciesParameters;
 import edu.mtu.models.StockingCondition;
-import landuse.NlcdClassification;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
