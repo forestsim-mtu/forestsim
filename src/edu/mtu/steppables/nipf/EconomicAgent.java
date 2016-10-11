@@ -3,8 +3,8 @@ package edu.mtu.steppables.nipf;
 import java.awt.Point;
 import java.util.List;
 
+import edu.mtu.models.Forest;
 import edu.mtu.models.StandThinning;
-import sim.engine.SimState;
 
 @SuppressWarnings("serial")
 public class EconomicAgent extends Agent {
@@ -15,7 +15,7 @@ public class EconomicAgent extends Agent {
 	 * Constructor.
 	 */
 	public EconomicAgent(LandUseGeomWrapper landUseWrapper) {
-		super(landUseWrapper);
+		super(type, landUseWrapper);
 	}
 	
 	/**
@@ -24,26 +24,27 @@ public class EconomicAgent extends Agent {
 	@Override
 	public AgentType getAgentType() { return type;	}
 	
-	/**
-	 * Apply the rules for this agent to the current simulation state.
-	 */
 	@Override
-	public void step(SimState state) {
+	protected void doVipOperation() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void doHarvestOperation() {
 		// Check to see if we should harvest
 		double biomass = 0.0;
 		if (plan.shouldHarvest()) {
 			Point[] stands = plan.createHarvestPlan();
-			biomass = harvest(stands, state);
+			biomass = Forest.getInstance().harvest(stands);
 		}
 		
 		// Check to see if we should thin the forest, depending upon the plan, we might harvest and thin
 		if (plan.shouldThin()) {
 			List<StandThinning> plans = plan.createThinningPlan();
-			biomass += thin(plans, state);
-		}
+			biomass += Forest.getInstance().thin(plans);
+		}		
 		
-		// Note any biomass harvested and return
-		// TODO Note the biomass	
-		return;
+		// TODO Note the harvested biomasss
 	}
 }

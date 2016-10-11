@@ -1,5 +1,7 @@
 package edu.mtu.models;
 
+import java.awt.Point;
+
 /**
  * This class provides a means of encapsulating some basic economics for the simulation.
  */
@@ -29,5 +31,23 @@ public class Economics {
 	public static double getProfit(double cost, double biomass) {
 		// Keep things simple for now
 		return (biomass * biomassPurchaseRate) - cost;
-	}	
+	}
+	
+	/**
+	 * Get the estimated economic value of the given stand.
+	 * 
+	 * @param stand The pixels that make up the harvest stand.
+	 * @return The expected profits for the stand.
+	 */
+	public static double getStandValue(Point[] stand) {
+		double area = stand.length * Forest.getInstance().getPixelArea();
+		
+		// Get the biomass for the region 
+		double biomass = Forest.getInstance().getStandBiomass(stand);
+		
+		// Get the profits for the region
+		double cost = Economics.getHarvestCost(area);
+		double profit = Economics.getProfit(cost, biomass);
+		return profit;
+	}
 }

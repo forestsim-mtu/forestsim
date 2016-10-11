@@ -1,12 +1,8 @@
 package edu.mtu.steppables.nipf;
 
 import java.awt.Point;
-import java.util.List;
 
 import edu.mtu.management.ManagementPlan;
-import edu.mtu.models.Economics;
-import edu.mtu.models.Forest;
-import edu.mtu.models.StandThinning;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.IntBag;
@@ -23,22 +19,35 @@ public abstract class Agent implements Steppable {
 	protected ManagementPlan plan;
 	
 	/**
+	 * Have the agent perform operations that are related to joining a VIP.
+	 */
+	protected abstract void doVipOperation();
+	
+	/**
+	 * Have the agent perform operations that are related to harvesting.
+	 */
+	protected abstract void doHarvestOperation();
+	
+	/**
 	 * Report what type of agent is being represented.
 	 */
 	public abstract AgentType getAgentType();
 	
 	/**
-	 * Allow the agent to perform the rules for the given state.
-	 */
-	public abstract void step(SimState state);
-	
-	/**
 	 * Constructor.
 	 */
-	public Agent(LandUseGeomWrapper landUseWrapper) {
+	public Agent(AgentType type, LandUseGeomWrapper landUseWrapper) {
 		this.landUseWrapper = landUseWrapper;
+		this.landUseWrapper.setAgentType(type);
 		coverPoints = null;
-		setAgentType(getAgentType());
+	}
+	
+	/**
+	 * Allow the agent to perform the rules for the given state.
+	 */
+	public void step(SimState state) {
+		doVipOperation();
+		doHarvestOperation();
 	}
 	
 	/**
@@ -57,25 +66,6 @@ public abstract class Agent implements Steppable {
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
 	
 	/**
-	 * Get the estimated economic value of the given stand.
-	 * 
-	 * @param stand The pixels that make up the harvest stand.
-	 * @param state The current state of the simulation.
-	 * @return The expected profits for the stand.
-	 */
-	public double getStandValue(Point[] stand, SimState state) {
-		double area = stand.length * Forest.getInstance().getPixelArea();
-		
-		// Get the biomass for the region 
-		double biomass = Forest.getInstance().getStandBiomass(stand);
-		
-		// Get the profits for the region
-		double cost = Economics.getHarvestCost(area);
-		double profit = Economics.getProfit(cost, biomass);
-		return profit;
-	}
-	
-	/**
 	 * Add the given points to the agents for the parcel that it controls.
 	 * 
 	 * @param xPos The x positions.
@@ -87,22 +77,6 @@ public abstract class Agent implements Steppable {
 			coverPoints[i] = new Point(xPos.get(i), yPos.get(i));
 		}
 	}
-	
-	/**
-	 * Harvest the forest.
-	 * 
-	 * @param stand The forest stand to be harvested.
-	 * @param state The current simulation state.
-	 * @return The total biomass harvested
-	 */	
-	protected double harvest(Point[] stand, SimState state) { 
-		return Forest.getInstance().harvest(stand); 
-	}
-	
-	/**
-	 * Set the agent's type.
-	 */
-	protected void setAgentType(AgentType value) { landUseWrapper.setAgentType(value); }
 	
 	/**
 	 * Set the odds that the agent will harvest once there is full coverage.
@@ -118,18 +92,7 @@ public abstract class Agent implements Steppable {
 	 * Set the land use for the agent's parcel.
 	 */
 	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
-	
-	/**
-	 * 
-	 * @param stands
-	 * @param percentage
-	 * @param state
-	 * @return
-	 */
-	protected double thin(List<StandThinning> plans, SimState state) {
-		return Forest.getInstance().thin(plans);
-	}
-	
+		
 	/**
 	 * Update the shape file to reflect the agent's attributes.
 	 */
