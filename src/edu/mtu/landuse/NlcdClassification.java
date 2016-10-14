@@ -2,6 +2,9 @@ package edu.mtu.landuse;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This enumeration represents the various NLCD 2011 land use classification types. 
@@ -42,6 +45,14 @@ public enum NlcdClassification {
 	// Wetlands
 	WoodyWetlands(90, "Woody Wetlands", new Color(0xC8E6F8)),
 	EmergentHerbaceousWetlands(95, "Emergent Herbaceous Wetlands", new Color(0x64B3D5));
+	
+	// The set of woody biomass types assoicated with the NLCD
+	public final static Set<Integer> WoodyBiomass = new HashSet<Integer>(Arrays.asList(new Integer[] { 
+			NlcdClassification.DeciduousForest.getValue(), 
+			NlcdClassification.EvergreenForest.getValue(),
+			NlcdClassification.MixedForest.getValue(),
+			NlcdClassification.WoodyWetlands.getValue()
+	}));		
 	
 	// Used to set the capacity of the color map
 	private final static int HighestValue = 95;

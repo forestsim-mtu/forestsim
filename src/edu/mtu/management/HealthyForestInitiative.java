@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mtu.models.Forest;
-import edu.mtu.models.StandThinning;
 import edu.mtu.models.StockingCondition;
 
 /**
- * This ecosystem services plan allows for basic thining of the tree stands from 
+ * This ecosystem services plan allows for basic thinning of the tree stands from 
  * over stocked to fully stocked, roughly as per the guidelines of the Healthy
  * Forest Initiative.
  * 

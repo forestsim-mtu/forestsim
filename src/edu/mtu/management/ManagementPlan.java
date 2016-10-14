@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.models.StandThinning;
 import edu.mtu.steppables.nipf.Agent;
 
 /**

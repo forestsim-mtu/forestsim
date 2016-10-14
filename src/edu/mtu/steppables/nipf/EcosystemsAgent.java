@@ -3,8 +3,8 @@ package edu.mtu.steppables.nipf;
 import java.awt.Point;
 import java.util.List;
 
+import edu.mtu.management.StandThinning;
 import edu.mtu.models.Forest;
-import edu.mtu.models.StandThinning;
 
 @SuppressWarnings("serial")
 public class EcosystemsAgent extends Agent {

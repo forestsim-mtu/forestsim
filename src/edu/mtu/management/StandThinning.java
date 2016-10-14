@@ -1,4 +1,4 @@
-package edu.mtu.models;
+package edu.mtu.management;
 
 import java.awt.Point;
 

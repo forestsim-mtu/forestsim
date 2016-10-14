@@ -11,7 +11,7 @@ import sim.util.geo.MasonGeometry;
 
 /**
  * This class acts as a wrapper for the NLCD raster layer, i.e. the GeomGridField. 
- * This allows for filters to be applied to it before it is loaded into the foresty model.
+ * This allows for filters to be applied to it before it is loaded into the forestry model.
  */
 @SuppressWarnings("serial")
 public class Nlcd extends GeomGridField {

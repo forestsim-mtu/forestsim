@@ -1,4 +1,4 @@
-package edu.mtu.models;
+package edu.mtu.models.growthmodels;
 
 /**
  * This enumeration wraps the information that is needed to to work with the various tree species. 

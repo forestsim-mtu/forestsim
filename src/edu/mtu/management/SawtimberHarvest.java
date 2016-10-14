@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mtu.models.Forest;
-import edu.mtu.models.StandThinning;
 import edu.mtu.models.StockingCondition;
 
 /**

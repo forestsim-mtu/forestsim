@@ -11,11 +11,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.mtu.landuse.Nlcd;
+import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.management.ManagementPlan;
 import edu.mtu.management.ManagementPlanFactory;
 import edu.mtu.management.NaturalManagment;
 import edu.mtu.management.SawtimberHarvest;
 import edu.mtu.models.Forest;
+import edu.mtu.models.growthmodels.GrowthModel;
+import edu.mtu.models.growthmodels.WesternUpEvenAgedWholeStand;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
@@ -183,7 +186,8 @@ public class ForestSim extends SimState {
 		
 		try {
 			// Create the forest model
-			Forest.getInstance().calculateInitialStands(coverLayer, random);
+			GrowthModel model = new WesternUpEvenAgedWholeStand(random);
+			Forest.getInstance().calculateInitialStands(coverLayer, model);
 		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
 			System.exit(-1);
@@ -287,7 +291,7 @@ public class ForestSim extends SimState {
 				int value = ((IntGrid2D) coverLayer.getGrid()).get(x, y);
 
 				// Move to the next if this pixel is not woody biomass
-				if (!Forest.WoodyBiomass.contains(value)) {
+				if (!NlcdClassification.WoodyBiomass.contains(value)) {
 					continue;
 				}
 

@@ -3,8 +3,6 @@ package edu.mtu.management;
 import java.awt.Point;
 import java.util.List;
 
-import edu.mtu.models.StandThinning;
-
 /**
  * This management plan encapsulates the concept of "let nature take it's course."
  */
