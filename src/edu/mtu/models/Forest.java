@@ -40,15 +40,51 @@ public class Forest {
 	 * Constructor.
 	 */
 	private Forest() { }
+	
+	public GrowthModel getGrowthModel() {
+		return growthModel;
+	}
+	
+	/**
+	 * Get an instance of the forest object.
+	 */
+	public static Forest getInstance() { 
+		return instance; 
+	}
+	
+	/**
+	 * Get the NLCD land cover that applies to the forest.
+	 */
+	public Nlcd getLandCover() { 
+		return landCover; 
+	}
 
+	/**
+	 * Get the stand DBH for the NLCD pixels in the forest.
+	 */
+	public GeomGridField getStandDbh() { 
+		return standDiameter; 
+	}
+	
 	public GeomGridField getStandDiameter() {
 		return standDiameter;
 	}
 
+	/**
+	 * Get the stocking for the entire map.
+	 */
+	public GeomGridField getStandStocking() { 
+		return stocking; 
+	}
+	
 	public GeomGridField getStocking() {
 		return stocking;
 	}
 
+	public IntGrid2D getTreeCount() {
+		return treeCount;
+	}
+	
 	public void setStandDiameter(GeomGridField standDiameter) {
 		this.standDiameter = standDiameter;
 	}
@@ -137,25 +173,13 @@ public class Forest {
 	public static double getBasalArea(double dbh) {
 		return 0.00007854 * Math.pow(dbh, 2);
 	}
-	
-	public GrowthModel getGrowthModel() {
-		return growthModel;
-	}
-
-	/**
-	 * Get an instance of the forest object.
-	 */
-	public static Forest getInstance() { return instance; }
-	
-	/**
-	 * Get the NLCD land cover that applies to the forest.
-	 */
-	public Nlcd getLandCover() { return landCover; }
-	
+		
 	/**
 	 * Get the area, in meters, of the pixels in the model.
 	 */
-	public double getPixelArea() { return landCover.getPixelHeight() * landCover.getPixelWidth(); }
+	public double getPixelArea() { 
+		return landCover.getPixelHeight() * landCover.getPixelWidth(); 
+	}
 	
 	/**
 	 * Get the multiplier that should be used to convert from pixels to acres / square meters.
@@ -184,19 +208,16 @@ public class Forest {
 		}
 		return biomass;
 	}
-	
-	/**
-	 * Get the stand DBH for the NLCD pixels in the forest.
-	 */
-	public GeomGridField getStandDbh() { return standDiameter; }
-	
+		
 	/**
 	 * Get the DBH of the given stand.
 	 * 
 	 * @param point The point to get the DBH of.
 	 * @return The current stand DBH, in centimeters.
 	 */
-	public double getStandDbh(Point point) { return ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y); }
+	public double getStandDbh(Point point) { 
+		return ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y); 
+	}
 		
 	/**
 	 * Get the height of the given stand using the height-diameter equation (Kershaw et al. 2008)
@@ -213,12 +234,7 @@ public class Forest {
 		double height = Constants.DbhTakenAt + reference.b1 * Math.pow(1 - Math.pow(Math.E, -reference.b2 * dbh), reference.b3);
 		return height;
 	}
-		
-	/**
-	 * Get the stocking for the entire map.
-	 */
-	public GeomGridField getStandStocking() { return stocking; }
-	
+			
 	/**
 	 * Get the stocking of the given stand.
 	 * 
@@ -232,7 +248,9 @@ public class Forest {
 	/**
 	 * Get the number of trees that are in the stand.
 	 */
-	public int getStandTreeCount(Point point) { return treeCount.get(point.x, point.y); }
+	public int getStandTreeCount(Point point) { 
+		return treeCount.get(point.x, point.y); 
+	}
 	
 	/**
 	 * Grow the forest stands.
@@ -378,9 +396,5 @@ public class Forest {
 				((IntGrid2D)stocking.getGrid()).set(ndx, ndy, value);
 			}
 		}
-	}
-
-	public IntGrid2D getTreeCount() {
-		return treeCount;
 	}
 }
