@@ -3,6 +3,8 @@ package edu.mtu.models.growthmodels;
 import java.awt.Point;
 import java.util.List;
 
+import edu.mtu.models.Stand;
+
 /**
  * This interface abstracts the functions that are used to actually grow a 
  * given forest stand. These methods are called by the Forest class while 
@@ -37,5 +39,5 @@ public interface GrowthModel {
 	 * 
 	 * @param point The coordinate of the stand to grow.
 	 */
-	void growStand(Point point);
+	Stand growStand(Stand stand);
 }

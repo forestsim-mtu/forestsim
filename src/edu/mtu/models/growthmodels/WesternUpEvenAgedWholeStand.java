@@ -12,10 +12,13 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import com.vividsolutions.jts.geom.util.GeometryTransformer;
+
 import ec.util.MersenneTwisterFast;
 import edu.mtu.landuse.Nlcd;
 import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.models.Forest;
+import edu.mtu.models.Stand;
 import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
@@ -75,8 +78,8 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	@Override
 	public void calculateInitialStands() {
 		// Note the height and width of the grid
-		int height = getLandCover().getGrid().getHeight();
-		int width = getLandCover().getGrid().getWidth();
+		int height = Forest.getInstance().getForestHeight();
+		int width = Forest.getInstance().getForestWidth();
 		
 		// Create a grid with Perlin noise that will act the base of our landscape
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
@@ -113,17 +116,10 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		standDiameter.setPixelHeight(landCover.getPixelHeight());
 		standDiameter.setPixelWidth(landCover.getPixelWidth());
 		standDiameter.setMBR(landCover.getMBR());
-						
-		// Update the stocking
-		GeomGridField stocking = new GeomGridField(new IntGrid2D(width, height, 0));
-		stocking.setPixelHeight(landCover.getPixelHeight());
-		stocking.setPixelWidth(landCover.getPixelWidth());
-		stocking.setMBR(landCover.getMBR());
-		
+				
 		// Pass the updates along to the forest
 		Forest.getInstance().setTreeCount(treeCount);
 		Forest.getInstance().setStandDiameter(standDiameter);
-		Forest.getInstance().setStocking(stocking);
 	}
 	
 	/**
@@ -201,7 +197,14 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return stockingGuides.get(species);
 	}
 
+	// TODO Refactor this method to be given a Stand and to return a Stand
 	@Override
+	public Stand growStand(Stand stand) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// TODO Remove this method once refactored into the stand model
 	public void growStand(Point point) {
 		// Prepare the random number generator, if better randomness is needed this is where to start
 		Normal generator = new Normal(0, 0, random);

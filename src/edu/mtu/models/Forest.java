@@ -41,6 +41,23 @@ public class Forest {
 	 */
 	private Forest() { }
 	
+	/**
+	 * Get the height of the forest geometry.
+	 */
+	public int getForestHeight() {
+		return getLandCover().getGrid().getHeight();
+	}
+	
+	/**
+	 * Get the width of the forest geometry.
+	 */
+	public int getForestWidth() {		
+		return getLandCover().getGrid().getWidth();
+	}
+	
+	/**
+	 * Get the growth model that is being used by the forest.
+	 */
 	public GrowthModel getGrowthModel() {
 		return growthModel;
 	}
@@ -60,12 +77,26 @@ public class Forest {
 	}
 
 	/**
+	 * Get the stand that is in the forest at the geometric x, y coordinate.
+	 */
+	public Stand getStand(int x, int y) {
+		Stand stand = new Stand();
+		
+		// TODO Set the attributes
+		
+		return stand;
+	}
+	
+	/**
 	 * Get the stand DBH for the NLCD pixels in the forest.
 	 */
 	public GeomGridField getStandDbh() { 
 		return standDiameter; 
 	}
 	
+	/**
+	 * Get the geometry that contains the stand diameter.
+	 */
 	public GeomGridField getStandDiameter() {
 		return standDiameter;
 	}
@@ -73,26 +104,41 @@ public class Forest {
 	/**
 	 * Get the stocking for the entire map.
 	 */
-	public GeomGridField getStandStocking() { 
-		return stocking; 
-	}
-	
 	public GeomGridField getStocking() {
 		return stocking;
 	}
 
+	/**
+	 * Get the tree count for the forest.
+	 */
 	public IntGrid2D getTreeCount() {
 		return treeCount;
 	}
 	
+	/**
+	 * Update the forest stand at the geometric x, y coordinate.
+	 */
+	public void setStand(Stand stand, int x, int y) {
+		// TODO Update the forest stand
+	}
+	
+	/**
+	 * Set the stand diameter for the forest.
+	 */
 	public void setStandDiameter(GeomGridField standDiameter) {
 		this.standDiameter = standDiameter;
 	}
 	
+	/**
+	 * Set the stocking for the forest.
+	 */
 	public void setStocking(GeomGridField stocking) {
 		this.stocking = stocking;
 	}
 	
+	/**
+	 * Set the tree count for the forest.
+	 */
 	public void setTreeCount(IntGrid2D treeCount) {
 		this.treeCount = treeCount;
 	}
@@ -119,6 +165,13 @@ public class Forest {
 		
 		// Allow the growth model to prepare the initial forest state
 		growthModel.calculateInitialStands();
+				
+		// Prepare the stocking layer
+		GeomGridField stocking = new GeomGridField(new IntGrid2D(getForestWidth(), getForestHeight(), 0));
+		stocking.setPixelHeight(landCover.getPixelHeight());
+		stocking.setPixelWidth(landCover.getPixelWidth());
+		stocking.setMBR(landCover.getMBR());
+		Forest.getInstance().setStocking(stocking);
 				
 		// Prepare the threads and update the stocking
 		prepareThreads();
@@ -277,7 +330,9 @@ public class Forest {
 				}
 				
 				// Perform the growth operation
-				growthModel.growStand(new Point(ndx, ndy));
+				Stand stand = getStand(ndx, ndy);
+				stand = growthModel.growStand(stand);
+								
 			}
 		}
 	}
