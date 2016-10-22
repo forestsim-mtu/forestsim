@@ -81,9 +81,10 @@ public class Forest {
 	 */
 	public Stand getStand(int x, int y) {
 		Stand stand = new Stand();
-		
-		// TODO Set the attributes
-		
+		stand.nlcd = ((IntGrid2D)landCover.getGrid()).get(x, y);
+		stand.arithmeticMeanDiameter = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
+		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);
+		stand.numberOfTrees = treeCount.get(x, y);
 		return stand;
 	}
 	
@@ -119,7 +120,8 @@ public class Forest {
 	 * Update the forest stand at the geometric x, y coordinate.
 	 */
 	public void setStand(Stand stand, int x, int y) {
-		// TODO Update the forest stand
+		((DoubleGrid2D)standDiameter.getGrid()).set(x, y, stand.arithmeticMeanDiameter);
+		treeCount.set(x, y, stand.numberOfTrees);
 	}
 	
 	/**
@@ -332,7 +334,7 @@ public class Forest {
 				// Perform the growth operation
 				Stand stand = getStand(ndx, ndy);
 				stand = growthModel.growStand(stand);
-								
+				setStand(stand, ndx, ndy);								
 			}
 		}
 	}

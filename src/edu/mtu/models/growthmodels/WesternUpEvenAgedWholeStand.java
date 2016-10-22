@@ -197,46 +197,35 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return stockingGuides.get(species);
 	}
 
-	// TODO Refactor this method to be given a Stand and to return a Stand
 	@Override
 	public Stand growStand(Stand stand) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// TODO Remove this method once refactored into the stand model
-	public void growStand(Point point) {
 		// Prepare the random number generator, if better randomness is needed this is where to start
 		Normal generator = new Normal(0, 0, random);
 				
 		// Get the growth reference to use
-		int nlcd = ((IntGrid2D)getLandCover().getGrid()).get(point.x, point.y);
-		SpeciesParameters reference = getGrowthPattern(nlcd);
-						
+		SpeciesParameters reference = getGrowthPattern(stand.nlcd);
+		
 		// Grow the tree trunk, but clamp at the maximum
-		double dbh = ((DoubleGrid2D)getStandDiameter().getGrid()).get(point.x, point.y);
+		double dbh = stand.arithmeticMeanDiameter;
 		if (dbh < reference.getMaximumDbh()) {
 			// Assume +/- 10% for the standard deviation
 			double mean = reference.getDbhGrowth();
 			double value = generator.nextDouble(mean, mean * 0.1);
 			
 			dbh += value;
-			dbh = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
-			((DoubleGrid2D)getStandDiameter().getGrid()).set(point.x, point.y, dbh);
+			stand.arithmeticMeanDiameter = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 		}
 		
 		// Check the stocking of the stand, if over stocked, thin the number of trees
 		// TODO Determine what the actual ecological constants are to use for this
-		double stocking = Forest.getInstance().getStandStocking(point);
-		if (stocking > 160) {
+		if (stand.stocking > 160) {
 			// Randomly thin the trees by up to 10%
 			double thinning = random.nextInt(10) / 100.0;
-			int count = getTreeCount().get(point.x, point.y);
-			count -= count * thinning;
-			getTreeCount().set(point.x, point.y, count);
+			stand.numberOfTrees -= stand.numberOfTrees * thinning;
 		}		
+		return stand;
 	}
-	
+
 	/**
 	 * Read the stocking guide for the species.
 	 * 
