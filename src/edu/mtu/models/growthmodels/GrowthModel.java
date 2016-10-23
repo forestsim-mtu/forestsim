@@ -1,6 +1,5 @@
 package edu.mtu.models.growthmodels;
 
-import java.awt.Point;
 import java.util.List;
 
 import edu.mtu.models.Stand;

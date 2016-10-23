@@ -31,6 +31,7 @@ public class Forest {
 	private GrowthModel growthModel;
 	private GeomGridField standDiameter;
 	private GeomGridField stocking;
+	private IntGrid2D standAge;
 	private IntGrid2D treeCount;
 	private List<Callable<Void>> growthThreads;
 	private List<Callable<Void>> stockingThreads;
@@ -85,6 +86,7 @@ public class Forest {
 		stand.arithmeticMeanDiameter = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
 		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);
 		stand.numberOfTrees = treeCount.get(x, y);
+		stand.age = standAge.get(x, y);
 		return stand;
 	}
 	
@@ -122,7 +124,13 @@ public class Forest {
 	public void setStand(Stand stand, int x, int y) {
 		((DoubleGrid2D)standDiameter.getGrid()).set(x, y, stand.arithmeticMeanDiameter);
 		treeCount.set(x, y, stand.numberOfTrees);
+		standAge.set(x, y, stand.age);
 	}
+	
+	/**
+	 * Set the age matrix for the forest stands.
+	 */
+	public void setStandAge(IntGrid2D value) { this.standAge = value; } 
 	
 	/**
 	 * Set the stand diameter for the forest.
@@ -143,6 +151,18 @@ public class Forest {
 	 */
 	public void setTreeCount(IntGrid2D treeCount) {
 		this.treeCount = treeCount;
+	}
+	
+	/**
+	 * Get the biomass at the given stand.
+	 * 
+	 * @param point The geometric coordinates of the stand.
+	 * @return The current biomass of the stand.
+	 */
+	public double calculateBiomass(Point point) {
+		Stand stand = getStand(point.x, point.y);
+		SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
+		return species.getBiomass(stand.height, stand.arithmeticMeanDiameter) * stand.numberOfTrees * getPixelArea();
 	}
 	
 	/**
@@ -252,14 +272,13 @@ public class Forest {
 	/**
 	 * Calculate the biomass in the given stand.
 	 * 
-	 * @param stand The pixels that make up the stand.
+	 * @param stands The pixels that make up the stand.
 	 * @return The estimated biomass for the stand.
 	 */
-	public double getStandBiomass(Point[] stand) {
+	public double getStandBiomass(Point[] stands) {
 		double biomass = 0;
-		for (Point point : stand) {
-			// TODO Flesh this out with a source approximation method, for now assume that height is a proxy for biomass
-			biomass += (getStandHeight(point) * getPixelArea());
+		for (Point point : stands) {
+			biomass += calculateBiomass(point);
 		}
 		return biomass;
 	}
@@ -344,12 +363,13 @@ public class Forest {
 	 * 
 	 * @return The biomass harvested from the stand.
 	 */
-	public double harvest(Point[] stand) {
-		for (Point point : stand) {
-			// Get the current stand DBH
-			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-			int count = treeCount.get(point.x, point.y);
-						
+	public double harvest(Point[] stands) {
+		double biomass = 0;
+		
+		for (Point point : stands) {
+			// Calculate out the stand biomass
+			biomass += calculateBiomass(point);
+									
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
 			
@@ -358,8 +378,7 @@ public class Forest {
 		}
 		
 		// Return the biomass
-		// TODO Do the appropriate math
-		return 0.0;		
+		return biomass;
 	}
 		
 	/**
@@ -399,17 +418,18 @@ public class Forest {
 	 */
 	public double thin(List<StandThinning> plans) {
 		double biomass = 0.0;
-		for (StandThinning plan : plans) {
-			// Get the current stand DBH
-			double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(plan.point.x, plan.point.y);
-			int count = treeCount.get(plan.point.x, plan.point.y);
-			
-			// Thin the stand
-			int harvest = (int)(count * plan.percentage);
-			treeCount.set(plan.point.x, plan.point.y, count - harvest);
 		
+		for (StandThinning plan : plans) {					
+			// Thin the stand
+			int count = treeCount.get(plan.point.x, plan.point.y);
+			int harvest = (int)(count * plan.percentage);
+			int difference = count - harvest;
+			treeCount.set(plan.point.x, plan.point.y, difference);
+
 			// Calculate the biomass
-			// TODO Do the appropriate math
+			Stand stand = getStand(plan.point.x, plan.point.y);
+			SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
+			biomass += species.getBiomass(stand.height, stand.arithmeticMeanDiameter) * difference * getPixelArea();
 		}
 				
 		// Return the biomass

@@ -41,6 +41,18 @@ public enum SpeciesParameters {
 	}
 	
 	/**
+	 * Calcluate the total above ground biomass for a tee with the given height
+	 * and diameter at breast height.
+	 * @param height The height of the tree in meters.
+	 * @param dbh The DBH of the tree in meters.
+	 * @return The total biomass of the tree in UNITS
+	 */
+	public double getBiomass(double height, double dbh) {
+		// TODO complete this method
+		return 0.0;
+	}
+	
+	/**
 	 * Returns the data file to use for the species.
 	 */
 	public String getDataFile() { return dataFile; }

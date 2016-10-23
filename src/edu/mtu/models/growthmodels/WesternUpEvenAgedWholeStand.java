@@ -1,6 +1,5 @@
 package edu.mtu.models.growthmodels;
 
-import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,8 +10,6 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-
-import com.vividsolutions.jts.geom.util.GeometryTransformer;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.landuse.Nlcd;
@@ -84,6 +81,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		// Create a grid with Perlin noise that will act the base of our landscape
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
 		IntGrid2D treeCount = new IntGrid2D(width, height);
+		IntGrid2D standAge = new IntGrid2D(width, height);
 		Nlcd landCover = getLandCover();
 				
 		// Match the grid the the NLCD data and scale the fields to the maximum diameter at breast
@@ -108,6 +106,8 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 				// Use the DBH to determine the number of trees in the pixel
 				int count = (int)(calculateTargetStocking(reference, dbh) * multiplier);
 				treeCount.set(ndx, ndy, count);
+				
+				// TOOD Calculate the expected average age of the stands
  			}
 		}
 				
@@ -118,6 +118,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		standDiameter.setMBR(landCover.getMBR());
 				
 		// Pass the updates along to the forest
+		Forest.getInstance().setStandAge(standAge);
 		Forest.getInstance().setTreeCount(treeCount);
 		Forest.getInstance().setStandDiameter(standDiameter);
 	}
