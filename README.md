@@ -18,6 +18,10 @@ The following is the development environment:
 
 A number of JAR files are included in the repository that are dependencies of MASON and GeoMASON, additional project libraries not included are managed using the MAVEN POM file.
 
+Additionally, the following Eclipse plug-ins are recommended for developers:
+
+- ObjectAid UML Explorer for Eclipse (1.1.11)
+
 # Branches
 ## VIP Branch
 The VIP branch is focused on the testing of voluntary incentive programs (VIPs) and testing for sustainable outcomes.
