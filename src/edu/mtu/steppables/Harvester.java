@@ -23,6 +23,7 @@ public class Harvester implements Steppable {
 		public Point[] stand;
 		public HarvestType type;
 		public int queueOrder;
+		public BiomassConsumer deliverTo; 
 	}
 	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();

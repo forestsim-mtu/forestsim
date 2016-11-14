@@ -4,17 +4,11 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 
 /**
- * This agent acts as the central point of collection of biomass and reports statistics back accordingly.
+ * This class represents a biomass plant that receives the biomass in green tons
+ * and generates electricity that is produced in MW.
  */
 @SuppressWarnings("serial")
-public class Biorefinary implements Steppable, BiomassConsumer {
-	/**
-	 * 
-	 */
-	@Override
-	public void step(SimState state) {
-		// TODO Auto-generated method stub
-	}
+public class BiomassPlant implements Steppable, BiomassConsumer {
 
 	@Override
 	public void receive(double biomass) {
@@ -32,5 +26,11 @@ public class Biorefinary implements Steppable, BiomassConsumer {
 	public String productionUnits() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void step(SimState arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
