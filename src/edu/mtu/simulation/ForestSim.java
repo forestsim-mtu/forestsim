@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.landuse.Nlcd;
 import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.management.ManagementPlan;
@@ -120,9 +121,13 @@ public class ForestSim extends SimState {
 	
 	/**
 	 * Get the parcel file path that is used by the simulation.
-	 * @return
 	 */
 	public String getParcelFilePath() { return parcelFile; }
+	
+	/**
+	 * Get the random number generator that is used by the simulation.
+	 */
+	public MersenneTwisterFast getRandom() { return random; }
 
 	/**
 	 * Set the cover file path to use for the simulation.
@@ -251,7 +256,14 @@ public class ForestSim extends SimState {
 	 * @return The constructed agent.
 	 */
 	private Agent createAgent(LandUseGeomWrapper lu, double probablity) {
-		Agent agent = (random.nextDouble() < probablity) ? new EconomicAgent(lu) : new EcosystemsAgent(lu);
+		Agent agent;
+		if (random.nextDouble() < probablity) {
+			agent = new EconomicAgent(lu);
+		} else {
+			 agent = new EcosystemsAgent(lu);
+			 
+			 // TODO Set the profit margin
+		}
 		String planName = (agent instanceof EcosystemsAgent) ? NaturalManagment.class.getName() : SawtimberHarvest.class.getName();
 		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(planName, agent);		
 		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);

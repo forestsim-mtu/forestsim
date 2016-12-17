@@ -9,14 +9,14 @@ import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class Agent implements Steppable {
-		
-	protected final static double minimumProfit = 1000.0;
-	
+			
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
 	
 	protected double harvestOdds;
 	protected ManagementPlan plan;
+	
+	protected double profitMagin = 0.1;
 	
 	/**
 	 * Have the agent perform operations that are related to joining a VIP.
@@ -82,6 +82,11 @@ public abstract class Agent implements Steppable {
 	 * Set the odds that the agent will harvest once there is full coverage.
 	 */
 	public void setHarvestOdds(double value) { harvestOdds = value; }
+	
+	/**
+	 * Set the profit margin that the agent will want to get when harvesting.
+	 */
+	public void setProfitMargin(double value) { profitMagin = value; }
 	
 	/**
 	 * Set the management plan to be used by the agent.

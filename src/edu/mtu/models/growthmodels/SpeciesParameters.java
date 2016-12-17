@@ -41,7 +41,7 @@ public enum SpeciesParameters {
 	}
 	
 	/**
-	 * Calcluate the total above ground biomass for a tee with the given height
+	 * Calculate the total above ground biomass for a tree with the given height
 	 * and diameter at breast height.
 	 * @param height The height of the tree in meters.
 	 * @param dbh The DBH of the tree in meters.

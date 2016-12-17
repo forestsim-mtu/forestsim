@@ -10,7 +10,7 @@ import edu.mtu.models.Forest;
 public class EconomicAgent extends Agent {
 	
 	private final static AgentType type = AgentType.ECONOMIC;
-	
+		
 	/**
 	 * Constructor.
 	 */
