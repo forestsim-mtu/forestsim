@@ -12,11 +12,11 @@ public enum SpeciesParameters {
 	// https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
 	// http://www.nrs.fs.fed.us/pubs/rp/rp_nc257.pdf 
 	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
-	AcerRubrum("Red Maple", "data/AcerRebrum.csv", 76.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175),			// Height growth is a guess
+	AcerRubrum("Red Maple", "data/AcerRebrum.csv", 76.0, 38.1, 0.57, 1.0, 29.007, 0.053, 1.175, -2.0127, 2.4342),			// Height growth is a guess
 		
 	// https://www.na.fs.fed.us/spfo/pubs/silvics_manual/Volume_1/pinus/strobus.htm
 	// http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
-	PinusStrobus("Eastern White Pine", "data/PinusStrobus.csv", 102.0, 48.0, 0.5, 1.0, 49.071, 0.016, 1);
+	PinusStrobus("Eastern White Pine", "data/PinusStrobus.csv", 102.0, 48.0, 0.5, 1.0, 49.071, 0.016, 1, -2.5356, 2.4349);
 	
 	private String dataFile;
 	private String name;
@@ -28,28 +28,35 @@ public enum SpeciesParameters {
 	// Exposed due to their use in equations
 	public double b1, b2, b3;
 	
-	private SpeciesParameters(String name, String dataFile, double maximumDbh, double maximumHeight, double dbhGrowth, double heightGrowth, double b1, double b2, double b3) {
+	// For use in above ground biomass calculations 
+	private double beta0, beta1;
+	
+	private SpeciesParameters(String name, String dataFile, double maximumDbh, double maximumHeight, double dbhGrowth, double heightGrowth, double b1, double b2, double b3, double beta0, double beta1) {
 		this.name = name;
 		this.dataFile = dataFile;
 		this.maximumDbh = maximumDbh;
 		this.maximumHeight = maximumHeight;
 		this.dbhGrowth = dbhGrowth;
 		this.heightGrowth = heightGrowth;
+		
 		this.b1 = b1;
 		this.b2 = b2;
 		this.b3 = b3;
+		
+		this.beta0 = beta0;
+		this.beta1 = beta1;
 	}
 	
 	/**
 	 * Calculate the total above ground biomass for a tree with the given height
-	 * and diameter at breast height.
-	 * @param height The height of the tree in meters.
+	 * and diameter at breast height. Based upon the above ground biomass calculation
+	 * of Jenkins et al., 2003.
+	 * 
 	 * @param dbh The DBH of the tree in meters.
-	 * @return The total biomass of the tree in UNITS
+	 * @return The total biomass of the tree in kg of dry weight
 	 */
-	public double getBiomass(double height, double dbh) {
-		// TODO complete this method
-		return 0.0;
+	public double getBiomass(double dbh) {
+		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}
 	
 	/**

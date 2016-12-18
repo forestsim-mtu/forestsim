@@ -26,7 +26,14 @@ public class Harvester implements Steppable {
 		public BiomassConsumer deliverTo; 
 	}
 	
+	private static Harvester instance = new Harvester();
+	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
+	
+	/**
+	 * Constructor.
+	 */
+	private Harvester() { }
 	
 	/**
 	 * 
@@ -40,6 +47,13 @@ public class Harvester implements Steppable {
 		
 		// Clear the request list
 		requests = new ArrayList<HarvestRequest>();		
+	}
+	
+	/**
+	 * Get an instance of the harvester agent.
+	 */
+	public static Harvester getInstance() {
+		return instance;
 	}
 	
 	/**

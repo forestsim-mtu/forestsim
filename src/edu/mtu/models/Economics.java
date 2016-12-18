@@ -2,14 +2,30 @@ package edu.mtu.models;
 
 import java.awt.Point;
 
+import org.apache.commons.math3.util.Precision;
+
 /**
  * This class provides a means of encapsulating some basic economics for the simulation.
  */
 public class Economics {
-	private final static double biomassPurchaseRate = 25.0;		// $25/green ton
-	private final static double biomassHarvestRate = 35.0;		// $35 per cut tree
+	private final static double biomassPurchaseRate = 25.0;			// $25/green ton
+	private final static double biomassHarvestRate = 35.0;			// $35 per cut tree
 	private final static double loblollyPinePerSquareMeter = 0.3;	// Based on http://www.nrcs.usda.gov/Internet/FSE_DOCUMENTS/nrcs141p2_021966.pdf
 
+	private final static double assesedValue = 1500.0;				// Assessed value per acre / 4046.86 sq.m.
+		
+	/**
+	 * Assess the taxes on the property.
+	 * 
+	 * @param area The area of the parcel in square meters.
+	 * @return The annual taxes due, to two decimals.
+	 */
+	public static double assessTaxes(double area, double millageRate) {
+		double av = area * assesedValue;
+		double taxes = (av / 1000) * millageRate;
+		return Precision.round(taxes, 2);
+	}	
+	
 	/**
 	 * Get the cost of harvesting the given area.
 	 * 

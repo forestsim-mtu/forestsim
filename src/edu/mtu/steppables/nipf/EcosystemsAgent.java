@@ -3,6 +3,7 @@ package edu.mtu.steppables.nipf;
 import java.awt.Point;
 import java.util.List;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.management.StandThinning;
 import edu.mtu.models.Forest;
 
@@ -14,8 +15,8 @@ public class EcosystemsAgent extends Agent {
 	/**
 	 * Constructor.
 	 */
-	public EcosystemsAgent(LandUseGeomWrapper landUseWrapper) {
-		super(type, landUseWrapper);
+	public EcosystemsAgent(LandUseGeomWrapper landUseWrapper, MersenneTwisterFast random) {
+		super(type, landUseWrapper, random);
 	}
 
 	/**
@@ -26,8 +27,23 @@ public class EcosystemsAgent extends Agent {
 
 	@Override
 	protected void doVipOperation() {
-		// TODO Auto-generated method stub
+		// Return if they are already a member
+		if (vipEnrollee) {
+			return;
+		}
 		
+		// Does the agent feel like investigating the program?
+		if (random.nextBoolean()) {
+			return;
+		}
+		
+		// Is the agent open to harvesting?
+		if (random.nextDouble() > harvestOdds) {
+			return;
+		}
+		
+		// Look into the program, the flag with be updated if they join
+		investigateVipProgram();
 	}
 
 	@Override

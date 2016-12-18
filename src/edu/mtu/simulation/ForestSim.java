@@ -17,6 +17,7 @@ import edu.mtu.management.ManagementPlan;
 import edu.mtu.management.ManagementPlanFactory;
 import edu.mtu.management.NaturalManagment;
 import edu.mtu.management.SawtimberHarvest;
+import edu.mtu.management.VIP;
 import edu.mtu.models.Forest;
 import edu.mtu.models.growthmodels.GrowthModel;
 import edu.mtu.models.growthmodels.WesternUpEvenAgedWholeStand;
@@ -96,6 +97,13 @@ public class ForestSim extends SimState {
 			}
 		}
 		return sum / count; 
+	}
+	
+	/**
+	 * Get the number of agents enrolled in the VIP program.
+	 */
+	public int getVipMembership() {
+		return VIP.getInstance().getSubscriptionRate();
 	}
 	
 	/**
@@ -258,9 +266,9 @@ public class ForestSim extends SimState {
 	private Agent createAgent(LandUseGeomWrapper lu, double probablity) {
 		Agent agent;
 		if (random.nextDouble() < probablity) {
-			agent = new EconomicAgent(lu);
+			agent = new EconomicAgent(lu, random);
 		} else {
-			 agent = new EcosystemsAgent(lu);
+			 agent = new EcosystemsAgent(lu, random);
 			 
 			 // Generate a random, normally distributed with a mean of 0.15
 			 double rand = random.nextGaussian();

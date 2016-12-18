@@ -2,20 +2,31 @@ package edu.mtu.steppables.nipf;
 
 import java.awt.Point;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.management.ManagementPlan;
+import edu.mtu.management.VIP;
+import edu.mtu.models.Economics;
+import edu.mtu.models.Forest;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class Agent implements Steppable {
-			
+	
+	private final static double initalMillageRate = 33.1577;			// Based upon the average rate for Houghton county
+	
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
 	
+	protected MersenneTwisterFast random;
+	
+	protected boolean vipEnrollee = false;
+	
 	protected double harvestOdds;
 	protected ManagementPlan plan;
-	
+		
+	protected double millageRate = initalMillageRate;
 	protected double profitMagin = 0.1;
 	
 	/**
@@ -36,7 +47,8 @@ public abstract class Agent implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	public Agent(AgentType type, LandUseGeomWrapper landUseWrapper) {
+	public Agent(AgentType type, LandUseGeomWrapper landUseWrapper, MersenneTwisterFast random) {
+		this.random = random;
 		this.landUseWrapper = landUseWrapper;
 		this.landUseWrapper.setAgentType(type);
 		coverPoints = null;
@@ -64,6 +76,29 @@ public abstract class Agent implements Steppable {
 	 * Get the current land use for the agent's parcel.
 	 */
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
+	
+	/**
+	 * Get the area, in square meters, of the parcel that the agent owns.
+	 */
+	public double getParcelArea() {
+		return coverPoints.length * Forest.getInstance().getPixelAreaMultiplier();
+	}
+	
+	protected void investigateVipProgram() {
+		// Get the taxes that they expect to pay this year
+		double area = getParcelArea();
+		double currentTaxes = Economics.assessTaxes(area, millageRate);
+		
+		// Get the taxes that they would expect to pay if they join the VIP
+		double millage = millageRate - VIP.getInstance().getMillageRateReduction();
+		double expectedTaxes = Economics.assessTaxes(area, millage);
+		
+		// Join VIP saves money
+		if (expectedTaxes < currentTaxes) {
+			VIP.getInstance().enroll();
+			vipEnrollee = true;
+		}
+	}
 	
 	/**
 	 * Add the given points to the agents for the parcel that it controls.

@@ -162,7 +162,7 @@ public class Forest {
 	public double calculateBiomass(Point point) {
 		Stand stand = getStand(point.x, point.y);
 		SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
-		return species.getBiomass(stand.height, stand.arithmeticMeanDiameter) * stand.numberOfTrees * getPixelArea();
+		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees * getPixelArea();
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class Forest {
 	}
 	
 	/**
-	 * Get the multiplier that should be used to convert from pixels to acres / square meters.
+	 * Get the multiplier that should be used to convert from pixels to square meters.
 	 * 
 	 * @return The multiplier to be used.
 	 */
@@ -429,7 +429,7 @@ public class Forest {
 			// Calculate the biomass
 			Stand stand = getStand(plan.point.x, plan.point.y);
 			SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
-			biomass += species.getBiomass(stand.height, stand.arithmeticMeanDiameter) * difference * getPixelArea();
+			biomass += species.getBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
 		}
 				
 		// Return the biomass

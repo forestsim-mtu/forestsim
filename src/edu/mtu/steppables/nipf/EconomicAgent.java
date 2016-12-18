@@ -3,6 +3,7 @@ package edu.mtu.steppables.nipf;
 import java.awt.Point;
 import java.util.List;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.management.StandThinning;
 import edu.mtu.models.Forest;
 
@@ -14,8 +15,8 @@ public class EconomicAgent extends Agent {
 	/**
 	 * Constructor.
 	 */
-	public EconomicAgent(LandUseGeomWrapper landUseWrapper) {
-		super(type, landUseWrapper);
+	public EconomicAgent(LandUseGeomWrapper landUseWrapper, MersenneTwisterFast random) {
+		super(type, landUseWrapper, random);
 	}
 	
 	/**
@@ -26,12 +27,22 @@ public class EconomicAgent extends Agent {
 	
 	@Override
 	protected void doVipOperation() {
-		// TODO Auto-generated method stub
+		// Return if they are already a member
+		if (vipEnrollee) {
+			return;
+		}			
 		
+		// Look into the program, the flag with be updated if they join
+		investigateVipProgram();
 	}
 
 	@Override
 	protected void doHarvestOperation() {
+		// Economic agents will always harvest when it is profitable
+		
+		
+		
+		
 		// Check to see if we should harvest
 		double biomass = 0.0;
 		if (plan.shouldHarvest()) {
