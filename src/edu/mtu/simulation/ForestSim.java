@@ -262,7 +262,11 @@ public class ForestSim extends SimState {
 		} else {
 			 agent = new EcosystemsAgent(lu);
 			 
-			 // TODO Set the profit margin
+			 // Generate a random, normally distributed with a mean of 0.15
+			 double rand = random.nextGaussian();
+			 rand = (rand * (0.15 / 3)) + 0.15;
+			 
+			 agent.setProfitMargin(rand);
 		}
 		String planName = (agent instanceof EcosystemsAgent) ? NaturalManagment.class.getName() : SawtimberHarvest.class.getName();
 		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(planName, agent);		
