@@ -1,4 +1,8 @@
-package edu.mtu.management;
+package edu.mtu.vip.houghton;
+
+import java.awt.Point;
+
+import edu.mtu.models.Forest;
 
 /**
  * This class encapsulates a very basic VIP that does two things:
@@ -13,6 +17,7 @@ public class VIP {
 	private final static double baseMillageRate = 2.5;
 	private double millageRate = baseMillageRate;
 	private int subscriptions = 0;
+	private double squareMeters = 0;
 	
 	/**
 	 * Constructor.
@@ -22,8 +27,12 @@ public class VIP {
 	/**
 	 * Enroll in the VIP program.
 	 */
-	public void enroll() {
+	public void enroll(Point[] parcel) {
+		// Update the stats
 		subscriptions++;
+		squareMeters += (parcel.length * Forest.getInstance().getPixelAreaMultiplier()); 
+		
+		// Update the millage
 		millageRate = baseMillageRate + ((int)(subscriptions / 1000)) * 0.1;
 	}
 	
@@ -49,7 +58,14 @@ public class VIP {
 	}
 	
 	/**
-	 * Return the number of years since last harvest that the member must havest at.
+	 * Get the subscribed area for the VIP.
+	 */
+	public double getSubscribedArea() {
+		return squareMeters;
+	}
+	
+	/**
+	 * Return the number of years since last harvest that the member must harvest at.
 	 */
 	public int mustHarvestAt() {
 		return 35;

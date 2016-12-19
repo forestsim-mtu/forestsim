@@ -1,6 +1,7 @@
 package edu.mtu.models;
 
 import java.awt.Point;
+import java.util.HashMap;
 
 import org.apache.commons.math3.util.Precision;
 
@@ -13,7 +14,7 @@ public class Economics {
 	private final static double loblollyPinePerSquareMeter = 0.3;	// Based on http://www.nrcs.usda.gov/Internet/FSE_DOCUMENTS/nrcs141p2_021966.pdf
 
 	private final static double assesedValue = 1500.0;				// Assessed value per acre / 4046.86 sq.m.
-		
+			
 	/**
 	 * Assess the taxes on the property.
 	 * 
@@ -52,18 +53,67 @@ public class Economics {
 	/**
 	 * Get the estimated economic value of the given stand.
 	 * 
-	 * @param stand The pixels that make up the harvest stand.
+	 * @param parcel The pixels that make up the harvest stand.
 	 * @return The expected profits for the stand.
 	 */
-	public static double getStandValue(Point[] stand) {
-		double area = stand.length * Forest.getInstance().getPixelArea();
+	public static double getStandValue(Point[] parcel) {
+		// Get the biomass volume
+		HashMap<String, Double> volume = new HashMap<String, Double>();
+		Forest forest = Forest.getInstance();
+		for (Point point : parcel) {
+			Stand stand = forest.getStand(point.x, point.y);
+			String key = stand.dominateSpecies.getName();
+			if (volume.containsKey(key)) {
+				double value = volume.get(key);
+				value += forest.calculateBiomass(point);
+				volume.put(key, value);
+			} else {
+				volume.put(key, forest.calculateBiomass(point));
+			}
+		}
 		
-		// Get the biomass for the region 
-		double biomass = Forest.getInstance().getStandBiomass(stand);
+		// Calculate and return the bid
+		double bid = 0;
+		for (String key : volume.keySet()) {
+			// Covert to cunit, assume that 1,000 kg is 1.4 m^3
+			double value = volume.get(key);
+			value /= 1000;
+			
+			// Convert to cubic feet
+			value *= 35.3147;
+						
+			// Multiply by value per species
+			if (key.equals("Red Maple")) {
+				value *= 450;					// TODO Get from somewhere else
+			} else {
+				value *= 100;
+			}
+			
+			// Update the bid
+			bid += value;
+		}
+		return bid;
+	}
+	
+	/**
+	 * 
+	 * @param parcel
+	 * @return
+	 */
+	public static boolean minimalHarvestConditions(Point[] parcel){
+		// Get the summary for the parcel
+		double averageStocking = 0, averageDbh = 0;
+		Forest forest = Forest.getInstance();
+		for (Point point : parcel) {
+			Stand stand = forest.getStand(point.x, point.y);
+			averageStocking += stand.stocking;
+			averageDbh += stand.arithmeticMeanDiameter;
+		}
+		int size = parcel.length;
+		averageStocking /= size;
+		averageDbh /= size;
 		
-		// Get the profits for the region
-		double cost = Economics.getHarvestCost(area);
-		double profit = Economics.getProfit(cost, biomass);
-		return profit;
+		// Optimal harvesting conditions occur when the parcel is fully stocked and contains sawtimber (i.e. 35.56 cm dbh)
+		return (averageStocking > StockingCondition.Full.getValue()) && (averageDbh > 35.56);
 	}
 }

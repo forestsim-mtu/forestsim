@@ -1,4 +1,4 @@
-package edu.mtu.models.growthmodels;
+package edu.mtu.vip.houghton;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,6 +16,8 @@ import edu.mtu.landuse.Nlcd;
 import edu.mtu.landuse.NlcdClassification;
 import edu.mtu.models.Forest;
 import edu.mtu.models.Stand;
+import edu.mtu.models.growthmodels.GrowthModel;
+import edu.mtu.models.growthmodels.SpeciesParameters;
 import edu.mtu.utilities.Perlin;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
@@ -107,7 +109,9 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 				int count = (int)(calculateTargetStocking(reference, dbh) * multiplier);
 				treeCount.set(ndx, ndy, count);
 				
-				// TOOD Calculate the expected average age of the stands
+				// Calculate the expected average age of the stands, as a loose estimation, 
+				// assume that the average age is based upon growth rate
+				standAge.set(ndx, ndy, (int)(dbh / reference.getDbhGrowth()));
  			}
 		}
 				
@@ -216,6 +220,9 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 			dbh += value;
 			stand.arithmeticMeanDiameter = (dbh <= reference.getMaximumDbh()) ? dbh : reference.getMaximumDbh();
 		}
+		
+		// Update the stand age
+		stand.age++;
 		
 		// Check the stocking of the stand, if over stocked, thin the number of trees
 		// TODO Determine what the actual ecological constants are to use for this

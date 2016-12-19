@@ -87,6 +87,7 @@ public class Forest {
 		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);
 		stand.numberOfTrees = treeCount.get(x, y);
 		stand.age = standAge.get(x, y);
+		stand.dominateSpecies = growthModel.getGrowthPattern(stand.nlcd);
 		return stand;
 	}
 	
@@ -162,7 +163,7 @@ public class Forest {
 	public double calculateBiomass(Point point) {
 		Stand stand = getStand(point.x, point.y);
 		SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
-		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees * getPixelArea();
+		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
 	}
 	
 	/**
@@ -375,6 +376,9 @@ public class Forest {
 			
 			// Set the stand to 300 seedlings per acre, as per common replanting guidelines in the US
 			treeCount.set(point.x, point.y, (int)(300 * getPixelAreaMultiplier()));
+			
+			// Reset the stand age
+			standAge.set(point.x, point.y, 0);
 		}
 		
 		// Return the biomass

@@ -17,15 +17,18 @@ import edu.mtu.management.ManagementPlan;
 import edu.mtu.management.ManagementPlanFactory;
 import edu.mtu.management.NaturalManagment;
 import edu.mtu.management.SawtimberHarvest;
-import edu.mtu.management.VIP;
 import edu.mtu.models.Forest;
 import edu.mtu.models.growthmodels.GrowthModel;
-import edu.mtu.models.growthmodels.WesternUpEvenAgedWholeStand;
+import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
+import edu.mtu.steppables.Harvester;
 import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
 import edu.mtu.steppables.nipf.EcosystemsAgent;
 import edu.mtu.steppables.nipf.LandUseGeomWrapper;
+import edu.mtu.vip.houghton.HoughtonVipScorecard;
+import edu.mtu.vip.houghton.VIP;
+import edu.mtu.vip.houghton.WesternUpEvenAgedWholeStand;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomVectorField;
@@ -39,8 +42,11 @@ import sim.util.IntBag;
 public class ForestSim extends SimState {
 
 	// Path to default GIS files used in the simulation
-	private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
-	private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
+	//private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
+	//private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
+	
+	private static final String defaultCoverFile = "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
+	private static final String defaultParcelFile = "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
 
 	// Display width and height
 	private static final int gridWidth = 1000;
@@ -97,6 +103,22 @@ public class ForestSim extends SimState {
 			}
 		}
 		return sum / count; 
+	}
+	
+	/**
+	 * Get amount of biomass harvested.
+	 * @return
+	 */
+	public double getBiomass() {
+		return Harvester.getInstance().getBiomass();
+	}
+	
+	/**
+	 * Get the number of sq.m. enrolled in the VIP program.
+	 * @return
+	 */
+	public double getVipArea() {
+		return VIP.getInstance().getSubscribedArea();
 	}
 	
 	/**
@@ -193,10 +215,6 @@ public class ForestSim extends SimState {
 		importVectorLayers();
 		importRasterLayers();
 		
-		// Apply any knock-outs to the NLCD as needed
-		// TODO Refine this to check what should be done
-		// coverLayer.clearMapOutsideParcels(parcelLayer);
-		
 		try {
 			// Create the forest model
 			GrowthModel model = new WesternUpEvenAgedWholeStand(random);
@@ -209,9 +227,18 @@ public class ForestSim extends SimState {
 		// Create the agents and assign one agent to each parcel
 		createAgents();
 		
+		// Create the harvester agent
+		Harvester harvester = Harvester.getInstance();
+		schedule.scheduleOnce(harvester);
+		
 		// Create the environment agent
-		Environment agent = new Environment();
-		schedule.scheduleOnce(agent);
+		Environment enviorment = new Environment();
+		schedule.scheduleOnce(enviorment);
+		
+		// Create the aggregation agent and the scorecard
+		AggregationStep aggregation = new AggregationStep();
+		aggregation.setScorecard(new HoughtonVipScorecard());
+		schedule.scheduleOnce(aggregation);
 
 		// Align the MBRs so layers line up in the display
 		Envelope globalMBR = parcelLayer.getMBR();

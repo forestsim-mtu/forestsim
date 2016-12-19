@@ -4,9 +4,10 @@ import java.awt.Point;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.management.ManagementPlan;
-import edu.mtu.management.VIP;
 import edu.mtu.models.Economics;
 import edu.mtu.models.Forest;
+import edu.mtu.models.Stand;
+import edu.mtu.vip.houghton.VIP;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.IntBag;
@@ -18,17 +19,14 @@ public abstract class Agent implements Steppable {
 	
 	private LandUseGeomWrapper landUseWrapper;
 	private Point[] coverPoints;
-	
+		
 	protected MersenneTwisterFast random;
 	
 	protected boolean vipEnrollee = false;
-	
 	protected double harvestOdds;
+	protected double profitMagin = 0.1;
 	protected ManagementPlan plan;
 		
-	protected double millageRate = initalMillageRate;
-	protected double profitMagin = 0.1;
-	
 	/**
 	 * Have the agent perform operations that are related to joining a VIP.
 	 */
@@ -63,6 +61,32 @@ public abstract class Agent implements Steppable {
 	}
 	
 	/**
+	 * Add the given points to the agents for the parcel that it controls.
+	 * 
+	 * @param xPos The x positions.
+	 * @param yPos The y positions.
+	 */
+	public void createCoverPoints(IntBag xPos, IntBag yPos) {
+		coverPoints = new Point[xPos.size()];
+		for(int i=0; i<coverPoints.length; i++) {
+			coverPoints[i] = new Point(xPos.get(i), yPos.get(i));
+		}
+	}
+	
+	/**
+	 * Get the average age of all of the stands in the parcel.
+	 */
+	public double getAverageStandAge() {
+		Forest forest = Forest.getInstance();
+		double total = 0;
+		for (Point point : coverPoints) {
+			Stand stand = forest.getStand(point.x, point.y);
+			total += stand.age;
+		}
+		return total / coverPoints.length;
+	}
+	
+	/**
 	 * Get the cover points that this agent is responsible for.
 	 */
 	public Point[] getCoverPoints() { return coverPoints; }
@@ -76,6 +100,16 @@ public abstract class Agent implements Steppable {
 	 * Get the current land use for the agent's parcel.
 	 */
 	public double getLandUse() { return landUseWrapper.getLandUse(); }
+
+	/**
+	 * Get the millage rate for the agent's parcel.
+	 */
+	public double getMillageRate() {
+		if (vipEnrollee) {
+			return initalMillageRate - VIP.getInstance().getMillageRateReduction();
+		}
+		return initalMillageRate;
+	}
 	
 	/**
 	 * Get the area, in square meters, of the parcel that the agent owns.
@@ -84,35 +118,38 @@ public abstract class Agent implements Steppable {
 		return coverPoints.length * Forest.getInstance().getPixelAreaMultiplier();
 	}
 	
+	protected boolean investigateHarvesting() {
+		// Check to see if it is profitable
+		double bid = Economics.getStandValue(getCoverPoints());
+		double area = getParcelArea();
+		double currentTaxes = Economics.assessTaxes(area, getMillageRate());
+		
+		// Return true if it is profitable, false otherwise
+		if (bid > currentTaxes * (1 + profitMagin)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Have the agent investigate the VIP program and join if it reduces their taxes.
+	 */
 	protected void investigateVipProgram() {
 		// Get the taxes that they expect to pay this year
 		double area = getParcelArea();
-		double currentTaxes = Economics.assessTaxes(area, millageRate);
+		double currentTaxes = Economics.assessTaxes(area, initalMillageRate);
 		
 		// Get the taxes that they would expect to pay if they join the VIP
-		double millage = millageRate - VIP.getInstance().getMillageRateReduction();
+		double millage = initalMillageRate - VIP.getInstance().getMillageRateReduction();
 		double expectedTaxes = Economics.assessTaxes(area, millage);
 		
 		// Join VIP saves money
 		if (expectedTaxes < currentTaxes) {
-			VIP.getInstance().enroll();
+			VIP.getInstance().enroll(coverPoints);
 			vipEnrollee = true;
 		}
 	}
-	
-	/**
-	 * Add the given points to the agents for the parcel that it controls.
-	 * 
-	 * @param xPos The x positions.
-	 * @param yPos The y positions.
-	 */
-	public void createCoverPoints(IntBag xPos, IntBag yPos) {
-		coverPoints = new Point[xPos.size()];
-		for(int i=0; i<coverPoints.length; i++) {
-			coverPoints[i] = new Point(xPos.get(i), yPos.get(i));
-		}
-	}
-	
+		
 	/**
 	 * Set the odds that the agent will harvest once there is full coverage.
 	 */

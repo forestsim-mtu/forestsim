@@ -1,11 +1,9 @@
 package edu.mtu.steppables.nipf;
 
-import java.awt.Point;
-import java.util.List;
-
 import ec.util.MersenneTwisterFast;
-import edu.mtu.management.StandThinning;
-import edu.mtu.models.Forest;
+import edu.mtu.models.Economics;
+import edu.mtu.steppables.Harvester;
+import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
 public class EconomicAgent extends Agent {
@@ -38,24 +36,18 @@ public class EconomicAgent extends Agent {
 
 	@Override
 	protected void doHarvestOperation() {
-		// Economic agents will always harvest when it is profitable
-		
-		
-		
-		
-		// Check to see if we should harvest
-		double biomass = 0.0;
-		if (plan.shouldHarvest()) {
-			Point[] stands = plan.createHarvestPlan();
-			biomass = Forest.getInstance().harvest(stands);
+		boolean harvesting = false;
+				 
+		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().mustHarvestAt()) {
+			// We must harvest if the VIP compels us to
+			harvesting = true;
+		} else if (Economics.minimalHarvestConditions(getCoverPoints())) {
+			harvesting = harvesting || investigateHarvesting();
 		}
 		
-		// Check to see if we should thin the forest, depending upon the plan, we might harvest and thin
-		if (plan.shouldThin()) {
-			List<StandThinning> plans = plan.createThinningPlan();
-			biomass += Forest.getInstance().thin(plans);
+		// Queue the request if we are harvesting
+		if (harvesting) {
+			Harvester.getInstance().requestHarvest(this, getCoverPoints());
 		}		
-		
-		// TODO Note the harvested biomasss
 	}
 }
