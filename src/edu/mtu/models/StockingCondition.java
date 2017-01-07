@@ -4,6 +4,8 @@ import java.awt.Color;
 
 /**
  * The following are the stocking conditions that are used in forest model.
+ * These values are based upon the USFS stocking classes for timberland:
+ * https://www.fs.fed.us/rm/ogden/publications/reference/periodic_terminology_final.pdf
  */
 public enum StockingCondition {
 	Nonstocked(0, "Nonstocked", "Stocking value less than 10"),

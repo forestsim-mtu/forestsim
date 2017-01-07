@@ -1,7 +1,10 @@
 package edu.mtu.simulation;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,8 +34,10 @@ import edu.mtu.vip.houghton.VIP;
 import edu.mtu.vip.houghton.WesternUpEvenAgedWholeStand;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField.GridDataType;
+import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.IntGrid2D;
+import sim.io.geo.ArcInfoASCGridExporter;
 import sim.io.geo.ArcInfoASCGridImporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
@@ -59,7 +64,7 @@ public class ForestSim extends SimState {
 	public Nlcd coverLayer = new Nlcd();
 
 	private Agent[] agents; // Array of all agents active in the simulation
-	private double economicAgentPercentage = 0.5; 		// Initially 50% of the agents should be economic optimizers
+	private double economicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
 	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
 	private String coverFile = defaultCoverFile;
@@ -219,7 +224,13 @@ public class ForestSim extends SimState {
 			// Create the forest model
 			GrowthModel model = new WesternUpEvenAgedWholeStand(random);
 			Forest.getInstance().calculateInitialStands(coverLayer, model);
-		} catch (InterruptedException ex) {
+			
+			// Store the initial stocking
+			GeomGridField stocking = Forest.getInstance().getStocking();
+			BufferedWriter output = new BufferedWriter(new FileWriter("out/stocking0.asc"));
+			ArcInfoASCGridExporter.write(stocking, output);
+			output.close();			
+		} catch (InterruptedException | IOException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
 			System.exit(-1);
 		}
