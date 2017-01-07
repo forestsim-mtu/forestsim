@@ -90,7 +90,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
 		// note that while the NLCD says that the stands should be at least five meters in height, 
 		// we allow the variability since harvests may have occurred.
-		double multiplier = Forest.getInstance().getPixelAreaMultiplier();
+		double multiplier = Forest.getInstance().getAcresPerPixel();
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);

@@ -42,7 +42,7 @@ public class HealthyForestInitiative extends ManagementPlan {
 		}
 		
 		// Note the target number of trees
-		int target = (int)(targetTreesPerAcre / Forest.getInstance().getPixelAreaMultiplier());
+		int target = (int)(targetTreesPerAcre / Forest.getInstance().getAcresPerPixel());
 		
 		List<StandThinning> plans = new ArrayList<StandThinning>();
 		for (Point point : agent.getCoverPoints()) {
@@ -60,7 +60,7 @@ public class HealthyForestInitiative extends ManagementPlan {
 			
 			// Continue if the stockin does not exceed the guidelines
 			int trees = Forest.getInstance().getStandTreeCount(point);
-			trees /= Forest.getInstance().getPixelAreaMultiplier();
+			trees /= Forest.getInstance().getAcresPerPixel();
 			if (trees <= target) {
 				continue;
 			}

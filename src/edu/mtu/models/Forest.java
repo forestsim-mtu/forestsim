@@ -220,7 +220,7 @@ public class Forest {
 		
 		// Get the number of trees per acre, by pixel 
 		int count = treeCount.get(point.x, point.y);
-		count /= getPixelAreaMultiplier();
+		count /= getAcresPerPixel();
 		
 		// Determine the total basal area
 		basalArea *= count;
@@ -257,19 +257,16 @@ public class Forest {
 		return landCover.getPixelHeight() * landCover.getPixelWidth(); 
 	}
 	
-	/**
-	 * Get the multiplier that should be used to convert from pixels to square meters.
+	/** 
+	 * Get the number of acres for each pixel.
 	 * 
-	 * @return The multiplier to be used.
+	 * @return The number of acres per pixel.
 	 */
-	public double getPixelAreaMultiplier() {
+	public double getAcresPerPixel() {
 		double area = landCover.getPixelHeight() * landCover.getPixelWidth();
-		if (area > Constants.acreInSquareMeters) {
-			return area / Constants.acreInSquareMeters;
-		}
-		return Constants.acreInSquareMeters / area;
+		return area / Constants.acreInSquareMeters;
 	}
-		
+			
 	/**
 	 * Calculate the biomass in the given stand.
 	 * 
@@ -375,7 +372,7 @@ public class Forest {
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
 			
 			// Set the stand to 300 seedlings per acre, as per common replanting guidelines in the US
-			treeCount.set(point.x, point.y, (int)(300 * getPixelAreaMultiplier()));
+			treeCount.set(point.x, point.y, (int)(300 * getAcresPerPixel()));
 			
 			// Reset the stand age
 			standAge.set(point.x, point.y, 0);

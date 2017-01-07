@@ -12,7 +12,6 @@ import sim.io.geo.ArcInfoASCGridExporter;
 
 public class HoughtonVipScorecard implements Scorecard {
 	
-	private final static String averageStocking = "out/stocking.csv";
 	private final static String biomassFile = "out/biomass.csv";
 	private final static String stockingFile = "out/stocking%1$d.asc";
 	private final static String vipFile = "out/vip.csv";

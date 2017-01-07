@@ -115,7 +115,7 @@ public abstract class Agent implements Steppable {
 	 * Get the area, in square meters, of the parcel that the agent owns.
 	 */
 	public double getParcelArea() {
-		return coverPoints.length * Forest.getInstance().getPixelAreaMultiplier();
+		return coverPoints.length * Forest.getInstance().getAcresPerPixel();
 	}
 	
 	protected boolean investigateHarvesting() {

@@ -13,5 +13,4 @@ public final class Constants {
 	 * The height of a standard diameter at breast height measurement, in meters.
 	 */
 	public final static double DbhTakenAt = 1.37;
-
 }

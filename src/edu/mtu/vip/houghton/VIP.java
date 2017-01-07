@@ -30,7 +30,7 @@ public class VIP {
 	public void enroll(Point[] parcel) {
 		// Update the stats
 		subscriptions++;
-		squareMeters += (parcel.length * Forest.getInstance().getPixelAreaMultiplier()); 
+		squareMeters += (parcel.length * Forest.getInstance().getAcresPerPixel()); 
 		
 		// Update the millage
 		millageRate = baseMillageRate + ((int)(subscriptions / 1000)) * 0.1;
