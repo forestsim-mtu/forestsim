@@ -24,13 +24,14 @@ public abstract class Agent implements Steppable {
 	
 	protected boolean vipEnrollee = false;
 	protected double harvestOdds;
+	protected double willingnessToJoinVip = 0.1;
 	protected double profitMagin = 0.1;
 	protected ManagementPlan plan;
 		
 	/**
-	 * Have the agent perform operations that are related to joining a VIP.
+	 * Have the agent perform operations that are related to the policy being investigated.
 	 */
-	protected abstract void doVipOperation();
+	protected abstract void doPolicyOperation();
 	
 	/**
 	 * Have the agent perform operations that are related to harvesting.
@@ -56,7 +57,7 @@ public abstract class Agent implements Steppable {
 	 * Allow the agent to perform the rules for the given state.
 	 */
 	public void step(SimState state) {
-		doVipOperation();
+		doPolicyOperation();
 		doHarvestOperation();
 	}
 	
@@ -135,6 +136,11 @@ public abstract class Agent implements Steppable {
 	 * Have the agent investigate the VIP program and join if it reduces their taxes.
 	 */
 	protected void investigateVipProgram() {
+		// If the VIP is not enabled, just return
+		if (!VIP.getInstance().getIsActive()) {
+			return;
+		}
+		
 		// Get the taxes that they expect to pay this year
 		double area = getParcelArea();
 		double currentTaxes = Economics.assessTaxes(area, initalMillageRate);
@@ -143,7 +149,7 @@ public abstract class Agent implements Steppable {
 		double millage = initalMillageRate - VIP.getInstance().getMillageRateReduction();
 		double expectedTaxes = Economics.assessTaxes(area, millage);
 		
-		// Join VIP saves money
+		// Join if VIP saves money
 		if (expectedTaxes < currentTaxes) {
 			VIP.getInstance().enroll(coverPoints);
 			vipEnrollee = true;

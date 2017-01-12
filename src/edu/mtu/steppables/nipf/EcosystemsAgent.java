@@ -24,22 +24,22 @@ public class EcosystemsAgent extends Agent {
 	public AgentType getAgentType() { return type; }
 
 	@Override
-	protected void doVipOperation() {
+	protected void doPolicyOperation() {
 		// Return if they are already a member
 		if (vipEnrollee) {
 			return;
 		}
-		
-		// Does the agent feel like investigating the program?
-		if (random.nextBoolean()) {
-			return;
-		}
-		
+
 		// Is the agent open to harvesting?
-		if (random.nextDouble() > harvestOdds) {
+		if (harvestOdds < random.nextDouble()) {
 			return;
 		}
 		
+		// Is the agent even willing to join a VIP?
+		if (willingnessToJoinVip < random.nextDouble()) {
+			return;
+		}
+				
 		// Look into the program, the flag with be updated if they join
 		investigateVipProgram();
 	}
@@ -48,7 +48,7 @@ public class EcosystemsAgent extends Agent {
 	protected void doHarvestOperation() {
 		boolean harvesting = false;
 		 
-		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().mustHarvestAt()) {
+		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().getMustHarvestBy()) {
 			// We must harvest if the VIP compels us to
 			harvesting = true;
 		} else if (random.nextDouble() < harvestOdds) {

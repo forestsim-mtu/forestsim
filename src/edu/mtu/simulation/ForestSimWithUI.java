@@ -46,10 +46,10 @@ public class ForestSimWithUI extends GUIState {
 		display = new Display2D(1000, 900, this);
 		
 		// Attach the land cover layers and then overlay the parcel layer
-		display.attach(coverPortrayal, "Land Cover");
+		display.attach(coverPortrayal, "Land Cover", false);
 		display.attach(dbhPortrayal, "Stand DBH", false);
-		display.attach(stockingPortrayal, "Stocking", false);
-		display.attach(parcelPortrayal, "Parcels Layer");
+		display.attach(stockingPortrayal, "Stocking", true);
+		display.attach(parcelPortrayal, "Parcels Layer", false);
 				
 		displayFrame = display.createFrame();
 		controller.registerFrame(displayFrame);

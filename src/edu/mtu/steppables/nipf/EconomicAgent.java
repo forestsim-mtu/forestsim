@@ -24,7 +24,7 @@ public class EconomicAgent extends Agent {
 	public AgentType getAgentType() { return type;	}
 	
 	@Override
-	protected void doVipOperation() {
+	protected void doPolicyOperation() {
 		// Return if they are already a member
 		if (vipEnrollee) {
 			return;
@@ -38,7 +38,7 @@ public class EconomicAgent extends Agent {
 	protected void doHarvestOperation() {
 		boolean harvesting = false;
 				 
-		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().mustHarvestAt()) {
+		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().getMustHarvestBy()) {
 			// We must harvest if the VIP compels us to
 			harvesting = true;
 		} else if (Economics.minimalHarvestConditions(getCoverPoints())) {

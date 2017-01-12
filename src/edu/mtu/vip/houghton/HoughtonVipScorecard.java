@@ -12,27 +12,32 @@ import sim.io.geo.ArcInfoASCGridExporter;
 
 public class HoughtonVipScorecard implements Scorecard {
 	
-	private final static String averageStocking = "out/stocking.csv";
-	private final static String biomassFile = "out/biomass.csv";
-	private final static String stockingFile = "out/stocking%1$d.asc";
-	private final static String vipFile = "out/vip.csv";
+	private final static String biomassFile = "/biomass.csv";
+	private final static String stockingFile = "/stocking%1$d.asc";
+	private final static String vipFile = "/vip.csv";
 	
 	private static int step = 0;
 	private static int nextExport = 10;
-		
+	
+	private String directory;
+	
+	public HoughtonVipScorecard(String directory) {
+		this.directory = directory;
+	}
+	
 	@Override
 	public void generate() {
 		try {
 			// Collect the VIP membership
 			VIP vip = VIP.getInstance();
-			FileWriter writer = new FileWriter(vipFile, true);
+			FileWriter writer = new FileWriter(directory + vipFile, true);
 			writer.write(vip.getSubscriptionRate() + "," + vip.getSubscribedArea() + ",");
 			writer.write(System.lineSeparator());
 			writer.close();
 					
 			// Collect the biomass harvested
 			double biomass = Harvester.getInstance().getBiomass();
-			writer = new FileWriter(biomassFile, true);
+			writer = new FileWriter(directory + biomassFile, true);
 			writer.write(biomass + ",");
 			writer.write(System.lineSeparator());
 			writer.close();
@@ -41,7 +46,7 @@ public class HoughtonVipScorecard implements Scorecard {
 			step++;
 			if (step == nextExport) {
 				GeomGridField stocking = Forest.getInstance().getStocking();
-				BufferedWriter output = new BufferedWriter(new FileWriter(String.format(stockingFile, step)));
+				BufferedWriter output = new BufferedWriter(new FileWriter(String.format(directory + stockingFile, step)));
 				ArcInfoASCGridExporter.write(stocking, output);
 				output.close();
 				nextExport += 10;

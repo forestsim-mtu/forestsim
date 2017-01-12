@@ -15,9 +15,13 @@ public class VIP {
 	private static VIP instance = new VIP();
 	
 	private final static double baseMillageRate = 2.5;
+	
+	private Boolean isActive = true;
+	private double agglomerationBonus = 0.1;
+	private int mustHarvestBy = 40;
 	private double millageRate = baseMillageRate;
 	private int subscriptions = 0;
-	private double squareMeters = 0;
+	private double acres = 0;
 	
 	/**
 	 * Constructor.
@@ -30,10 +34,10 @@ public class VIP {
 	public void enroll(Point[] parcel) {
 		// Update the stats
 		subscriptions++;
-		squareMeters += (parcel.length * Forest.getInstance().getPixelAreaMultiplier()); 
+		acres += (parcel.length * Forest.getInstance().getPixelArea()); 
 		
 		// Update the millage
-		millageRate = baseMillageRate + ((int)(subscriptions / 1000)) * 0.1;
+		millageRate = baseMillageRate + ((int)(subscriptions / 1000)) * agglomerationBonus;
 	}
 	
 	/**
@@ -42,6 +46,16 @@ public class VIP {
 	public static VIP getInstance() {
 		return instance;
 	}
+	
+	/**
+	 * The agglomeration bonus millage rate reduction per 1,000 enrollees.
+	 */
+	public double getAgglomerationBonus() { return agglomerationBonus; }
+	
+	/**
+	 * Returns true if the VIP is active, false otherwise.
+	 */
+	public Boolean getIsActive() { return isActive; }
 	
 	/**
 	 * Get the millage rate reduction for joining.
@@ -61,13 +75,38 @@ public class VIP {
 	 * Get the subscribed area for the VIP.
 	 */
 	public double getSubscribedArea() {
-		return squareMeters;
+		return acres;
 	}
 	
 	/**
 	 * Return the number of years since last harvest that the member must harvest at.
 	 */
-	public int mustHarvestAt() {
-		return 35;
+	public int getMustHarvestBy() {
+		return mustHarvestBy;
 	}
+	
+	/**
+	 * Reset the the VIP in preparation for a new run.
+	 */
+	public void reset() {
+		millageRate = baseMillageRate;
+		subscriptions = 0;
+		acres = 0;
+	}
+	
+	/**
+	 * Set the agglomeration bonus millage rate reduction per 1,000 enrollees.
+	 */
+	public void setAgglomerationBonus(double value) { agglomerationBonus = value; }
+	
+	/**
+	 * Set the VIP to true if it is active, false otherwise.
+	 */
+	public void setIsActive(Boolean value) { isActive = value; }
+	
+	/**
+	 * Set the year that a stand must be harvested by.
+	 * @param value
+	 */
+	public void setMustHarvestBy(int value) { mustHarvestBy = value; }
 }

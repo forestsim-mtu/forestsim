@@ -1,6 +1,7 @@
 package edu.mtu.simulation;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -46,30 +47,35 @@ import sim.util.IntBag;
 @SuppressWarnings("serial")
 public class ForestSim extends SimState {
 
-	// Path to default GIS files used in the simulation
-	//private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
-	//private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
-	
-	private static final String defaultCoverFile = "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
-	private static final String defaultParcelFile = "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
-
 	// Display width and height
 	private static final int gridWidth = 1000;
 	private static final int gridHeight = 900;
 	
+	// Path to default GIS files used in the simulation
+	//private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
+	//private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
+
+	// Location of simulation GIS files and their default values
+	private static final String defaultCoverFile 		= "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
+	private static final String defaultParcelFile 		= "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
+	private static final String defaultOutputDirectory 	= "out"; 
+	private String coverFile = defaultCoverFile;
+	private String outputDirectory = defaultOutputDirectory;
+	private String parcelFile = defaultParcelFile;	
+	
 	// Geometry assigned to assigned to agents to geo-locate their parcel
 	public GeomVectorField parcelLayer;
-
+	
 	// Geometry representing current land cover at high resolution
 	public Nlcd coverLayer = new Nlcd();
 
-	private Agent[] agents; // Array of all agents active in the simulation
+	// Array of all agents active in the simulation
+	private Agent[] agents; 						
+	
 	private double economicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
 	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
-	private String coverFile = defaultCoverFile;
-	private String parcelFile = defaultParcelFile;
-
+	
 	/**
 	 * Constructor.
 	 */
@@ -91,6 +97,10 @@ public class ForestSim extends SimState {
 		return new sim.util.Interval(0.0, 1.0);
 	}
 
+	public double getAgglomerationBonus() { 
+		return VIP.getInstance().getAgglomerationBonus(); 
+	}
+	
 	/**
 	 * Return the average NIPF stocking for the model.
 	 */
@@ -112,18 +122,38 @@ public class ForestSim extends SimState {
 	
 	/**
 	 * Get amount of biomass harvested.
-	 * @return
 	 */
 	public double getBiomass() {
 		return Harvester.getInstance().getBiomass();
 	}
 	
 	/**
+	 * Get how old the stand may be before it must be harvested.
+	 */
+	public int getMustHarvestBy() { 
+		return VIP.getInstance().getMustHarvestBy();
+	}
+	
+	/**
+	 * Get the directory that output files should be written to.
+	 */
+	public String getOutputDirectory() {
+		return outputDirectory;
+	}
+	
+	/**
 	 * Get the number of sq.m. enrolled in the VIP program.
-	 * @return
 	 */
 	public double getVipArea() {
 		return VIP.getInstance().getSubscribedArea();
+	}
+	
+	/**
+	 * Get the flag that indicates if the VIP is active or not.
+	 * @return
+	 */
+	public Boolean getVipEnabled() { 
+		return VIP.getInstance().getIsActive();	
 	}
 	
 	/**
@@ -165,6 +195,11 @@ public class ForestSim extends SimState {
 	public MersenneTwisterFast getRandom() { return random; }
 
 	/**
+	 * Set the agglomeration bonus as mills reduction per 1,000 enrolled.
+	 */
+	public void setAgglomerationBonus(double value) { VIP.getInstance().setAgglomerationBonus(value); }
+	
+	/**
 	 * Set the cover file path to use for the simulation.
 	 */
 	public void setCoverFilePath(String value) { coverFile = value; }
@@ -189,6 +224,13 @@ public class ForestSim extends SimState {
 	}
 	
 	/**
+	 * Set how old the stand may be before it must be harvested.
+	 */
+	public void setMustHarvestBy(int value) {
+		VIP.getInstance().setMustHarvestBy(value);
+	}
+	
+	/**
 	 * Set the minimum harvest area for the agents.
 	 */
 	public void setMinimumHarvestArea(double value) {
@@ -198,9 +240,21 @@ public class ForestSim extends SimState {
 	}
 
 	/**
+	 * Set the path where output files should be stored.
+	 */
+	public void setOutputDirectory(String value) { outputDirectory = value; }
+	
+	/**
 	 * Set the parcel file path to use for the simulation.
 	 */
 	public void setParcelFilePath(String value) { parcelFile = value; } 
+	
+	/**
+	 * Flag to indicate if the VIP should be enabled or not.
+	 */
+	public void setVipEnabled(Boolean value) { 
+		VIP.getInstance().setIsActive(value);
+	}
 	
 	/**
 	 * Main entry point for the model.
@@ -221,13 +275,17 @@ public class ForestSim extends SimState {
 		importRasterLayers();
 		
 		try {
+			// Bootstrap any relevant paths
+			File directory = new File(outputDirectory);
+			directory.mkdirs();
+			
 			// Create the forest model
 			GrowthModel model = new WesternUpEvenAgedWholeStand(random);
 			Forest.getInstance().calculateInitialStands(coverLayer, model);
 			
 			// Store the initial stocking
 			GeomGridField stocking = Forest.getInstance().getStocking();
-			BufferedWriter output = new BufferedWriter(new FileWriter("out/stocking0.asc"));
+			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
 			ArcInfoASCGridExporter.write(stocking, output);
 			output.close();			
 		} catch (InterruptedException | IOException ex) {
@@ -246,9 +304,12 @@ public class ForestSim extends SimState {
 		Environment enviorment = new Environment();
 		schedule.scheduleOnce(enviorment);
 		
+		// Reset the VIP
+		VIP.getInstance().reset();
+		
 		// Create the aggregation agent and the scorecard
 		AggregationStep aggregation = new AggregationStep();
-		aggregation.setScorecard(new HoughtonVipScorecard());
+		aggregation.setScorecard(new HoughtonVipScorecard(outputDirectory));
 		schedule.scheduleOnce(aggregation);
 
 		// Align the MBRs so layers line up in the display
@@ -314,10 +375,12 @@ public class ForestSim extends SimState {
 			 
 			 agent.setProfitMargin(rand);
 		}
+		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
+		
 		String planName = (agent instanceof EcosystemsAgent) ? NaturalManagment.class.getName() : SawtimberHarvest.class.getName();
 		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(planName, agent);		
-		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
 		agent.setManagementPlan(plan);
+		
 		return createAgentParcel(agent);
 	}
 
@@ -399,13 +462,5 @@ public class ForestSim extends SimState {
 	 */
 	public void finish() {
 		super.finish();
-
-		// Allow the agents to update shape file
-		for (Agent agent : agents) {
-			agent.updateShapefile();
-		}
-
-		// TODO Figure out why this is throwing an error
-		// ShapeFileExporter.write(outputShapeFile, parcelLayer);
 	}
 }
