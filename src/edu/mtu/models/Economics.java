@@ -54,7 +54,7 @@ public class Economics {
 	 * Get the estimated economic value of the given stand.
 	 * 
 	 * @param parcel The pixels that make up the harvest stand.
-	 * @return The expected profits for the stand.
+	 * @return The offer for to harvest the stand.
 	 */
 	public static double getStandValue(Point[] parcel) {
 		// Get the biomass volume
