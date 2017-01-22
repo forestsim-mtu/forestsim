@@ -27,7 +27,9 @@ public class Harvester implements Steppable {
 		public BiomassConsumer deliverTo; 
 	}
 	
-	private final static int totalLoggingCapablity = 200;		// TODO Get an actual value, allow it to be configurable
+	private final static int loggingCompanies = 24;		// Based upon yellowbook listings
+														// http://www.yellowbook.com/s/logging-companies/surrounding-houghton-county-mi/
+	private final static int totalLoggingCapablity = loggingCompanies *2;		
 	
 	private static Harvester instance = new Harvester();
 	
