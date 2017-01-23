@@ -1,28 +1,20 @@
-package edu.mtu.steppables.nipf;
+package edu.mtu.vip.houghton.nipf;
 
-import ec.util.MersenneTwisterFast;
+import edu.mtu.steppables.AgentType;
 import edu.mtu.steppables.Harvester;
 import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
-public class EconomicAgent extends Agent {
-	
-	private final static AgentType type = AgentType.ECONOMIC;
+public class EconomicAgent extends ModelAgent {
 		
 	/**
 	 * Constructor.
 	 */
-	public EconomicAgent(LandUseGeomWrapper landUseWrapper, MersenneTwisterFast random) {
-		super(type, landUseWrapper, random);
+	public EconomicAgent() {
+		super(AgentType.ECONOMIC);
 	}
-	
-	/**
-	 * Return the agent type we are representing.
-	 */
-	@Override
-	public AgentType getAgentType() { return type;	}
-	
+		
 	@Override
 	protected void doPolicyOperation() {
 		// Return if they are already a member
@@ -41,13 +33,13 @@ public class EconomicAgent extends Agent {
 		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().getMustHarvestBy()) {
 			// We must harvest if the VIP compels us to
 			harvesting = true;
-		} else if (Economics.minimalHarvestConditions(getCoverPoints())) {
+		} else if (Economics.minimalHarvestConditions(getParcel())) {
 			harvesting = harvesting || investigateHarvesting();
 		}
 		
 		// Queue the request if we are harvesting
 		if (harvesting) {
-			Harvester.getInstance().requestHarvest(this, getCoverPoints());
+			Harvester.getInstance().requestHarvest(this, getParcel());
 		}		
 	}
 }

@@ -1,4 +1,4 @@
-package edu.mtu.steppables.nipf;
+package edu.mtu.steppables;
 
 import sim.util.geo.MasonGeometry;
 

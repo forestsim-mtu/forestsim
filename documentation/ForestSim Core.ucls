@@ -10,17 +10,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="edu.mtu.steppables.nipf.EconomicAgent" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/nipf/EconomicAgent.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1328" y="80"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="edu.mtu.steppables.nipf.EcosystemsAgent" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/nipf/EcosystemsAgent.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="edu.mtu.vip.houghton.agent.EcosystemsAgent" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/vip/houghton/agent/EcosystemsAgent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1337" y="264"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -28,7 +19,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
+  <class id="3" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Environment.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="448" y="89"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -37,7 +28,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="edu.mtu.steppables.Biorefinary" project="ForstSim" 
+  <class id="4" language="java" name="edu.mtu.steppables.Biorefinary" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Biorefinary.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1152" y="796"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -46,7 +37,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="edu.mtu.steppables.Harvester" project="ForstSim" 
+  <class id="5" language="java" name="edu.mtu.steppables.Harvester" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Harvester.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="496" y="415"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -55,7 +46,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="edu.mtu.steppables.Harvester.HarvestRequest" project="ForstSim" 
+  <class id="6" language="java" name="edu.mtu.steppables.Harvester.HarvestRequest" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Harvester.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="556" y="635"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -64,7 +55,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="8" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
+  <interface id="7" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/GrowthModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="574" y="835"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -73,7 +64,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </interface>  
-  <class id="9" language="java" name="edu.mtu.environment.Forest" project="ForstSim" 
+  <class id="8" language="java" name="edu.mtu.environment.Forest" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/Forest.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="162" y="336"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -82,7 +73,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="10" language="java" name="edu.mtu.steppables.BiomassConsumer" project="ForstSim" 
+  <interface id="9" language="java" name="edu.mtu.steppables.BiomassConsumer" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/BiomassConsumer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="898" y="707"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -91,7 +82,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </interface>  
-  <class id="11" language="java" name="edu.mtu.steppables.BiomassPlant" project="ForstSim" 
+  <class id="10" language="java" name="edu.mtu.steppables.BiomassPlant" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/BiomassPlant.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1186" y="587"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -100,7 +91,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="edu.mtu.environment.Stand" project="ForstSim" 
+  <class id="11" language="java" name="edu.mtu.environment.Stand" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/Stand.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="161" y="825"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -109,105 +100,101 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <association id="13">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="14" name="growthModel">        
+  <association id="12">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="13" name="growthModel">        
         <position height="0" width="0" x="0" y="17"/>      
       </attribute>      
-      <multiplicity id="15" minimum="0" maximum="1">        
+      <multiplicity id="14" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="17"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="16">    
+  <dependency id="15">    
     <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="9"/>  
+    <end type="TARGET" refId="8"/>  
   </dependency>  
-  <association id="17">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="18" name="agent">        
+  <association id="16">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="17" name="agent">        
         <position height="0" width="0" x="302" y="12"/>      
       </attribute>      
-      <multiplicity id="19" minimum="0" maximum="1">        
+      <multiplicity id="18" minimum="0" maximum="1">        
         <position height="0" width="0" x="302" y="12"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="20">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <realization id="21">    
+  <dependency id="19">    
     <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="10"/>  
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <realization id="20">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="9"/>  
   </realization>  
-  <association id="22">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="23" name="deliverTo">        
+  <association id="21">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="22" name="deliverTo">        
         <position height="0" width="0" x="-20" y="-8"/>      
       </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
+      <multiplicity id="23" minimum="0" maximum="1">        
         <position height="0" width="0" x="-20" y="-8"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="26" name="instance">        
-        <position height="0" width="0" x="5" y="-174"/>      
-      </attribute>      
-      <multiplicity id="27" minimum="0" maximum="1">        
-        <position height="0" width="0" x="5" y="-174"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="29">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <nesting id="30">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <dependency id="31">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="12"/>  
-  </dependency>  
-  <association id="32">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="33" name="requests">        
-        <position height="0" width="0" x="-7" y="68"/>      
+  <association id="24">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="25" name="instance">        
+        <position height="0" width="0" x="5" y="-174"/>      
       </attribute>      
-      <multiplicity id="34" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-7" y="68"/>      
+      <multiplicity id="26" minimum="0" maximum="1">        
+        <position height="0" width="0" x="5" y="-174"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="35">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <generalization id="36">    
+  <generalization id="27">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <dependency id="37">    
+  <realization id="28">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="9"/>  
+  </realization>  
+  <nesting id="29">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
+  <dependency id="30">    
     <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="12"/>  
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <association id="31">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="32" name="requests">        
+        <position height="0" width="0" x="-7" y="68"/>      
+      </attribute>      
+      <multiplicity id="33" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-7" y="68"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="34">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="35">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="11"/>  
   </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    

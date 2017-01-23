@@ -1,8 +1,12 @@
 package edu.mtu.vip.houghton;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
+import edu.mtu.steppables.Agent;
+import edu.mtu.vip.houghton.nipf.EconomicAgent;
+import edu.mtu.vip.houghton.nipf.EcosystemsAgent;
 
 @SuppressWarnings("serial")
 public class HoughtonModel extends ForestSim {
@@ -13,6 +17,13 @@ public class HoughtonModel extends ForestSim {
 	private static final String defaultCoverFile 		= "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
 	private static final String defaultParcelFile 		= "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
 	private static final String defaultOutputDirectory 	= "out"; 
+	
+	// Based upon yellowbook listings http://www.yellowbook.com/s/logging-companies/surrounding-houghton-county-mi/
+	private final static int loggingCompanies = 24;		
+	private final static int totalLoggingCapablity = loggingCompanies *2;	
+	
+	private static final double defaultEconomicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
+	private double ecosystemsAgentHarvestOdds = 0.1; 						// Initially 10% of the time, eco-system services agent's will harvest
 	
 	/**
 	 * Constructor.
@@ -27,6 +38,13 @@ public class HoughtonModel extends ForestSim {
 	 */
 	public double getAgglomerationBonus() { 
 		return VIP.getInstance().getAgglomerationBonus(); 
+	}
+	
+	/**
+	 * Get the odds that an ecosystems services optimizing agent will harvest.
+	 */
+	public double getEcosystemsAgentHarvestOdds() { 
+		return ecosystemsAgentHarvestOdds; 
 	}
 	
 	/**
@@ -63,6 +81,15 @@ public class HoughtonModel extends ForestSim {
 	 */
 	public void setAgglomerationBonus(double value) { 
 		VIP.getInstance().setAgglomerationBonus(value); 
+	}
+	
+	/**
+	 * Set the odds that an ecosystems services optimizing agent will harvest.
+	 */
+	public void setEcosystemsAgentHarvestOdds(double value) {
+		if (value >= 0.0 && value <= 1.0) {
+			ecosystemsAgentHarvestOdds = value;
+		}
 	}
 	
 	/**
@@ -107,5 +134,33 @@ public class HoughtonModel extends ForestSim {
 	@Override
 	public String getDefaultParcelFile() {
 		return defaultParcelFile;
+	}
+
+	@Override
+	public int getHarvestCapacity() {
+		return totalLoggingCapablity;
+	}
+
+	@Override
+	public Agent createEconomicAgent(MersenneTwisterFast random) {
+		return new EconomicAgent();
+	}
+
+	@Override
+	public Agent createEcosystemsAgent(MersenneTwisterFast random) {
+		EcosystemsAgent agent = new EcosystemsAgent();
+
+		// Generate a random, normally distributed with a mean of 0.15
+		double rand = random.nextGaussian();
+		rand = (rand * (0.15 / 3)) + 0.15;
+		agent.setProfitMargin(rand);
+
+		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
+		return agent;
+	}
+
+	@Override
+	public double getDefaultEconomicAgentPercentage() {
+		return defaultEconomicAgentPercentage;
 	}
 }

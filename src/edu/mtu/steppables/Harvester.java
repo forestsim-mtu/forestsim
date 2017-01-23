@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.math3.util.Precision;
 
 import edu.mtu.environment.Forest;
-import edu.mtu.steppables.nipf.Agent;
+import edu.mtu.simulation.ForestSim;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -26,11 +26,7 @@ public class Harvester implements Steppable {
 		public int queueOrder;
 		public BiomassConsumer deliverTo; 
 	}
-	
-	private final static int loggingCompanies = 24;		// Based upon yellowbook listings
-														// http://www.yellowbook.com/s/logging-companies/surrounding-houghton-county-mi/
-	private final static int totalLoggingCapablity = loggingCompanies *2;		
-	
+		
 	private static Harvester instance = new Harvester();
 	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
@@ -48,7 +44,8 @@ public class Harvester implements Steppable {
 	@Override
 	public void step(SimState state) {
 		// Process the requests
-		biomass = processHarvestRequests();
+		int capacity = ((ForestSim)state).getHarvestCapacity();
+		biomass = processHarvestRequests(capacity);
 		
 		// Clear the request list
 		requests = new ArrayList<HarvestRequest>();		
@@ -73,21 +70,33 @@ public class Harvester implements Steppable {
 	
 	/**
 	 * Process the list of harvest requests and harvest the stands that result
-	 * in the most economic returns for the company.
+	 * in the most economic returns for the company. Note that this method is
+	 * provided as an example and can be overridden to provide more flexibility.
+	 * 
+	 * @param capacity The total capacity for harvests.
 	 */
-	private double processHarvestRequests() {
-		double biomass = 0;
+	protected double processHarvestRequests(int capacity) {
+		double totalBiomass = 0;
 		int count = 0;
 		Forest forest = Forest.getInstance();		
 		while (!requests.isEmpty()) {
 			HarvestRequest request = requests.remove(0);
-			biomass += forest.harvest(request.stand);
+			
+			// Remove the biomass and deliver it if need be
+			double biomass = forest.harvest(request.stand);
+			if (request.deliverTo != null) 
+			{
+				request.deliverTo.receive(biomass);
+			}
+			
+			// Update the aggregation
+			totalBiomass += biomass;
 			count++;
-			if (count >= totalLoggingCapablity) {
-				return biomass;
+			if (count >= capacity) {
+				return totalBiomass;
 			}
 		}
-		return biomass;
+		return totalBiomass;
 	}
 	
 	/**
@@ -97,10 +106,22 @@ public class Harvester implements Steppable {
 	 * @param stand The points that are associated with the stand to be harvested.
 	 */
 	public void requestHarvest(Agent agent, Point[] stand) {
+		requestHarvest(agent, stand, null);
+	}
+	
+	/**
+	 * Allow an agent to request that the forest stand indicated be harvested.
+	 * 
+	 * @param agent The agent that is requesting the harvest.
+	 * @param stand The points that are associated with the stand to be harvested.
+	 * @param deliverTo The BiomassConsumer that the harvested biomass should be delivered to.
+	 */
+	public void requestHarvest(Agent agent, Point[] stand, BiomassConsumer deliverTo) {
 		// Wrap the data in a request
 		HarvestRequest request = new HarvestRequest();
 		request.agent = agent;
 		request.stand = stand;
+		request.deliverTo = null;
 		
 		// Queue it to be processed later
 		request.queueOrder = requests.size();

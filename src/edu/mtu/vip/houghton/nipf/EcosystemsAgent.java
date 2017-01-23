@@ -1,27 +1,19 @@
-package edu.mtu.steppables.nipf;
+package edu.mtu.vip.houghton.nipf;
 
-import ec.util.MersenneTwisterFast;
+import edu.mtu.steppables.AgentType;
 import edu.mtu.steppables.Harvester;
 import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
-public class EcosystemsAgent extends Agent {
-
-	private final static AgentType type = AgentType.ECOSYSTEM;
-		
+public class EcosystemsAgent extends ModelAgent {
+	
 	/**
 	 * Constructor.
 	 */
-	public EcosystemsAgent(LandUseGeomWrapper landUseWrapper, MersenneTwisterFast random) {
-		super(type, landUseWrapper, random);
+	public EcosystemsAgent() {
+		super(AgentType.ECOSYSTEM);
 	}
-
-	/**
-	 * Return the agent type we are representing.
-	 */
-	@Override
-	public AgentType getAgentType() { return type; }
 
 	@Override
 	protected void doPolicyOperation() {
@@ -31,12 +23,12 @@ public class EcosystemsAgent extends Agent {
 		}
 
 		// Is the agent open to harvesting?
-		if (harvestOdds < random.nextDouble()) {
+		if (harvestOdds < getRandom().nextDouble()) {
 			return;
 		}
 		
 		// Is the agent even willing to join a VIP?
-		if (willingnessToJoinVip < random.nextDouble()) {
+		if (willingnessToJoinVip < getRandom().nextDouble()) {
 			return;
 		}
 				
@@ -51,16 +43,16 @@ public class EcosystemsAgent extends Agent {
 		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().getMustHarvestBy()) {
 			// We must harvest if the VIP compels us to
 			harvesting = true;
-		} else if (random.nextDouble() < harvestOdds) {
+		} else if (getRandom().nextDouble() < harvestOdds) {
 			// Agent feels like looking into harvesting
-			if (Economics.minimalHarvestConditions(getCoverPoints())) {
+			if (Economics.minimalHarvestConditions(getParcel())) {
 				harvesting = harvesting || investigateHarvesting();
 			}	
 		}
 			
 		// Queue the request if we are harvesting
 		if (harvesting) {
-			Harvester.getInstance().requestHarvest(this, getCoverPoints());
+			Harvester.getInstance().requestHarvest(this, getParcel());
 		}	
 	}
 }

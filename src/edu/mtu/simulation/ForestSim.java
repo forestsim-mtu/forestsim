@@ -14,13 +14,11 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
+import edu.mtu.steppables.Agent;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.Harvester;
-import edu.mtu.steppables.nipf.Agent;
-import edu.mtu.steppables.nipf.EconomicAgent;
-import edu.mtu.steppables.nipf.EcosystemsAgent;
-import edu.mtu.steppables.nipf.LandUseGeomWrapper;
+import edu.mtu.steppables.LandUseGeomWrapper;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -39,7 +37,10 @@ public abstract class ForestSim extends SimState {
 	private static final int gridHeight = 900;
 
 	// Array of all agents active in the simulation
-	private Agent[] agents; 						
+	private Agent[] agents;
+	
+	// Percentage of economic agents to be created;
+	private double economicAgentPercentage = getDefaultEconomicAgentPercentage();
 	
 	// Geometry representing current land cover at high resolution
 	private GeomGridField coverLayer;
@@ -51,14 +52,32 @@ public abstract class ForestSim extends SimState {
 	private String coverFile = getDefaultCoverFile();
 	private String outputDirectory = getDefaultOutputDirectory();
 	private String parcelFile = getDefaultParcelFile();	
+		
+	/**
+	 * Create an economic agent for use by the simulation.
+	 * 
+	 * @param random The random number generator being used by the simulation.
+	 * @return A concrete agent of the AgentType ECONOMIC.
+	 */
+	public abstract Agent createEconomicAgent(MersenneTwisterFast random);
 	
-	private double economicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
-	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
+	/**
+	 * Create an ecosystem services agent for use by the simulation.
+	 * 
+	 * @param random The random number generator being used by the simulation.
+	 * @return A concrete agent of the AgentType ECOSYSTEM.
+	 */
+	public abstract Agent createEcosystemsAgent(MersenneTwisterFast random);
 	
 	/**
 	 * Get the default path and name of the cover file.
 	 */
 	public abstract String getDefaultCoverFile();
+	
+	/**
+	 * Get the default percentage of economic agents to create. 
+	 */
+	public abstract double getDefaultEconomicAgentPercentage();
 	
 	/**
 	 * Get the default path and name of the output directory.
@@ -76,6 +95,11 @@ public abstract class ForestSim extends SimState {
 	 * @return A concrete class that implements the GrowthModel interface.
 	 */
 	public abstract GrowthModel getGrowthModel(); 
+	
+	/**
+	 * Get the number of harvests that can be done per time step.
+	 */
+	public abstract int getHarvestCapacity();
 	
 	/**
 	 * Get the score card to use for aggregation at the end of each step.
@@ -133,7 +157,7 @@ public abstract class ForestSim extends SimState {
 		double sum = 0;
 		int count = 0;
 		for (Agent agent : agents) {
-			for (java.awt.Point point : agent.getCoverPoints()) {
+			for (java.awt.Point point : agent.getParcel()) {
 				sum += Forest.getInstance().calculateStandStocking(point);
 				count++;
 			}
@@ -168,11 +192,6 @@ public abstract class ForestSim extends SimState {
 	 * optimizers.
 	 */
 	public double getEconomicAgentPercentage() { return economicAgentPercentage; }
-
-	/**
-	 * Get the odds that an ecosystems services optimizing agent will harvest.
-	 */
-	public double getEcosystemsAgentHarvestOdds() { return ecosystemsAgentHarvestOdds; }
 	
 	/**
 	 * Get the parcel file path that is used by the simulation.
@@ -196,15 +215,6 @@ public abstract class ForestSim extends SimState {
 	public void setEconomicAgentPercentage(double value) {
 		if (value >= 0.0 && value <= 1.0) {
 			economicAgentPercentage = value;
-		}
-	}
-
-	/**
-	 * Set the odds that an ecosystems services optimizing agent will harvest.
-	 */
-	public void setEcosystemsAgentHarvestOdds(double value) {
-		if (value >= 0.0 && value <= 1.0) {
-			ecosystemsAgentHarvestOdds = value;
 		}
 	}
 		
@@ -316,21 +326,15 @@ public abstract class ForestSim extends SimState {
 	 * 
 	 * @return The constructed agent.
 	 */
-	// TODO Move Houghton specific aspects out.
 	protected Agent createAgent(LandUseGeomWrapper lu, double probablity) {
 		Agent agent;
 		if (random.nextDouble() < probablity) {
-			agent = new EconomicAgent(lu, random);
+			agent = createEconomicAgent(random);
 		} else {
-			 agent = new EcosystemsAgent(lu, random);
-			 
-			 // Generate a random, normally distributed with a mean of 0.15
-			 double rand = random.nextGaussian();
-			 rand = (rand * (0.15 / 3)) + 0.15;
-			 
-			 agent.setProfitMargin(rand);
+			 agent = createEcosystemsAgent(random);
 		}
-		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
+		agent.setLandUseWrapper(lu);
+		agent.setRandom(random);
 		return createAgentParcel(agent);
 	}
 
