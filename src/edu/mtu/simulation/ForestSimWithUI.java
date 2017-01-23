@@ -86,7 +86,7 @@ public class ForestSimWithUI extends GUIState {
 		ForestSim world = (ForestSim)state;
 		
 		// Portray the parcel as an unfilled polygon with black borders
-		parcelPortrayal.setField(world.parcelLayer);
+		parcelPortrayal.setField(world.getParcelLayer());
 		parcelPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLACK, false));
 
 		// Portray the current land cover based on the cover type scheme of NLCD

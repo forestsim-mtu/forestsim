@@ -1,6 +1,7 @@
 package edu.mtu.vip.houghton;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -19,25 +20,25 @@ public class HoughtonVipScorecard implements Scorecard {
 	private static int step = 0;
 	private static int nextExport = 10;
 	
-	private String directory;
+	private String outputDirectory;
 	
 	public HoughtonVipScorecard(String directory) {
-		this.directory = directory;
+		outputDirectory = directory;
 	}
 	
 	@Override
-	public void generate() {
+	public void processTimeStep() {
 		try {
 			// Collect the VIP membership
 			VIP vip = VIP.getInstance();
-			FileWriter writer = new FileWriter(directory + vipFile, true);
+			FileWriter writer = new FileWriter(outputDirectory + vipFile, true);
 			writer.write(vip.getSubscriptionRate() + "," + vip.getSubscribedArea() + ",");
 			writer.write(System.lineSeparator());
 			writer.close();
 					
 			// Collect the biomass harvested
 			double biomass = Harvester.getInstance().getBiomass();
-			writer = new FileWriter(directory + biomassFile, true);
+			writer = new FileWriter(outputDirectory + biomassFile, true);
 			writer.write(biomass + ",");
 			writer.write(System.lineSeparator());
 			writer.close();
@@ -46,7 +47,7 @@ public class HoughtonVipScorecard implements Scorecard {
 			step++;
 			if (step == nextExport) {
 				GeomGridField stocking = Forest.getInstance().getStocking();
-				BufferedWriter output = new BufferedWriter(new FileWriter(String.format(directory + stockingFile, step)));
+				BufferedWriter output = new BufferedWriter(new FileWriter(String.format(outputDirectory + stockingFile, step)));
 				ArcInfoASCGridExporter.write(stocking, output);
 				output.close();
 				nextExport += 10;
@@ -55,5 +56,23 @@ public class HoughtonVipScorecard implements Scorecard {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
 		}		
+	}
+
+	@Override
+	public void processInitialization() {
+		try {
+			// Bootstrap any relevant paths
+			File directory = new File(outputDirectory);
+			directory.mkdirs();
+						
+			// Store the initial stocking
+			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
+			GeomGridField stocking = Forest.getInstance().getStocking();
+			ArcInfoASCGridExporter.write(stocking, output);
+			output.close();		
+		} catch (IOException ex) {
+			System.err.println("Unhandled IOException: " + ex.toString());
+			System.exit(-1);
+		}	
 	}
 }

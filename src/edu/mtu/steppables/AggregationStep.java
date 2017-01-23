@@ -17,7 +17,7 @@ public class AggregationStep implements Steppable {
 	public void step(SimState state) {
 		// Run the scorecard, if provided
 		if (scorecard != null) {
-			scorecard.generate();
+			scorecard.processTimeStep();
 		}
 		
 		// Should we end the model?

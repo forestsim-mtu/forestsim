@@ -1,11 +1,7 @@
 package edu.mtu.simulation;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,15 +21,11 @@ import edu.mtu.steppables.nipf.Agent;
 import edu.mtu.steppables.nipf.EconomicAgent;
 import edu.mtu.steppables.nipf.EcosystemsAgent;
 import edu.mtu.steppables.nipf.LandUseGeomWrapper;
-import edu.mtu.vip.houghton.HoughtonVipScorecard;
-import edu.mtu.vip.houghton.VIP;
-import edu.mtu.vip.houghton.WesternUpEvenAgedWholeStand;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.IntGrid2D;
-import sim.io.geo.ArcInfoASCGridExporter;
 import sim.io.geo.ArcInfoASCGridImporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
@@ -45,31 +37,57 @@ public abstract class ForestSim extends SimState {
 	// Display width and height
 	private static final int gridWidth = 1000;
 	private static final int gridHeight = 900;
-	
-	// Path to default GIS files used in the simulation
-	//private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
-	//private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
-
-	// Location of simulation GIS files and their default values
-	private static final String defaultCoverFile 		= "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
-	private static final String defaultParcelFile 		= "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
-	private static final String defaultOutputDirectory 	= "out"; 
-	private String coverFile = defaultCoverFile;
-	private String outputDirectory = defaultOutputDirectory;
-	private String parcelFile = defaultParcelFile;	
-	
-	// Geometry assigned to assigned to agents to geo-locate their parcel
-	public GeomVectorField parcelLayer;
-	
-	// Geometry representing current land cover at high resolution
-	public GeomGridField coverLayer = new GeomGridField();
 
 	// Array of all agents active in the simulation
 	private Agent[] agents; 						
 	
+	// Geometry representing current land cover at high resolution
+	private GeomGridField coverLayer;
+	
+	// Geometry assigned to assigned to agents to geo-locate their parcel
+	private GeomVectorField parcelLayer;
+	
+	// Location of simulation GIS files and their default values
+	private String coverFile = getDefaultCoverFile();
+	private String outputDirectory = getDefaultOutputDirectory();
+	private String parcelFile = getDefaultParcelFile();	
+	
 	private double economicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 	// Initially 10% of the time, eco-system services agent's will harvest
-	private double minimumHarvestArea = 40468.0;		// About 10 acres in meters
+	
+	/**
+	 * Get the default path and name of the cover file.
+	 */
+	public abstract String getDefaultCoverFile();
+	
+	/**
+	 * Get the default path and name of the output directory.
+	 */
+	public abstract String getDefaultOutputDirectory();
+	
+	/**
+	 * Get the default path and name of the parcel file.
+	 */
+	public abstract String getDefaultParcelFile();
+	
+	/**
+	 * Get the growth model to be used with the forest.
+	 * 
+	 * @return A concrete class that implements the GrowthModel interface.
+	 */
+	public abstract GrowthModel getGrowthModel(); 
+	
+	/**
+	 * Get the score card to use for aggregation at the end of each step.
+	 * 
+	 * @return A concrete class that implements the Scorecard interface, or null.
+	 */
+	public abstract Scorecard getScoreCard();
+	
+	/**
+	 * Initialize or reset any aspects of the model in preparation for a new run.
+	 */
+	public abstract void initialize();
 	
 	/**
 	 * Constructor.
@@ -103,10 +121,6 @@ public abstract class ForestSim extends SimState {
 	public Object domEcosystemsAgentHarvestOdds() {
 		return new sim.util.Interval(0.0, 1.0);
 	}
-
-	public double getAgglomerationBonus() { 
-		return VIP.getInstance().getAgglomerationBonus(); 
-	}
 	
 	/**
 	 * Return the average NIPF stocking for the model.
@@ -133,43 +147,17 @@ public abstract class ForestSim extends SimState {
 	public double getBiomass() {
 		return Harvester.getInstance().getBiomass();
 	}
-	
-	/**
-	 * Get how old the stand may be before it must be harvested.
-	 */
-	public int getMustHarvestBy() { 
-		return VIP.getInstance().getMustHarvestBy();
-	}
-	
+		
 	/**
 	 * Get the directory that output files should be written to.
 	 */
-	public String getOutputDirectory() {
-		return outputDirectory;
-	}
+	public String getOutputDirectory() { return outputDirectory; }
 	
 	/**
-	 * Get the number of sq.m. enrolled in the VIP program.
+	 * Get the parcel layer that is used by the simulation.
 	 */
-	public double getVipArea() {
-		return VIP.getInstance().getSubscribedArea();
-	}
-	
-	/**
-	 * Get the flag that indicates if the VIP is active or not.
-	 * @return
-	 */
-	public Boolean getVipEnabled() { 
-		return VIP.getInstance().getIsActive();	
-	}
-	
-	/**
-	 * Get the number of agents enrolled in the VIP program.
-	 */
-	public int getVipMembership() {
-		return VIP.getInstance().getSubscriptionRate();
-	}
-	
+	public GeomVectorField getParcelLayer() { return parcelLayer; }
+		
 	/**
 	 * Get the cover file path that is used by the simulation.
 	 */
@@ -187,11 +175,6 @@ public abstract class ForestSim extends SimState {
 	public double getEcosystemsAgentHarvestOdds() { return ecosystemsAgentHarvestOdds; }
 	
 	/**
-	 * Get the minimum harvest area for the agents.
-	 */
-	public double getMinimumHarvestArea() { return minimumHarvestArea; }
-	
-	/**
 	 * Get the parcel file path that is used by the simulation.
 	 */
 	public String getParcelFilePath() { return parcelFile; }
@@ -200,11 +183,6 @@ public abstract class ForestSim extends SimState {
 	 * Get the random number generator that is used by the simulation.
 	 */
 	public MersenneTwisterFast getRandom() { return random; }
-
-	/**
-	 * Set the agglomeration bonus as mills reduction per 1,000 enrolled.
-	 */
-	public void setAgglomerationBonus(double value) { VIP.getInstance().setAgglomerationBonus(value); }
 	
 	/**
 	 * Set the cover file path to use for the simulation.
@@ -229,23 +207,7 @@ public abstract class ForestSim extends SimState {
 			ecosystemsAgentHarvestOdds = value;
 		}
 	}
-	
-	/**
-	 * Set how old the stand may be before it must be harvested.
-	 */
-	public void setMustHarvestBy(int value) {
-		VIP.getInstance().setMustHarvestBy(value);
-	}
-	
-	/**
-	 * Set the minimum harvest area for the agents.
-	 */
-	public void setMinimumHarvestArea(double value) {
-		if (value >= 0.0) {
-			minimumHarvestArea = value;
-		}
-	}
-
+		
 	/**
 	 * Set the path where output files should be stored.
 	 */
@@ -257,13 +219,6 @@ public abstract class ForestSim extends SimState {
 	public void setParcelFilePath(String value) { parcelFile = value; } 
 	
 	/**
-	 * Flag to indicate if the VIP should be enabled or not.
-	 */
-	public void setVipEnabled(Boolean value) { 
-		VIP.getInstance().setIsActive(value);
-	}
-
-	/**
 	 * Prepare the model to be run.
 	 */
 	public void start() {
@@ -273,25 +228,17 @@ public abstract class ForestSim extends SimState {
 		importVectorLayers();
 		importRasterLayers();
 		
+		// Inform the model that it should prepare itself
+		initialize();
+		
+		// Create the forest model
 		try {
-			// Bootstrap any relevant paths
-			File directory = new File(outputDirectory);
-			directory.mkdirs();
-			
-			// Create the forest model
-			GrowthModel model = new WesternUpEvenAgedWholeStand(random);
-			Forest.getInstance().calculateInitialStands(coverLayer, model);
-			
-			// Store the initial stocking
-			GeomGridField stocking = Forest.getInstance().getStocking();
-			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
-			ArcInfoASCGridExporter.write(stocking, output);
-			output.close();			
-		} catch (InterruptedException | IOException ex) {
+			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
+		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
 			System.exit(-1);
 		}
-
+		
 		// Create the agents and assign one agent to each parcel
 		createAgents();
 		
@@ -303,13 +250,14 @@ public abstract class ForestSim extends SimState {
 		Environment enviorment = new Environment();
 		schedule.scheduleOnce(enviorment);
 		
-		// Reset the VIP
-		VIP.getInstance().reset();
-		
-		// Create the aggregation agent and the scorecard
-		AggregationStep aggregation = new AggregationStep();
-		aggregation.setScorecard(new HoughtonVipScorecard(outputDirectory));
-		schedule.scheduleOnce(aggregation);
+		// Get the score card and create the aggregation step if one is provided 
+		Scorecard scoreCard = getScoreCard();
+		if (scoreCard != null) {
+			scoreCard.processInitialization();
+			AggregationStep aggregation = new AggregationStep();
+			aggregation.setScorecard(getScoreCard());
+			schedule.scheduleOnce(aggregation);
+		}		
 
 		// Align the MBRs so layers line up in the display
 		Envelope globalMBR = parcelLayer.getMBR();
@@ -318,6 +266,13 @@ public abstract class ForestSim extends SimState {
 		coverLayer.setMBR(globalMBR);
 	}
 
+	/**
+	 * Wrap-up the model operation.
+	 */
+	public void finish() {
+		super.finish();
+	}
+	
 	/**
 	 * Import the ASCII grid file for NLCD (land cover)
 	 */
@@ -361,7 +316,8 @@ public abstract class ForestSim extends SimState {
 	 * 
 	 * @return The constructed agent.
 	 */
-	private Agent createAgent(LandUseGeomWrapper lu, double probablity) {
+	// TODO Move Houghton specific aspects out.
+	protected Agent createAgent(LandUseGeomWrapper lu, double probablity) {
 		Agent agent;
 		if (random.nextDouble() < probablity) {
 			agent = new EconomicAgent(lu, random);
@@ -384,7 +340,7 @@ public abstract class ForestSim extends SimState {
 	 * @param agent The agent to get the pixels for.
 	 * @return An updated agent.
 	 */
-	private Agent createAgentParcel(Agent agent) {
+	protected Agent createAgentParcel(Agent agent) {
 		// Get the agent's parcel 
 		Geometry parcelPolygon = agent.getGeometry().getGeometry();
 
@@ -433,7 +389,7 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Create all of the agents that are used in the model.
 	 */
-	private void createAgents() {		
+	protected void createAgents() {		
 		// Assign one agent to each parcel and then schedule the agent
 		Bag parcelGeoms = parcelLayer.getGeometries();
 		agents = new Agent[parcelGeoms.numObjs];
@@ -444,12 +400,5 @@ public abstract class ForestSim extends SimState {
 			schedule.scheduleRepeating(agent);
 			index++;
 		}
-	}
-
-	/**
-	 * Store the agent information to the shape file and save it.
-	 */
-	public void finish() {
-		super.finish();
 	}
 }

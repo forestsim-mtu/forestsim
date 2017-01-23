@@ -28,8 +28,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="edu.mtu.simulation.Marketplace" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/simulation/Marketplace.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="edu.mtu.steppables.Marketplace" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/Marketplace.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="171" width="200" x="1433" y="-74"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

@@ -21,6 +21,7 @@ public abstract class Agent implements Steppable {
 		
 	protected MersenneTwisterFast random;
 	
+	// TODO Migrate the model specific information out
 	protected boolean vipEnrollee = false;
 	protected double harvestOdds;
 	protected double willingnessToJoinVip = 0.1;

@@ -1,10 +1,7 @@
-package edu.mtu.simulation;
+package edu.mtu.steppables;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.mtu.steppables.Biorefinary;
-import edu.mtu.steppables.Harvester;
 
 /**
  * This class acts as an aggregation point for agents that need to be accessed 
@@ -15,7 +12,8 @@ public class Marketplace {
 
 	private static Marketplace instance = new Marketplace();
 	
-	private List<Biorefinary> biorefinaries = new ArrayList<Biorefinary>();
+	private List<BiomassConsumer> bioenergyPlants = new ArrayList<BiomassConsumer>();
+	private List<BiomassConsumer> biorefinaries = new ArrayList<BiomassConsumer>();
 	private List<Harvester> harvesters = new ArrayList<Harvester>();
 	
 	/**
@@ -30,9 +28,14 @@ public class Marketplace {
 	public static Marketplace getInstance() { return instance; }
 	
 	/**
+	 * Get the list of registered bioenergy plants.
+	 */
+	public List<BiomassConsumer> getBioenergyPlants() { return bioenergyPlants; }
+	
+	/**
 	 * Get the list of registered biorefinaries.
 	 */
-	public List<Biorefinary> getBiorefinaries() { return biorefinaries; }
+	public List<BiomassConsumer> getBiorefinaries() { return biorefinaries; }
 	
 	/**
 	 * Get the list of registered harvesters.
@@ -40,9 +43,16 @@ public class Marketplace {
 	public List<Harvester> getHarvesters() { return harvesters; }
 	
 	/**
+	 * Register a bioenergy plant with the marketplace.
+	 */
+	public void registerBioenergyPlant(BiomassConsumer agent) {
+		bioenergyPlants.add(agent);
+	}
+	
+	/**
 	 * Register a biorefinary with the marketplace.
 	 */
-	public void registerBiorefinary(Biorefinary agent) {
+	public void registerBiorefinary(BiomassConsumer agent) {
 		biorefinaries.add(agent);
 	}
 	
