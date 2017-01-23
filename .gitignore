@@ -1,2 +1,6 @@
-bin/
-shapefiles/
+/bin/
+/shapefiles/
+/target/
+/.settings/
+/out
+.DS_Store
