@@ -4,13 +4,13 @@ import java.awt.Point;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
-import edu.mtu.steppables.Agent;
-import edu.mtu.steppables.AgentType;
+import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
-public abstract class ModelAgent extends Agent {
+public abstract class NipfAgent extends ParcelAgent {
 	private final static double initalMillageRate = 33.1577;			// Based upon the average rate for Houghton county
 	
 	protected boolean vipEnrollee = false;
@@ -18,7 +18,7 @@ public abstract class ModelAgent extends Agent {
 	protected double willingnessToJoinVip = 0.1;
 	protected double profitMagin = 0.1;
 	
-	public ModelAgent(AgentType type) {
+	public NipfAgent(ParcelAgentType type) {
 		super(type);
 	}
 	

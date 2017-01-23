@@ -4,10 +4,13 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
-import edu.mtu.steppables.Agent;
+import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.vip.houghton.nipf.EconomicAgent;
 import edu.mtu.vip.houghton.nipf.EcosystemsAgent;
 
+/**
+ * This is an aggregate model of Houghton County in Michigan, USA. 
+ */
 @SuppressWarnings("serial")
 public class HoughtonModel extends ForestSim {
 	// Path to default GIS files used in the simulation
@@ -142,12 +145,12 @@ public class HoughtonModel extends ForestSim {
 	}
 
 	@Override
-	public Agent createEconomicAgent(MersenneTwisterFast random) {
+	public ParcelAgent createEconomicAgent(MersenneTwisterFast random) {
 		return new EconomicAgent();
 	}
 
 	@Override
-	public Agent createEcosystemsAgent(MersenneTwisterFast random) {
+	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
 		EcosystemsAgent agent = new EcosystemsAgent();
 
 		// Generate a random, normally distributed with a mean of 0.15
@@ -162,5 +165,10 @@ public class HoughtonModel extends ForestSim {
 	@Override
 	public double getDefaultEconomicAgentPercentage() {
 		return defaultEconomicAgentPercentage;
+	}
+
+	@Override
+	public boolean useAggregateHarvester() {
+		return true;
 	}
 }

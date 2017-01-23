@@ -14,8 +14,8 @@ import sim.util.IntBag;
  * can be expanded beyond that.
  */
 @SuppressWarnings("serial")
-public abstract class Agent implements Steppable {
-	private AgentType type;
+public abstract class ParcelAgent implements Steppable {
+	private ParcelAgentType type;
 	private LandUseGeomWrapper landUseWrapper;
 	private MersenneTwisterFast random;
 	private Point[] parcel;
@@ -33,7 +33,7 @@ public abstract class Agent implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	public Agent(AgentType type) {
+	public ParcelAgent(ParcelAgentType type) {
 		this.landUseWrapper.setAgentType(type);
 		parcel = null;
 	}
@@ -41,7 +41,7 @@ public abstract class Agent implements Steppable {
 	/**
 	 * Report what type of agent is being represented.
 	 */
-	public AgentType getAgentType() { return type; }
+	public ParcelAgentType getAgentType() { return type; }
 
 	/**
 	 * Get the cover points that this agent is responsible for.

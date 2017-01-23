@@ -1,4 +1,4 @@
-package edu.mtu.steppables;
+package edu.mtu.steppables.marketplace;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import org.apache.commons.math3.util.Precision;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.simulation.ForestSim;
+import edu.mtu.steppables.ParcelAgent;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -16,18 +17,8 @@ import sim.engine.Steppable;
  * various rules.
  */
 @SuppressWarnings("serial")
-public class Harvester implements Steppable {
-	/**
-	 * This private class is used to wrap harvest requests.
-	 */
-	private class HarvestRequest {
-		public Agent agent;
-		public Point[] stand;
-		public int queueOrder;
-		public BiomassConsumer deliverTo; 
-	}
-		
-	private static Harvester instance = new Harvester();
+public class AggregateHarvester implements Steppable {
+	private static AggregateHarvester instance = new AggregateHarvester();
 	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
 	
@@ -36,7 +27,7 @@ public class Harvester implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	private Harvester() { }
+	private AggregateHarvester() { }
 	
 	/**
 	 * 
@@ -64,7 +55,7 @@ public class Harvester implements Steppable {
 	/**
 	 * Get an instance of the harvester agent.
 	 */
-	public static Harvester getInstance() {
+	public static AggregateHarvester getInstance() {
 		return instance;
 	}
 	
@@ -105,7 +96,7 @@ public class Harvester implements Steppable {
 	 * @param agent The agent that is requesting the harvest.
 	 * @param stand The points that are associated with the stand to be harvested.
 	 */
-	public void requestHarvest(Agent agent, Point[] stand) {
+	public void requestHarvest(ParcelAgent agent, Point[] stand) {
 		requestHarvest(agent, stand, null);
 	}
 	
@@ -116,7 +107,7 @@ public class Harvester implements Steppable {
 	 * @param stand The points that are associated with the stand to be harvested.
 	 * @param deliverTo The BiomassConsumer that the harvested biomass should be delivered to.
 	 */
-	public void requestHarvest(Agent agent, Point[] stand, BiomassConsumer deliverTo) {
+	public void requestHarvest(ParcelAgent agent, Point[] stand, BiomassConsumer deliverTo) {
 		// Wrap the data in a request
 		HarvestRequest request = new HarvestRequest();
 		request.agent = agent;

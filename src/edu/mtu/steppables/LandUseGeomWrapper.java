@@ -6,7 +6,7 @@ import sim.util.geo.MasonGeometry;
 public class LandUseGeomWrapper extends MasonGeometry {
 
 	private double landUse = 1.0;
-	private AgentType agentType;
+	private ParcelAgentType agentType;
 	
 	/**
 	 * Constructor.
@@ -23,12 +23,12 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	/**
 	 * Get the type of agent occupying the parcel.
 	 */
-	public AgentType getAgentType() { return agentType; }
+	public ParcelAgentType getAgentType() { return agentType; }
 	
 	/**
 	 * Set the type of agent in the parcel.
 	 */
-	public void setAgentType(AgentType value) { agentType = value; }
+	public void setAgentType(ParcelAgentType value) { agentType = value; }
 	
 	/**
 	 * Set the current land use for the agent's parcel.

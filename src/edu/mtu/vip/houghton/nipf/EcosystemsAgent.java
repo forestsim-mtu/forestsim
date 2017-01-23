@@ -1,18 +1,18 @@
 package edu.mtu.vip.houghton.nipf;
 
-import edu.mtu.steppables.AgentType;
-import edu.mtu.steppables.Harvester;
+import edu.mtu.steppables.ParcelAgentType;
+import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
-public class EcosystemsAgent extends ModelAgent {
+public class EcosystemsAgent extends NipfAgent {
 	
 	/**
 	 * Constructor.
 	 */
 	public EcosystemsAgent() {
-		super(AgentType.ECOSYSTEM);
+		super(ParcelAgentType.ECOSYSTEM);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class EcosystemsAgent extends ModelAgent {
 			
 		// Queue the request if we are harvesting
 		if (harvesting) {
-			Harvester.getInstance().requestHarvest(this, getParcel());
+			AggregateHarvester.getInstance().requestHarvest(this, getParcel());
 		}	
 	}
 }

@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="edu.mtu.simulation.ForestSimWithUI" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/simulation/ForestSimWithUI.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="315" width="239" x="61" y="-74"/>    
+    <position height="297" width="239" x="41" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,446 +12,370 @@
   </class>  
   <class id="2" language="java" name="edu.mtu.environment.Stand" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/Stand.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="279" width="178" x="340" y="-74"/>    
+    <position height="279" width="178" x="320" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="edu.mtu.steppables.Marketplace" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/Marketplace.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="200" x="1433" y="-74"/>    
+  <class id="3" language="java" name="edu.mtu.utilities.Perlin" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/utilities/Perlin.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="207" width="354" x="770" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="4" language="java" name="edu.mtu.management.HarvestType" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/HarvestType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1232" y="851"/>    
+  <class id="4" language="java" name="edu.mtu.steppables.AggregationStep" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/AggregationStep.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="174" x="2880" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="5" language="java" name="edu.mtu.environment.Species" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/Species.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="192" x="320" y="906"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="6" language="java" name="edu.mtu.utilities.Constants" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/utilities/Constants.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="162" x="2312" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="edu.mtu.simulation.ForestSim" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/simulation/ForestSim.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="837" width="322" x="2541" y="906"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="8" language="java" name="edu.mtu.environment.StockingCondition" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/StockingCondition.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="297" width="192" x="538" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="5" language="java" name="edu.mtu.vip.houghton.agent.EcosystemsAgent" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/vip/houghton/agent/EcosystemsAgent.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="135" width="235" x="1272" y="2112"/>    
+  <class id="9" language="java" name="edu.mtu.environment.StandThinning" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/StandThinning.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="119" x="1687" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="edu.mtu.steppables.Harvester" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/Harvester.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="135" width="257" x="1314" y="605"/>    
+  <interface id="10" language="java" name="edu.mtu.simulation.Scorecard" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/simulation/Scorecard.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="151" x="2903" y="906"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="11" language="java" name="edu.mtu.steppables.LandUseGeomWrapper" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/LandUseGeomWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="189" width="206" x="2221" y="2192"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="edu.mtu.utilities.Perlin" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/utilities/Perlin.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="207" width="354" x="558" y="-74"/>    
+  <class id="12" language="java" name="edu.mtu.simulation.ForestSimException" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/simulation/ForestSimException.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="207" x="1164" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="edu.mtu.utilities.Constants" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/utilities/Constants.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="162" x="952" y="-74"/>    
+  <class id="13" language="java" name="edu.mtu.steppables.ParcelAgent" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/ParcelAgent.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="369" width="270" x="2448" y="1783"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="edu.mtu.models.growthmodels.WesternUpEvenAgedWholeStand" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/models/growthmodels/WesternUpEvenAgedWholeStand.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="405" y="1331"/>    
+  <enumeration id="14" language="java" name="edu.mtu.steppables.ParcelAgentType" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/ParcelAgentType.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="243" width="177" x="2448" y="2421"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
-  </class>  
-  <class id="10" language="java" name="edu.mtu.management.HealthyForestInitiative" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/HealthyForestInitiative.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="225" width="225" x="1604" y="1649"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="11" language="java" name="edu.mtu.management.ManagementPlanFactory" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/ManagementPlanFactory.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="189" width="229" x="1154" y="-74"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="edu.mtu.management.StandThinning" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/StandThinning.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="119" x="1763" y="2112"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="13" language="java" name="edu.mtu.simulation.ForestSim" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/simulation/ForestSim.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="199" y="577"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="14" language="java" name="edu.mtu.management.SawtimberHarvest" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/SawtimberHarvest.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="225" width="225" x="1869" y="1649"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
+  </enumeration>  
   <class id="15" language="java" name="edu.mtu.environment.Forest" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/Forest.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1023" y="641"/>    
+    <position height="819" width="295" x="3094" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="edu.mtu.steppables.Harvester.HarvestRequest" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/Harvester.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1447" y="1042"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="17" language="java" name="edu.mtu.steppables.nipf.AgentType" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/nipf/AgentType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="207" width="149" x="1272" y="2341"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <enumeration id="18" language="java" name="edu.mtu.environment.NlcdClassification" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/environment/NlcdClassification.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="2174" y="512"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="19" language="java" name="edu.mtu.steppables.Biorefinary" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/Biorefinary.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="99" width="120" x="1611" y="605"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="20" language="java" name="edu.mtu.steppables.nipf.Agent" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/nipf/Agent.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1267" y="1774"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="21" language="java" name="edu.mtu.management.ManagementPlan" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/ManagementPlan.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1771" y="1065"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="22" language="java" name="edu.mtu.management.NaturalManagment" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/management/NaturalManagment.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="225" x="2134" y="1649"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="23" language="java" name="edu.mtu.landuse.Nlcd" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/landuse/Nlcd.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1066" y="1227"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="24" language="java" name="edu.mtu.vip.houghton.SpeciesParameters" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/vip/houghton/SpeciesParameters.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="423" width="432" x="61" y="1649"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <interface id="25" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/environment/GrowthModel.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="153" width="282" x="533" y="1649"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </interface>  
-  <class id="26" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
+  <class id="16" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Environment.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="99" width="120" x="1989" y="-74"/>    
+    <position height="99" width="120" x="2152" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="27" language="java" name="edu.mtu.vip.houghton.Economics" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/vip/houghton/Economics.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="189" width="194" x="2149" y="-74"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="28" language="java" name="edu.mtu.steppables.nipf.LandUseGeomWrapper" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/nipf/LandUseGeomWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="189" width="176" x="1547" y="2112"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="29" language="java" name="edu.mtu.environment.StockingCondition" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/environment/StockingCondition.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="297" width="192" x="2383" y="-74"/>    
+  <enumeration id="17" language="java" name="edu.mtu.environment.NlcdClassification" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/NlcdClassification.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="639" width="266" x="1846" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <interface id="30" language="java" name="edu.mtu.steppables.BiomassConsumer" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/BiomassConsumer.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1797" y="371"/>    
+  <interface id="18" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/GrowthModel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="227" x="3094" y="906"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="31" language="java" name="edu.mtu.steppables.BiomassPlant" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/BiomassPlant.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1912" y="656"/>    
+  <class id="19" language="java" name="edu.mtu.steppables.marketplace.BiomassProducer" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/BiomassProducer.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="211" x="1798" y="1783"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="32" language="java" name="edu.mtu.simulation.Scorecard" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/simulation/Scorecard.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="460" y="298"/>    
+  <class id="20" language="java" name="edu.mtu.steppables.marketplace.BiomassConsumer" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/BiomassConsumer.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="162" x="2049" y="1783"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
-  </interface>  
-  <realization id="33">    
-    <end type="SOURCE" refId="31"/>    
-    <end type="TARGET" refId="30"/>  
-  </realization>  
+  </class>  
+  <class id="21" language="java" name="edu.mtu.steppables.marketplace.HarvestRequest" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/HarvestRequest.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="146" x="2355" y="906"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="edu.mtu.steppables.marketplace.AggregateHarvester" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/AggregateHarvester.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="207" width="316" x="2514" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="edu.mtu.steppables.marketplace.Marketplace" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/Marketplace.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="333" width="256" x="2049" y="906"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="edu.mtu.utilities.Randomizers" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/utilities/Randomizers.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="236" x="1411" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="25">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="26" name="agentType">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="27" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="28">    
+    <end type="SOURCE" refId="21" navigable="false">      
+      <attribute id="29" name="agent"/>      
+      <multiplicity id="30" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="31">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="32" name="loggers"/>      
+      <multiplicity id="33" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="34">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="35" name="agent">        
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="35" name="scorecard">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="36" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="20" navigable="true"/>    
+    <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="37">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="38" name="instance">        
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="38" name="agents">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
+      <multiplicity id="39" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="41" name="instance"/>      
+      <multiplicity id="42" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <bendpoint x="2457" y="2192"/>    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="44" name="type">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="46">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="47" name="biorefinaries"/>      
+      <multiplicity id="48" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="49">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="50" name="instance">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="51" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="15" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="21"/>  
-  </generalization>  
-  <realization id="41">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="30"/>  
-  </realization>  
-  <association id="42">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="43" name="type">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="44" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+  <association id="52">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="53" name="instance"/>      
+      <multiplicity id="54" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="45">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="46" name="requests">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="47" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="48">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="49" name="instance">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="50" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="51">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="52" name="agents">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="53" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+  <association id="55">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="56" name="transporters"/>      
+      <multiplicity id="57" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="54">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="25"/>  
-  </realization>  
-  <generalization id="55">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="21"/>  
-  </generalization>  
-  <association id="56">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="57" name="harvesters">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="58" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="59">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="16"/>  
-  </nesting>  
-  <association id="60">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="61" name="biorefinaries">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="62" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="19" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="63">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="64" name="growthPatterns">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="65" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="66">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="67">    
+  <association id="58">    
     <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="68" name="growthModel">        
+      <attribute id="59" name="growthModel">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="69" minimum="0" maximum="1">        
+      <multiplicity id="60" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="25" navigable="true"/>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="61">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="62" name="dominateSpecies">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="63" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="64">    
+    <end type="SOURCE" refId="21" navigable="false">      
+      <attribute id="65" name="deliverTo"/>      
+      <multiplicity id="66" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="67">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="68" name="bioenergyPlants"/>      
+      <multiplicity id="69" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="70">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="71" name="agent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="72" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="71" name="mills"/>      
+      <multiplicity id="72" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="73">    
-    <end type="SOURCE" refId="20" navigable="false">      
+    <end type="SOURCE" refId="13" navigable="false">      
       <attribute id="74" name="landUseWrapper">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -459,71 +383,15 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="28" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="76">    
-    <end type="SOURCE" refId="28" navigable="false">      
-      <attribute id="77" name="agentType">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="78" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="77" name="requests"/>      
+      <multiplicity id="78" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="79">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="21"/>  
-  </generalization>  
-  <association id="80">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="81" name="thinningPlan">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="82" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="83">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="84" name="coverLayer">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="85" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="86">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="87" name="landCover">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="88" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="89">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="90" name="instance">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="91" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="21" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

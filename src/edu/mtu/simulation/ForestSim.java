@@ -14,11 +14,12 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
-import edu.mtu.steppables.Agent;
+import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
-import edu.mtu.steppables.Harvester;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import edu.mtu.steppables.marketplace.AggregateHarvester;
+import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -37,8 +38,8 @@ public abstract class ForestSim extends SimState {
 	private static final int gridHeight = 900;
 
 	// Array of all agents active in the simulation
-	private Agent[] agents;
-	
+	private ParcelAgent[] agents;
+		
 	// Percentage of economic agents to be created;
 	private double economicAgentPercentage = getDefaultEconomicAgentPercentage();
 	
@@ -59,7 +60,7 @@ public abstract class ForestSim extends SimState {
 	 * @param random The random number generator being used by the simulation.
 	 * @return A concrete agent of the AgentType ECONOMIC.
 	 */
-	public abstract Agent createEconomicAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEconomicAgent(MersenneTwisterFast random);
 	
 	/**
 	 * Create an ecosystem services agent for use by the simulation.
@@ -67,7 +68,7 @@ public abstract class ForestSim extends SimState {
 	 * @param random The random number generator being used by the simulation.
 	 * @return A concrete agent of the AgentType ECOSYSTEM.
 	 */
-	public abstract Agent createEcosystemsAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEcosystemsAgent(MersenneTwisterFast random);
 	
 	/**
 	 * Get the default path and name of the cover file.
@@ -114,6 +115,11 @@ public abstract class ForestSim extends SimState {
 	public abstract void initialize();
 	
 	/**
+	 * Indicate if this is an aggregation model (true), or a marketplace model (false).
+	 */
+	public abstract boolean useAggregateHarvester();
+	
+	/**
 	 * Constructor.
 	 */
 	public ForestSim(long seed) {
@@ -156,7 +162,7 @@ public abstract class ForestSim extends SimState {
 		
 		double sum = 0;
 		int count = 0;
-		for (Agent agent : agents) {
+		for (ParcelAgent agent : agents) {
 			for (java.awt.Point point : agent.getParcel()) {
 				sum += Forest.getInstance().calculateStandStocking(point);
 				count++;
@@ -168,8 +174,8 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Get amount of biomass harvested.
 	 */
-	public double getBiomass() {
-		return Harvester.getInstance().getBiomass();
+	public double getAggregateBiomass() {
+		return AggregateHarvester.getInstance().getBiomass();
 	}
 		
 	/**
@@ -250,12 +256,27 @@ public abstract class ForestSim extends SimState {
 		}
 		
 		// Create the agents and assign one agent to each parcel
-		createAgents();
+		createParcelAgents();
 		
-		// Create the harvester agent
-		Harvester harvester = Harvester.getInstance();
-		schedule.scheduleOnce(harvester);
-		
+		// Check to see how the marketplace is configured
+		if (useAggregateHarvester()) {
+			// This is an aggregation model, only the one harvester is needed
+			AggregateHarvester harvester = AggregateHarvester.getInstance();
+			schedule.scheduleOnce(harvester);
+		} else {
+			try {
+				// This is a marketplace model, defer agent initialization to the modeler
+				initializeMarketplace();
+				
+				// The step operation adds members of the marketplace and the marketplace
+				// to the schedule correctly. 
+				Marketplace.getInstance().step(this);				
+			} catch (ForestSimException ex) {
+				System.err.println("An error occured while preparing the marketplace: " + ex);
+				System.exit(-1);
+			}			
+		}
+				
 		// Create the environment agent
 		Environment enviorment = new Environment();
 		schedule.scheduleOnce(enviorment);
@@ -317,7 +338,7 @@ public abstract class ForestSim extends SimState {
 			System.exit(-1);
 		}
 	}
-
+	
 	/**
 	 * Create a new agent.
 	 * 
@@ -326,8 +347,8 @@ public abstract class ForestSim extends SimState {
 	 * 
 	 * @return The constructed agent.
 	 */
-	protected Agent createAgent(LandUseGeomWrapper lu, double probablity) {
-		Agent agent;
+	protected ParcelAgent createAgent(LandUseGeomWrapper lu, double probablity) {
+		ParcelAgent agent;
 		if (random.nextDouble() < probablity) {
 			agent = createEconomicAgent(random);
 		} else {
@@ -344,7 +365,7 @@ public abstract class ForestSim extends SimState {
 	 * @param agent The agent to get the pixels for.
 	 * @return An updated agent.
 	 */
-	protected Agent createAgentParcel(Agent agent) {
+	protected ParcelAgent createAgentParcel(ParcelAgent agent) {
 		// Get the agent's parcel 
 		Geometry parcelPolygon = agent.getGeometry().getGeometry();
 
@@ -393,16 +414,24 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Create all of the agents that are used in the model.
 	 */
-	protected void createAgents() {		
+	protected void createParcelAgents() {		
 		// Assign one agent to each parcel and then schedule the agent
 		Bag parcelGeoms = parcelLayer.getGeometries();
-		agents = new Agent[parcelGeoms.numObjs];
+		agents = new ParcelAgent[parcelGeoms.numObjs];
 		int index = 0;
 		for (Object parcelPolygon : parcelGeoms) {
-			Agent agent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
+			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
 			agents[index] = agent;
 			schedule.scheduleRepeating(agent);
 			index++;
 		}
+	}
+	
+	/**
+	 * We expect this method to be over-ridden by the model if it is called, 
+	 * just throw an exception to let the modeler know we were called.
+	 */
+	protected void initializeMarketplace() throws ForestSimException {
+		throw new ForestSimException("initializeMarketplace() called even though market place model was indicated.");
 	}
 }

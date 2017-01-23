@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.simulation.Scorecard;
-import edu.mtu.steppables.Harvester;
+import edu.mtu.steppables.marketplace.AggregateHarvester;
 import sim.field.geo.GeomGridField;
 import sim.io.geo.ArcInfoASCGridExporter;
 
@@ -37,7 +37,7 @@ public class HoughtonVipScorecard implements Scorecard {
 			writer.close();
 					
 			// Collect the biomass harvested
-			double biomass = Harvester.getInstance().getBiomass();
+			double biomass = AggregateHarvester.getInstance().getBiomass();
 			writer = new FileWriter(outputDirectory + biomassFile, true);
 			writer.write(biomass + ",");
 			writer.write(System.lineSeparator());
