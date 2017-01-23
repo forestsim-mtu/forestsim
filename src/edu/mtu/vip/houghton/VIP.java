@@ -2,7 +2,7 @@ package edu.mtu.vip.houghton;
 
 import java.awt.Point;
 
-import edu.mtu.models.Forest;
+import edu.mtu.environment.Forest;
 
 /**
  * This class encapsulates a very basic VIP that does two things:

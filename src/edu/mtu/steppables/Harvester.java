@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Precision;
 
-import edu.mtu.models.Forest;
+import edu.mtu.environment.Forest;
 import edu.mtu.steppables.nipf.Agent;
 import sim.engine.SimState;
 import sim.engine.Steppable;

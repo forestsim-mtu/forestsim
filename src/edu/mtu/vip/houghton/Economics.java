@@ -1,9 +1,13 @@
-package edu.mtu.models;
+package edu.mtu.vip.houghton;
 
 import java.awt.Point;
 import java.util.HashMap;
 
 import org.apache.commons.math3.util.Precision;
+
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.Stand;
+import edu.mtu.environment.StockingCondition;
 
 /**
  * This class provides a means of encapsulating some basic economics for the simulation.

@@ -4,10 +4,9 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import edu.mtu.landuse.NlcdClassification;
-import edu.mtu.models.Forest;
-import edu.mtu.models.StockingCondition;
-import edu.mtu.models.growthmodels.SpeciesParameters;
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.NlcdClassification;
+import edu.mtu.environment.StockingCondition;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -20,7 +19,6 @@ import sim.portrayal.grid.FastValueGridPortrayal2D;
 import sim.util.gui.SimpleColorMap;
 
 public class ForestSimWithUI extends GUIState {
-
 	private Display2D display;
 	private JFrame displayFrame;
 	
@@ -29,15 +27,15 @@ public class ForestSimWithUI extends GUIState {
 	
 	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
-	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
+//	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D stockingPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
 		super(state);
 	}
 	
-	public ForestSimWithUI() {
-		super(new ForestSim(System.currentTimeMillis()));
+	public ForestSimWithUI(ForestSim model) {
+		super(model);
 	}
 	
 	public void init(Controller controller) {
@@ -47,13 +45,21 @@ public class ForestSimWithUI extends GUIState {
 		
 		// Attach the land cover layers and then overlay the parcel layer
 		display.attach(coverPortrayal, "Land Cover", false);
-		display.attach(dbhPortrayal, "Stand DBH", false);
+//		display.attach(dbhPortrayal, "Stand DBH", false);
 		display.attach(stockingPortrayal, "Stocking", true);
 		display.attach(parcelPortrayal, "Parcels Layer", false);
 				
 		displayFrame = display.createFrame();
 		controller.registerFrame(displayFrame);
 		displayFrame.setVisible(true);
+	}
+	
+	/**
+	 * Load the model and make the UI visable.
+	 */
+	public void load() {
+		Console c = new Console(this);
+		c.setVisible(true);
 	}
 	
 	/**
@@ -75,7 +81,7 @@ public class ForestSimWithUI extends GUIState {
 		setupPortrayals();
 	}
 	
-	// TODO Update the portryals so they aren't quite so species dependent
+	// TODO Update the portrayals so they aren't quite so species dependent
 	private void setupPortrayals() {
 		ForestSim world = (ForestSim)state;
 		
@@ -90,8 +96,8 @@ public class ForestSimWithUI extends GUIState {
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
 		
 		// Portray the current stand DBH
-		dbhPortrayal.setField(Forest.getInstance().getStandDbh().getGrid());
-		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
+//		dbhPortrayal.setField(Forest.getInstance().getStandDbh().getGrid());
+//		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
 		
 		// Portray the current stand stocking
 		stockingPortrayal.setField(Forest.getInstance().getStocking().getGrid());
@@ -101,11 +107,5 @@ public class ForestSimWithUI extends GUIState {
 		display.setBackdrop(Color.WHITE);
 		
 		display.repaint();
-	}
-	
-	public static void main(String[] args) {
-		ForestSimWithUI fs = new ForestSimWithUI();
-		Console c = new Console(fs);
-		c.setVisible(true);
 	}
 }

@@ -12,13 +12,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.landuse.Nlcd;
-import edu.mtu.landuse.NlcdClassification;
-import edu.mtu.models.Forest;
-import edu.mtu.models.Stand;
-import edu.mtu.models.growthmodels.GrowthModel;
-import edu.mtu.models.growthmodels.SpeciesParameters;
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.GrowthModel;
+import edu.mtu.environment.NlcdClassification;
+import edu.mtu.environment.Species;
+import edu.mtu.environment.Stand;
 import edu.mtu.utilities.Perlin;
+import edu.mtu.vip.houghton.species.AcerRebrum;
+import edu.mtu.vip.houghton.species.PinusStrobus;
+import edu.mtu.vip.houghton.species.WesternUPSpecies;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
@@ -42,21 +44,21 @@ import sim.util.distribution.Normal;
  */
 public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	// The set of reference plants to use for the growth patterns
-	private final static HashMap<Integer, SpeciesParameters> growthPatterns;
+	private final static HashMap<Integer, WesternUPSpecies> growthPatterns;
 	static {
-		HashMap<Integer, SpeciesParameters> map = new HashMap<Integer, SpeciesParameters>();
-		map.put(NlcdClassification.DeciduousForest.getValue(), SpeciesParameters.AcerRubrum);
-		map.put(NlcdClassification.EvergreenForest.getValue(), SpeciesParameters.PinusStrobus);
-		map.put(NlcdClassification.WoodyWetlands.getValue(), SpeciesParameters.AcerRubrum);		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
+		HashMap<Integer, WesternUPSpecies> map = new HashMap<Integer, WesternUPSpecies>();
+		map.put(NlcdClassification.DeciduousForest.getValue(), new AcerRebrum());
+		map.put(NlcdClassification.EvergreenForest.getValue(), new PinusStrobus());
+		map.put(NlcdClassification.WoodyWetlands.getValue(), new AcerRebrum());		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
 		growthPatterns = map;
 	}
 	
 	// The set of reference stocking guides for the growth patterns
-	private final static HashMap<SpeciesParameters, List<double[]>> stockingGuides;
+	private final static HashMap<WesternUPSpecies, List<double[]>> stockingGuides;
 	static {
-		HashMap<SpeciesParameters, List<double[]>> map = new HashMap<SpeciesParameters, List<double[]>>();
+		HashMap<WesternUPSpecies, List<double[]>> map = new HashMap<WesternUPSpecies, List<double[]>>();
 		for (int nlcd : growthPatterns.keySet()) {
-			SpeciesParameters key = growthPatterns.get(nlcd);
+			WesternUPSpecies key = growthPatterns.get(nlcd);
 			if (map.containsKey(key)) {
 				continue;
 			}
@@ -84,7 +86,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
 		IntGrid2D treeCount = new IntGrid2D(width, height);
 		IntGrid2D standAge = new IntGrid2D(width, height);
-		Nlcd landCover = getLandCover();
+		GeomGridField landCover = getLandCover();
 				
 		// Match the grid the the NLCD data and scale the fields to the maximum diameter at breast
 		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
@@ -101,7 +103,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 				}
 				
 				// Otherwise, scale it to the DBH
-				SpeciesParameters reference = getGrowthPattern(nlcd);
+				WesternUPSpecies reference = (WesternUPSpecies)getSpecies(nlcd);
 				double dbh = reference.getMaximumDbh() * grid.get(ndx, ndy);
 				grid.set(ndx, ndy, dbh);
 				
@@ -134,7 +136,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	 * @param dbh Mean DBH in cm for the stand.
 	 * @return The number of trees for the stand.
 	 */
-	public int calculateTargetStocking(SpeciesParameters species, double dbh) {
+	public int calculateTargetStocking(WesternUPSpecies species, double dbh) {
 		// Start by finding the guideline to use
 		List<double[]> stocking = stockingGuides.get(species);
 		int ndx = 0;
@@ -153,8 +155,8 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	}
 	
 	@Override
-	public SpeciesParameters getGrowthPattern(int nlcd) {
-		SpeciesParameters reference;
+	public Species getSpecies(int nlcd) {
+		Species reference;
 		if (nlcd == NlcdClassification.MixedForest.getValue()) {
 			// For mixed forest, randomize the growth pattern
 			reference = (random.nextBoolean()) ? 
@@ -169,7 +171,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	/**
 	 * Get the NLCD land cover for the model.
 	 */
-	private Nlcd getLandCover() {
+	private GeomGridField getLandCover() {
 		return Forest.getInstance().getLandCover();
 	}
 	
@@ -182,13 +184,13 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	}
 	
 	@Override
-	public List<double[]> getStockingGuide(SpeciesParameters species) {
+	public List<double[]> getStockingGuide(Species species) {
 		return stockingGuides.get(species);
 	}
 
 	@Override
 	public List<double[]> getStockingGuide(int nlcd) {
-		SpeciesParameters species;
+		WesternUPSpecies species;
 				
 		if (nlcd == NlcdClassification.MixedForest.getValue()) {
 			// For mixed forest, randomize the growth pattern
@@ -208,7 +210,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		Normal generator = new Normal(0, 0, random);
 				
 		// Get the growth reference to use
-		SpeciesParameters reference = getGrowthPattern(stand.nlcd);
+		WesternUPSpecies reference = (WesternUPSpecies)getSpecies(stand.nlcd);
 		
 		// Grow the tree trunk, but clamp at the maximum
 		double dbh = stand.arithmeticMeanDiameter;

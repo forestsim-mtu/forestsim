@@ -1,6 +1,4 @@
-package edu.mtu.models;
-
-import edu.mtu.models.growthmodels.SpeciesParameters;
+package edu.mtu.environment;
 
 /**
  * This class represents a single stand in a forest. It is provided to a growth
@@ -17,7 +15,7 @@ public class Stand {
 	public double arithmeticMeanDiameter;
 	public double quadraticMeanDiameter;
 	public int nlcd;
-	public SpeciesParameters dominateSpecies;
+	public Species dominateSpecies;
 	
 	// Output attributes
 	public int numberOfTrees;

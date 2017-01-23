@@ -1,4 +1,4 @@
-package edu.mtu.landuse;
+package edu.mtu.environment;
 
 import java.awt.Color;
 import java.util.ArrayList;

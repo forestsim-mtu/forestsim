@@ -15,14 +15,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.landuse.Nlcd;
-import edu.mtu.landuse.NlcdClassification;
-import edu.mtu.management.ManagementPlan;
-import edu.mtu.management.ManagementPlanFactory;
-import edu.mtu.management.NaturalManagment;
-import edu.mtu.management.SawtimberHarvest;
-import edu.mtu.models.Forest;
-import edu.mtu.models.growthmodels.GrowthModel;
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.GrowthModel;
+import edu.mtu.environment.NlcdClassification;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.Harvester;
@@ -34,8 +29,8 @@ import edu.mtu.vip.houghton.HoughtonVipScorecard;
 import edu.mtu.vip.houghton.VIP;
 import edu.mtu.vip.houghton.WesternUpEvenAgedWholeStand;
 import sim.engine.SimState;
-import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.IntGrid2D;
 import sim.io.geo.ArcInfoASCGridExporter;
@@ -45,7 +40,7 @@ import sim.util.Bag;
 import sim.util.IntBag;
 
 @SuppressWarnings("serial")
-public class ForestSim extends SimState {
+public abstract class ForestSim extends SimState {
 
 	// Display width and height
 	private static final int gridWidth = 1000;
@@ -67,7 +62,7 @@ public class ForestSim extends SimState {
 	public GeomVectorField parcelLayer;
 	
 	// Geometry representing current land cover at high resolution
-	public Nlcd coverLayer = new Nlcd();
+	public GeomGridField coverLayer = new GeomGridField();
 
 	// Array of all agents active in the simulation
 	private Agent[] agents; 						
@@ -82,7 +77,19 @@ public class ForestSim extends SimState {
 	public ForestSim(long seed) {
 		super(seed);
 	}
-
+	
+	/**
+	 * Bootstrapped loader for command line interaction with ForestSim models.
+	 * 
+	 * @param model The model that extends ForestSim to be loaded.
+	 * @param args The arguments to be passed to the model.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void load(Class model, String[] args) {
+		doLoop(model, args);
+		System.exit(0);
+	}
+				
 	/**
 	 * Return the interval for the economicAgentPercentage
 	 */
@@ -255,14 +262,6 @@ public class ForestSim extends SimState {
 	public void setVipEnabled(Boolean value) { 
 		VIP.getInstance().setIsActive(value);
 	}
-	
-	/**
-	 * Main entry point for the model.
-	 */
-	public static void main(String[] args) {
-		doLoop(ForestSim.class, args);
-		System.exit(0);
-	}
 
 	/**
 	 * Prepare the model to be run.
@@ -376,11 +375,6 @@ public class ForestSim extends SimState {
 			 agent.setProfitMargin(rand);
 		}
 		agent.setHarvestOdds(ecosystemsAgentHarvestOdds);
-		
-		String planName = (agent instanceof EcosystemsAgent) ? NaturalManagment.class.getName() : SawtimberHarvest.class.getName();
-		ManagementPlan plan = ManagementPlanFactory.getInstance().createPlan(planName, agent);		
-		agent.setManagementPlan(plan);
-		
 		return createAgentParcel(agent);
 	}
 
@@ -439,12 +433,7 @@ public class ForestSim extends SimState {
 	/**
 	 * Create all of the agents that are used in the model.
 	 */
-	private void createAgents() {
-		// Prepare the management plan factory
-		ManagementPlanFactory factory = ManagementPlanFactory.getInstance();
-		factory.setMinimumHarvestArea(minimumHarvestArea);
-		factory.setRadom(random);
-		
+	private void createAgents() {		
 		// Assign one agent to each parcel and then schedule the agent
 		Bag parcelGeoms = parcelLayer.getGeometries();
 		agents = new Agent[parcelGeoms.numObjs];

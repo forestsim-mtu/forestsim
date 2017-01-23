@@ -1,6 +1,6 @@
 package edu.mtu.steppables;
 
-import edu.mtu.models.Forest;
+import edu.mtu.environment.Forest;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 

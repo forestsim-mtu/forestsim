@@ -1,8 +1,6 @@
-package edu.mtu.models.growthmodels;
+package edu.mtu.environment;
 
 import java.util.List;
-
-import edu.mtu.models.Stand;
 
 /**
  * This interface abstracts the functions that are used to actually grow a 
@@ -16,12 +14,12 @@ public interface GrowthModel {
 	void calculateInitialStands();
 
 	/**
-	 * Get the growth pattern for the NLCD grid code.
+	 * Get the species associated with the NLCD grid code
 	 * 
 	 * @param nlcd NLCD grid code to get the pattern for.
-	 * @return The growth pattern to use when growing the forest.
+	 * @return The dominate species for the grid.
 	 */
-	SpeciesParameters getGrowthPattern(int nlcd);
+	Species getSpecies(int nlcd);
 	
 	/**
 	 * Get the stocking guide list for the given NLCD grid code.
@@ -31,7 +29,7 @@ public interface GrowthModel {
 	/**
 	 * Get the stocking guide list for the given species.
 	 */
-	List<double[]> getStockingGuide(SpeciesParameters species);
+	List<double[]> getStockingGuide(Species species);
 	
 	/**
 	 * Perform the growth operation for the given stand.

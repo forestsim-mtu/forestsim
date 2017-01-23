@@ -1,4 +1,4 @@
-package edu.mtu.models;
+package edu.mtu.environment;
 
 import java.awt.Color;
 

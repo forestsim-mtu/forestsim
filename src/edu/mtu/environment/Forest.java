@@ -1,4 +1,4 @@
-package edu.mtu.models;
+package edu.mtu.environment;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -7,11 +7,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import edu.mtu.landuse.Nlcd;
-import edu.mtu.landuse.NlcdClassification;
-import edu.mtu.management.StandThinning;
-import edu.mtu.models.growthmodels.GrowthModel;
-import edu.mtu.models.growthmodels.SpeciesParameters;
 import edu.mtu.utilities.Constants;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
@@ -29,14 +24,14 @@ public class Forest {
 	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
 	
 	private GrowthModel growthModel;
+	private GeomGridField landCover;
 	private GeomGridField standDiameter;
 	private GeomGridField stocking;
 	private IntGrid2D standAge;
 	private IntGrid2D treeCount;
 	private List<Callable<Void>> growthThreads;
 	private List<Callable<Void>> stockingThreads;
-	private Nlcd landCover;
-
+	
 	/**
 	 * Constructor.
 	 */
@@ -73,7 +68,7 @@ public class Forest {
 	/**
 	 * Get the NLCD land cover that applies to the forest.
 	 */
-	public Nlcd getLandCover() { 
+	public GeomGridField getLandCover() { 
 		return landCover; 
 	}
 
@@ -87,7 +82,7 @@ public class Forest {
 		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);
 		stand.numberOfTrees = treeCount.get(x, y);
 		stand.age = standAge.get(x, y);
-		stand.dominateSpecies = growthModel.getGrowthPattern(stand.nlcd);
+		stand.dominateSpecies = growthModel.getSpecies(stand.nlcd);
 		return stand;
 	}
 	
@@ -162,8 +157,8 @@ public class Forest {
 	 */
 	public double calculateBiomass(Point point) {
 		Stand stand = getStand(point.x, point.y);
-		SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
-		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
+		Species species = growthModel.getSpecies(stand.nlcd);
+		return species.getBiomass(stand.arithmeticMeanDiameter, stand.height) * stand.numberOfTrees;
 	}
 	
 	/**
@@ -173,7 +168,7 @@ public class Forest {
 	 * @param growthModel The forest growth model to use on the individual stands.
 	 * @throws InterruptedException Thrown when on of the threads are interrupted.
 	 */
-	public void calculateInitialStands(Nlcd landCover, GrowthModel growthModel) throws InterruptedException {
+	public void calculateInitialStands(GeomGridField landCover, GrowthModel growthModel) throws InterruptedException {
 		// Check for an invalid state
 		if (landCover == null) {
 			throw new IllegalStateException("The NLCD land cover data cannot be null.");
@@ -290,23 +285,7 @@ public class Forest {
 	public double getStandDbh(Point point) { 
 		return ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y); 
 	}
-		
-	/**
-	 * Get the height of the given stand using the height-diameter equation (Kershaw et al. 2008)
-	 * 
-	 * @param point The point to get the height of.
-	 * @return The current stand height, in meters.
-	 */
-	public double getStandHeight(Point point) {	
-		// Get the growth reference to use
-		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
-		SpeciesParameters reference = growthModel.getGrowthPattern(nlcd);
-		
-		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-		double height = Constants.DbhTakenAt + reference.b1 * Math.pow(1 - Math.pow(Math.E, -reference.b2 * dbh), reference.b3);
-		return height;
-	}
-			
+					
 	/**
 	 * Get the stocking of the given stand.
 	 * 
@@ -429,8 +408,8 @@ public class Forest {
 
 			// Calculate the biomass
 			Stand stand = getStand(plan.point.x, plan.point.y);
-			SpeciesParameters species = growthModel.getGrowthPattern(stand.nlcd);
-			biomass += species.getBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
+			Species species = growthModel.getSpecies(stand.nlcd);
+			biomass += species.getBiomass(stand.arithmeticMeanDiameter, stand.height) * difference * getPixelArea();
 		}
 				
 		// Return the biomass

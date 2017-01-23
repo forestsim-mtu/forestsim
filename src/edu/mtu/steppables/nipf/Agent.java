@@ -3,10 +3,9 @@ package edu.mtu.steppables.nipf;
 import java.awt.Point;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.management.ManagementPlan;
-import edu.mtu.models.Economics;
-import edu.mtu.models.Forest;
-import edu.mtu.models.Stand;
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.Stand;
+import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -26,7 +25,6 @@ public abstract class Agent implements Steppable {
 	protected double harvestOdds;
 	protected double willingnessToJoinVip = 0.1;
 	protected double profitMagin = 0.1;
-	protected ManagementPlan plan;
 		
 	/**
 	 * Have the agent perform operations that are related to the policy being investigated.
@@ -165,11 +163,6 @@ public abstract class Agent implements Steppable {
 	 * Set the profit margin that the agent will want to get when harvesting.
 	 */
 	public void setProfitMargin(double value) { profitMagin = value; }
-	
-	/**
-	 * Set the management plan to be used by the agent.
-	 */
-	public void setManagementPlan(ManagementPlan value) { plan = value; }
 	
 	/**
 	 * Set the land use for the agent's parcel.

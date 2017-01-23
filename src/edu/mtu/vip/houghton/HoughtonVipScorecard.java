@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import edu.mtu.models.Forest;
+import edu.mtu.environment.Forest;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.Harvester;
 import sim.field.geo.GeomGridField;

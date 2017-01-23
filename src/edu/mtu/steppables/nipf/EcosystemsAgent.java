@@ -1,8 +1,8 @@
 package edu.mtu.steppables.nipf;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.models.Economics;
 import edu.mtu.steppables.Harvester;
+import edu.mtu.vip.houghton.Economics;
 import edu.mtu.vip.houghton.VIP;
 
 @SuppressWarnings("serial")
