@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.14" icons="true">  
+  <object id="1" language="java" name="sim.engine.SimState" project="ForstSim" file="/ForstSim/lib/Mason.jar" 
+    binary="true" label="simState" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="474" y="0"/>    
+    <execution id="2">      
+      <position height="611" width="83" x="5" y="84"/>    
+    </execution>  
+  </object>  
+  <object id="5" language="java" name="edu.mtu.simulation.ForestSim" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/simulation/ForestSim.java" binary="false" label="forestSim" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="174" y="0"/>    
+    <execution id="4">      
+      <position height="569" width="94" x="92" y="105"/>    
+    </execution>    
+    <execution id="7">      
+      <position height="21" width="94" x="92" y="140"/>    
+    </execution>    
+    <execution id="9">      
+      <position height="21" width="94" x="92" y="204"/>    
+    </execution>    
+    <execution id="11">      
+      <position height="21" width="7" x="136" y="276"/>    
+    </execution>    
+    <execution id="21">      
+      <position height="21" width="94" x="92" y="550"/>    
+    </execution>    
+    <execution id="15">      
+      <position height="21" width="7" x="136" y="389"/>    
+    </execution>  
+  </object>  
+  <object id="26" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/environment/GrowthModel.java" binary="false" label="growthModel" type="interface" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="413" y="0"/>    
+    <execution id="13">      
+      <position height="21" width="115" x="304" y="315"/>    
+    </execution>  
+  </object>  
+  <object id="27" language="java" name="edu.mtu.steppables.marketplace.AggregateHarvester" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/AggregateHarvester.java" binary="false" 
+    label="aggregateHarvester" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="552" y="0"/>    
+    <execution id="17">      
+      <position height="21" width="159" x="309" y="436"/>    
+    </execution>  
+  </object>  
+  <object id="28" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/Environment.java" binary="false" label="environment" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="495" y="0"/>    
+    <execution id="19">      
+      <position height="21" width="110" x="472" y="480"/>    
+    </execution>  
+  </object>  
+  <object id="29" language="java" name="edu.mtu.steppables.AggregationStep" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/AggregationStep.java" binary="false" label="aggregationStep" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="826" y="0"/>    
+    <execution id="23">      
+      <position height="21" width="139" x="586" y="584"/>    
+    </execution>    
+    <execution id="25">      
+      <position height="21" width="139" x="586" y="632"/>    
+    </execution>  
+  </object>  
+  <message id="3" operation="start():void" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="6" operation="importVectorLayers():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </message>  
+  <message id="8" operation="importRasterLayers():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="9"/>  
+  </message>  
+  <message id="10" operation="initialize():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="11"/>  
+  </message>  
+  <message id="12" operation="calculateInitialStands():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="13"/>  
+  </message>  
+  <message id="14" operation="createParcelAgents():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="15"/>  
+  </message>  
+  <message id="16" operation="getInstance():edu.mtu.steppables.marketplace.AggregateHarvester" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="17"/>  
+  </message>  
+  <message id="18" operation="Environment()" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="19"/>  
+  </message>  
+  <message id="20" operation="getScoreCard():edu.mtu.simulation.Scorecard" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="21"/>  
+  </message>  
+  <message id="22" operation="AggregationStep()" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="23"/>  
+  </message>  
+  <message id="24" operation="setScorecard(edu.mtu.simulation.Scorecard):void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="25"/>  
+  </message>
+</sequence-diagram>
