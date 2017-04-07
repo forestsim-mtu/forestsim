@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton;
+package edu.mtu.wup;
 
 import edu.mtu.simulation.ForestSim;
 

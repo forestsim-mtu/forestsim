@@ -1,9 +1,9 @@
-package edu.mtu.vip.houghton.nipf;
+package edu.mtu.wup.nipf;
 
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
-import edu.mtu.vip.houghton.Economics;
-import edu.mtu.vip.houghton.VIP;
+import edu.mtu.wup.Economics;
+import edu.mtu.wup.VIP;
 
 @SuppressWarnings("serial")
 public class EconomicAgent extends NipfAgent {

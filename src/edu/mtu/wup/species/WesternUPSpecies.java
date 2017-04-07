@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton.species;
+package edu.mtu.wup.species;
 
 import edu.mtu.environment.Species;
 

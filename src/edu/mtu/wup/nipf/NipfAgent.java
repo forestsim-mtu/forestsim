@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton.nipf;
+package edu.mtu.wup.nipf;
 
 import java.awt.Point;
 
@@ -6,8 +6,8 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.vip.houghton.Economics;
-import edu.mtu.vip.houghton.VIP;
+import edu.mtu.wup.Economics;
+import edu.mtu.wup.VIP;
 
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {

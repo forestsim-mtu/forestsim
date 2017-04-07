@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton;
+package edu.mtu.wup;
 
 import java.awt.Point;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton;
+package edu.mtu.wup;
 
 import java.io.BufferedWriter;
 import java.io.File;

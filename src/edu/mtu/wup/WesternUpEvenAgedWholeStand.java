@@ -1,4 +1,4 @@
-package edu.mtu.vip.houghton;
+package edu.mtu.wup;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,9 +18,9 @@ import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Species;
 import edu.mtu.environment.Stand;
 import edu.mtu.utilities.Perlin;
-import edu.mtu.vip.houghton.species.AcerRebrum;
-import edu.mtu.vip.houghton.species.PinusStrobus;
-import edu.mtu.vip.houghton.species.WesternUPSpecies;
+import edu.mtu.wup.species.AcerRebrum;
+import edu.mtu.wup.species.PinusStrobus;
+import edu.mtu.wup.species.WesternUPSpecies;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;

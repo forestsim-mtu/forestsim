@@ -1,12 +1,12 @@
-package edu.mtu.vip.houghton;
+package edu.mtu.wup;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.vip.houghton.nipf.EconomicAgent;
-import edu.mtu.vip.houghton.nipf.EcosystemsAgent;
+import edu.mtu.wup.nipf.EconomicAgent;
+import edu.mtu.wup.nipf.EcosystemsAgent;
 
 /**
  * This is an aggregate model of Houghton County in Michigan, USA. 
