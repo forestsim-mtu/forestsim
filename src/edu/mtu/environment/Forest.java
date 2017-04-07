@@ -162,6 +162,22 @@ public class Forest {
 	}
 	
 	/**
+	 * Get the total biomass for the forest.
+	 * 
+	 * @return The total biomass for the forest in green tons.
+	 */
+	public double calculateTotalBiomass() {
+		double biomass = 0;
+		for (int ndx = 0; ndx < landCover.getGridWidth(); ndx++) {
+			for (int ndy = 0; ndy < landCover.getGridHeight(); ndy++) {
+				// Only calculate biomass in locations with trees
+				biomass += (treeCount.get(ndx, ndy) != 0) ? calculateBiomass(new Point(ndx, ndy)) : 0; 
+			}
+		}
+		return biomass;
+	}
+	
+	/**
 	 * Store the land cover provided and use it to calculate the initial stands
 	 * 
 	 * @param landCover The NLCD land cover information to use for the forest.
