@@ -55,8 +55,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="edu.mtu.wup.HoughtonVipScorecard" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/wup/HoughtonVipScorecard.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="edu.mtu.wup.WupScorecard" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/wup/WupScorecard.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="117" width="175" x="491" y="536"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -91,8 +91,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </interface>  
-  <class id="11" language="java" name="edu.mtu.wup.HoughtonModel" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/wup/HoughtonModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="edu.mtu.wup.WupModel" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/wup/WupModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="459" width="320" x="498" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

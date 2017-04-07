@@ -12,13 +12,10 @@ import edu.mtu.wup.nipf.EcosystemsAgent;
  * This is an aggregate model of Houghton County in Michigan, USA. 
  */
 @SuppressWarnings("serial")
-public class HoughtonModel extends ForestSim {
+public class WupModel extends ForestSim {
 	// Path to default GIS files used in the simulation
-	//private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
-	//private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
-	
-	private static final String defaultCoverFile 		= "shapefiles/Houghton Land Cover/houghtonlandcover.asc";
-	private static final String defaultParcelFile 		= "file:shapefiles/Houghton Parcels/houghton_parcels.shp";
+	private static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
+	private static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
 	private static final String defaultOutputDirectory 	= "out"; 
 	
 	// Based upon yellowbook listings http://www.yellowbook.com/s/logging-companies/surrounding-houghton-county-mi/
@@ -32,7 +29,7 @@ public class HoughtonModel extends ForestSim {
 	 * Constructor.
 	 * @param seed
 	 */
-	public HoughtonModel(long seed) {
+	public WupModel(long seed) {
 		super(seed);
 	}
 	
@@ -121,7 +118,7 @@ public class HoughtonModel extends ForestSim {
 
 	@Override
 	public Scorecard getScoreCard() {
-		return new HoughtonVipScorecard(getOutputDirectory());
+		return new WupScorecard(getOutputDirectory());
 	}
 
 	@Override
