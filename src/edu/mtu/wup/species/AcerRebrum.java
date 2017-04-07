@@ -30,12 +30,12 @@ public class AcerRebrum implements WesternUPSpecies {
 
 	@Override
 	public double getDbhGrowth() {
-		return 76.0;
+		return 0.57;
 	}
 
 	@Override
 	public double getMaximumDbh() {
-		return 38.1;
+		return 76.0;
 	}
 
 	@Override

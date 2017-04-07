@@ -26,12 +26,12 @@ public class PinusStrobus implements WesternUPSpecies {
 
 	@Override
 	public double getDbhGrowth() {
-		return 102.0;
+		return 0.5;
 	}
 
 	@Override
 	public double getMaximumDbh() {
-		return 48.0;
+		return 102.0;
 	}
 
 	@Override
