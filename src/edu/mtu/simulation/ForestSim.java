@@ -246,9 +246,9 @@ public abstract class ForestSim extends SimState {
 		
 		// Inform the model that it should prepare itself
 		initialize();
-		
-		// Create the forest model
+				
 		try {
+			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
 		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
@@ -309,6 +309,7 @@ public abstract class ForestSim extends SimState {
 	 */
 	private void importRasterLayers() {
 		try {
+			coverLayer = new GeomGridField();
 			InputStream inputStream = new FileInputStream(coverFile);
 			ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, coverLayer);
 		} catch (FileNotFoundException e) {
@@ -326,9 +327,9 @@ public abstract class ForestSim extends SimState {
 		// Specify GIS attributes to import with shapefile
 		Bag desiredAttributes = new Bag();
 		desiredAttributes.add("OWNER");
-
-		// Import parcel layer shapefile
+		
 		try {
+			// Import parcel layer shapefile
 			ShapeFileImporter.read(new URL(parcelFile), parcelLayer, desiredAttributes, LandUseGeomWrapper.class);
 		} catch (FileNotFoundException e) {
 			System.out.println("Error opening shapefile:" + e);
