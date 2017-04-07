@@ -23,3 +23,5 @@ Additionally, the following Eclipse plug-ins are recommended for developers:
 - ObjectAid UML Explorer for Eclipse (1.1.11)
 
 # Branches
+
+master is the primary branch for active develompent for the foreseeable future. Use the stable branch for snapshots of the code that have tagged for release. 
