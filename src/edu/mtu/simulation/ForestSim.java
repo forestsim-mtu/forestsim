@@ -310,6 +310,7 @@ public abstract class ForestSim extends SimState {
 	private void importRasterLayers() {
 		try {
 			InputStream inputStream = new FileInputStream(coverFile);
+			coverLayer = new GeomGridField();
 			ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, coverLayer);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -326,9 +327,9 @@ public abstract class ForestSim extends SimState {
 		// Specify GIS attributes to import with shapefile
 		Bag desiredAttributes = new Bag();
 		desiredAttributes.add("OWNER");
-
-		// Import parcel layer shapefile
+		
 		try {
+			// Import parcel layer shapefile
 			ShapeFileImporter.read(new URL(parcelFile), parcelLayer, desiredAttributes, LandUseGeomWrapper.class);
 		} catch (FileNotFoundException e) {
 			System.out.println("Error opening shapefile:" + e);
