@@ -137,7 +137,7 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-				
+					
 	/**
 	 * Return the interval for the economicAgentPercentage
 	 */
@@ -302,6 +302,11 @@ public abstract class ForestSim extends SimState {
 	 */
 	public void finish() {
 		super.finish();
+		
+		Scorecard scorecard = getScoreCard();
+		if (scorecard != null) {
+			scorecard.processFinalization();
+		}
 	}
 	
 	/**
