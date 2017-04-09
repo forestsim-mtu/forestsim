@@ -103,6 +103,11 @@ public abstract class ForestSim extends SimState {
 	public abstract int getHarvestCapacity();
 	
 	/**
+	 * Get the object that exposes the properties that are displayed in the UI.
+	 */
+	public abstract Object getModelProperties();
+	
+	/**
 	 * Get the score card to use for aggregation at the end of each step.
 	 * 
 	 * @return A concrete class that implements the Scorecard interface, or null.
