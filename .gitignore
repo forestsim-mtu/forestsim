@@ -1,6 +1,12 @@
 /bin/
+/analysis/*.png
 /shapefiles/
 /target/
 /.settings/
 /out
+
 .DS_Store
+
+.Rapp.history
+.RData
+.Rhistory

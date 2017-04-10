@@ -10,7 +10,7 @@ public interface Species {
 	 * 
 	 * @param dbh The DBH of the tree in meters.
 	 * @param height The height of the tree in meters.
-	 * @return The total biomass of the tree in kg of dry weight
+	 * @return The total biomass of the tree in green tons (GT)
 	 */
 	double getBiomass(double dbh, double height);
 	

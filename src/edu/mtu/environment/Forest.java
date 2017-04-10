@@ -153,7 +153,7 @@ public class Forest {
 	 * Get the biomass at the given stand.
 	 * 
 	 * @param point The geometric coordinates of the stand.
-	 * @return The current biomass of the stand.
+	 * @return The current biomass of the stand in green tons (GT)
 	 */
 	public double calculateBiomass(Point point) {
 		Stand stand = getStand(point.x, point.y);
@@ -164,7 +164,7 @@ public class Forest {
 	/**
 	 * Get the total biomass for the forest.
 	 * 
-	 * @return The total biomass for the forest in green tons.
+	 * @return The total biomass for the forest in green tons (GT)
 	 */
 	public double calculateTotalBiomass() {
 		double biomass = 0;

@@ -65,6 +65,7 @@ public class AggregateHarvester implements Steppable {
 	 * provided as an example and can be overridden to provide more flexibility.
 	 * 
 	 * @param capacity The total capacity for harvests.
+	 * @return The total biomass harvested in green tons (GT)
 	 */
 	protected double processHarvestRequests(int capacity) {
 		double totalBiomass = 0;
