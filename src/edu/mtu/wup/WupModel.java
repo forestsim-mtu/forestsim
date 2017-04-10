@@ -163,9 +163,17 @@ public class WupModel extends ForestSim {
 	public double getDefaultEconomicAgentPercentage() {
 		return defaultEconomicAgentPercentage;
 	}
+	
+	@Override
+	public Object getModelProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public boolean useAggregateHarvester() {
 		return true;
 	}
+
+
 }

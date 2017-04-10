@@ -23,5 +23,3 @@ Additionally, the following Eclipse plug-ins are recommended for developers:
 - ObjectAid UML Explorer for Eclipse (1.1.11)
 
 # Branches
-## VIP Branch
-The VIP branch is focused on the testing of voluntary incentive programs (VIPs) and testing for sustainable outcomes.

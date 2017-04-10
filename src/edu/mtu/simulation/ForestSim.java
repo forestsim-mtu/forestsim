@@ -103,6 +103,11 @@ public abstract class ForestSim extends SimState {
 	public abstract int getHarvestCapacity();
 	
 	/**
+	 * Get the object that exposes the properties that are displayed in the UI.
+	 */
+	public abstract Object getModelProperties();
+	
+	/**
 	 * Get the score card to use for aggregation at the end of each step.
 	 * 
 	 * @return A concrete class that implements the Scorecard interface, or null.
@@ -137,7 +142,7 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-				
+					
 	/**
 	 * Return the interval for the economicAgentPercentage
 	 */
@@ -246,9 +251,9 @@ public abstract class ForestSim extends SimState {
 		
 		// Inform the model that it should prepare itself
 		initialize();
-		
-		// Create the forest model
+				
 		try {
+			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
 		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
@@ -302,6 +307,11 @@ public abstract class ForestSim extends SimState {
 	 */
 	public void finish() {
 		super.finish();
+		
+		Scorecard scorecard = getScoreCard();
+		if (scorecard != null) {
+			scorecard.processFinalization();
+		}
 	}
 	
 	/**
@@ -309,6 +319,7 @@ public abstract class ForestSim extends SimState {
 	 */
 	private void importRasterLayers() {
 		try {
+			coverLayer = new GeomGridField();
 			InputStream inputStream = new FileInputStream(coverFile);
 			coverLayer = new GeomGridField();
 			ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, coverLayer);

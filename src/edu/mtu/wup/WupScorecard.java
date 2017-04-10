@@ -64,6 +64,12 @@ public class WupScorecard implements Scorecard {
 		}	
 	}
 	
+	@Override
+	public void processFinalization() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/**
 	 * Find the approximate amount of carbon in the woody biomass.
 	 * 

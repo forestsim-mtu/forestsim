@@ -1,8 +1,8 @@
 package edu.mtu.simulation;
 
 /**
- * This interface is called at the end of each simulation step to build out a sustainability score card that
- * is 
+ * This interface is called at the end of each simulation step to build out a score card that is based
+ * upon the model state. 
  */
 public interface Scorecard {
 	/**
@@ -16,4 +16,9 @@ public interface Scorecard {
 	 * a score card. 
 	 */
 	public void processTimeStep();
+	
+	/**
+	 * Called at the end of the simulation, allows for the score card to clean up before shutdown.
+	 */
+	public void processFinalization();
 }

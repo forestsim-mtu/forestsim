@@ -74,7 +74,9 @@ public class ForestSimWithUI extends GUIState {
 	/**
 	 * Get a state object for the UI.
 	 */
-	public Object getSimulationInspectedObject() { return state; }
+	public Object getSimulationInspectedObject() { 
+		return ((ForestSim)state).getModelProperties(); 
+	}
 	
 	public void start() {
 		super.start();
