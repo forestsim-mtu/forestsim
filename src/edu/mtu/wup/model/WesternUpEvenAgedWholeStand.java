@@ -1,4 +1,4 @@
-package edu.mtu.wup;
+package edu.mtu.wup.model;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -173,14 +173,6 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	 */
 	private GeomGridField getLandCover() {
 		return Forest.getInstance().getLandCover();
-	}
-	
-	private GeomGridField getStandDiameter() {
-		return Forest.getInstance().getStandDiameter();
-	}
-	
-	private IntGrid2D getTreeCount() {
-		return Forest.getInstance().getTreeCount();
 	}
 	
 	@Override

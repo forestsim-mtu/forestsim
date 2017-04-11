@@ -1,6 +1,7 @@
 package edu.mtu.wup;
 
 import edu.mtu.simulation.ForestSim;
+import edu.mtu.wup.model.WupModel;
 
 public class ModelNoUi {
 	/**

@@ -1,4 +1,4 @@
-package edu.mtu.wup;
+package edu.mtu.wup.model;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,12 +12,14 @@ import sim.field.geo.GeomGridField;
 import sim.io.geo.ArcInfoASCGridExporter;
 
 public class WupScorecard implements Scorecard {
-	
+
+
 	private final static String biomassFile = "/biomass.csv";
 	private final static String carbonFile = "/carbon.csv";
+	private final static String recreationFile = "/recreation.csv";
 	private final static String stockingFile = "/stocking%1$d.asc";
 	private final static String vipFile = "/vip.csv";
-	
+		
 	private static int step = 0;
 	private static int nextExport = 10;
 	
@@ -66,8 +68,26 @@ public class WupScorecard implements Scorecard {
 	
 	@Override
 	public void processFinalization() {
-		// TODO Auto-generated method stub
-		
+		try {
+			FileWriter writer = new FileWriter(outputDirectory + biomassFile, true);
+			writer.write(System.lineSeparator());
+			writer.close();
+			
+			writer = new FileWriter(outputDirectory + carbonFile, true);
+			writer.write(System.lineSeparator());
+			writer.close();
+			
+			writer = new FileWriter(outputDirectory + recreationFile, true);
+			writer.write(System.lineSeparator());
+			writer.close();
+			
+			writer = new FileWriter(outputDirectory + vipFile, true);
+			writer.write(System.lineSeparator());
+			writer.close();
+		} catch (IOException ex) {
+			System.err.println("Unhandled IOException: " + ex.toString());
+			System.exit(-1);
+		}
 	}
 	
 	/**
@@ -95,10 +115,13 @@ public class WupScorecard implements Scorecard {
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
 		VIP vip = VIP.getInstance();
-		FileWriter writer = new FileWriter(outputDirectory + vipFile, true);
-		writer.write(vip.getSubscriptionRate() + "," + vip.getSubscribedArea() + ",");
-		writer.write(System.lineSeparator());
+		FileWriter writer = new FileWriter(outputDirectory + recreationFile, true);
+		writer.write(vip.getSubscribedArea() + ",");
 		writer.close();
+		
+		writer = new FileWriter(outputDirectory + vipFile, true);
+		writer.write(vip.getSubscriptionRate() + ",");
+		writer.close();	
 	}
 
 	// Environment: Carbon Sequestration
@@ -106,7 +129,7 @@ public class WupScorecard implements Scorecard {
 		double biomass = Forest.getInstance().calculateTotalBiomass();
 		double carbon = carbonInBiomassEstiamte(biomass);
 		FileWriter writer = new FileWriter(outputDirectory + carbonFile, true);
-		writer.write(carbon + "," + System.lineSeparator());
+		writer.write(carbon + ",");
 		writer.close();
 	}
 
@@ -114,7 +137,7 @@ public class WupScorecard implements Scorecard {
 	private void writeHarvestedBiomass() throws IOException {
 		double biomass = AggregateHarvester.getInstance().getBiomass();
 		FileWriter writer = new FileWriter(outputDirectory + biomassFile, true);
-		writer.write(biomass + "," + System.lineSeparator());
+		writer.write(biomass + ",");
 		writer.close();
 	}
 }

@@ -1,4 +1,4 @@
-package edu.mtu.wup;
+package edu.mtu.wup.model;
 
 import java.awt.Point;
 
@@ -17,6 +17,8 @@ public class VIP {
 	private final static double baseMillageRate = 2.5;
 	
 	private Boolean isActive = true;
+	private Boolean isBonusActive = true;
+	
 	private double agglomerationBonus = 0.1;
 	private int mustHarvestBy = 40;
 	private double millageRate = baseMillageRate;
@@ -51,7 +53,12 @@ public class VIP {
 	 * The agglomeration bonus millage rate reduction per 1,000 enrollees.
 	 */
 	public double getAgglomerationBonus() { return agglomerationBonus; }
-	
+		
+	/**
+	 * Returns true if the agglomeration bonus is active, false otherwise.
+	 */
+	public Boolean getIsBonusActive() { return isBonusActive; }
+
 	/**
 	 * Returns true if the VIP is active, false otherwise.
 	 */
@@ -89,7 +96,8 @@ public class VIP {
 	 * Reset the the VIP in preparation for a new run.
 	 */
 	public void reset() {
-		millageRate = baseMillageRate;
+		// If the agglomeration bonus is enabled, cut the base millage rate in half
+		millageRate = (isBonusActive) ? baseMillageRate / 2 : baseMillageRate;
 		subscriptions = 0;
 		acres = 0;
 	}
@@ -103,6 +111,11 @@ public class VIP {
 	 * Set the VIP to true if it is active, false otherwise.
 	 */
 	public void setIsActive(Boolean value) { isActive = value; }
+	
+	/**
+	 * Set to true if the agglomeration bonus is active, false otherwise.
+	 */
+	public void setIsBonusActive(Boolean value) { isBonusActive = value; }
 	
 	/**
 	 * Set the year that a stand must be harvested by.

@@ -1,4 +1,4 @@
-package edu.mtu.wup;
+package edu.mtu.wup.model;
 
 import java.awt.Point;
 import java.util.HashMap;

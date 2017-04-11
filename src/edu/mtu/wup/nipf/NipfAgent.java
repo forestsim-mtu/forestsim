@@ -6,8 +6,8 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.wup.Economics;
-import edu.mtu.wup.VIP;
+import edu.mtu.wup.model.Economics;
+import edu.mtu.wup.model.VIP;
 
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {
