@@ -15,11 +15,11 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.steppables.marketplace.Marketplace;
 import edu.mtu.steppables.AggregationStep;
+import edu.mtu.steppables.BiomassRecordKeeper;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
-import edu.mtu.steppables.marketplace.AggregateHarvester;
-import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -180,7 +180,7 @@ public abstract class ForestSim extends SimState {
 	 * Get amount of biomass harvested.
 	 */
 	public double getAggregateBiomass() {
-		return AggregateHarvester.getInstance().getBiomass();
+		return BiomassRecordKeeper.getInstance().getBiomass();
 	}
 		
 	/**
@@ -271,7 +271,7 @@ public abstract class ForestSim extends SimState {
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
-			AggregateHarvester harvester = AggregateHarvester.getInstance();
+			BiomassRecordKeeper harvester = BiomassRecordKeeper.getInstance();
 			schedule.scheduleOnce(harvester);
 		} else {
 			try {

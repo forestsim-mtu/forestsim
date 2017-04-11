@@ -1,4 +1,4 @@
-package edu.mtu.steppables.marketplace;
+package edu.mtu.steppables;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -9,16 +9,18 @@ import org.apache.commons.math3.util.Precision;
 import edu.mtu.environment.Forest;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.steppables.marketplace.HarvestRequest;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
 /**
- * This agent accepts requests from NIPF agents and harvests their land based upon 
- * various rules.
+ * The record keeper accepts requests from agents to harvest their land. It then 
+ * harvests parcels up to the defined capacity limit after all ParcelAgents, but
+ * before the environment is updated.
  */
 @SuppressWarnings("serial")
-public class AggregateHarvester implements Steppable {
-	private static AggregateHarvester instance = new AggregateHarvester();
+public class BiomassRecordKeeper implements Steppable {
+	private static BiomassRecordKeeper instance = new BiomassRecordKeeper();
 	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
 	
@@ -27,7 +29,7 @@ public class AggregateHarvester implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	private AggregateHarvester() { }
+	private BiomassRecordKeeper() { }
 	
 	/**
 	 * 
@@ -55,7 +57,7 @@ public class AggregateHarvester implements Steppable {
 	/**
 	 * Get an instance of the harvester agent.
 	 */
-	public static AggregateHarvester getInstance() {
+	public static BiomassRecordKeeper getInstance() {
 		return instance;
 	}
 	
@@ -98,17 +100,6 @@ public class AggregateHarvester implements Steppable {
 	 * @param stand The points that are associated with the stand to be harvested.
 	 */
 	public void requestHarvest(ParcelAgent agent, Point[] stand) {
-		requestHarvest(agent, stand, null);
-	}
-	
-	/**
-	 * Allow an agent to request that the forest stand indicated be harvested.
-	 * 
-	 * @param agent The agent that is requesting the harvest.
-	 * @param stand The points that are associated with the stand to be harvested.
-	 * @param deliverTo The BiomassConsumer that the harvested biomass should be delivered to.
-	 */
-	public void requestHarvest(ParcelAgent agent, Point[] stand, BiomassConsumer deliverTo) {
 		// Wrap the data in a request
 		HarvestRequest request = new HarvestRequest();
 		request.agent = agent;
