@@ -8,7 +8,7 @@ public class Parameters {
 	
 	// Based upon a review of Yellowbook listings we know that Houghton has 24, so scale it up for eight counties.
 	private final static int loggingCompanies = 24 * 8;		
-	private int totalLoggingCapablity = loggingCompanies *2;	
+	private int totalLoggingCapablity = loggingCompanies * 2;	
 	
 	public static final double defaultEconomicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 						// Initially 10% of the time, eco-system services agent's will harvest
