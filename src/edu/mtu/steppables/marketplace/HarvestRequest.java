@@ -11,5 +11,5 @@ public class HarvestRequest {
 	public ParcelAgent agent;
 	public Point[] stand;
 	public int queueOrder;
-	public BiomassConsumer deliverTo;
+	public Processor deliverTo;
 }

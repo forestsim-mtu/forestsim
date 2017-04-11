@@ -10,11 +10,7 @@ import sim.engine.Steppable;
  * the biomass to a consumer, but don't care about the underlying object.  
  */
 @SuppressWarnings("serial")
-public abstract class BiomassProducer implements Steppable {
-	/**
-	 * Get the capacity supported by this producer.
-	 */
-	public abstract double getCapacity();
+public abstract class Harvester implements MarketplaceAgent, Steppable {
 		
 	/**
 	 * Perform harvest operations.
@@ -24,11 +20,6 @@ public abstract class BiomassProducer implements Steppable {
 	public abstract void harvest(ForestSim state);
 	
 	/**
-	 * The units of the output for simulation aggregation purposes. 
-	 */
-	public abstract String productionUnits();
-	
-	/**
 	 * Log the indicated harvest request with this producer.
 	 * 
 	 * @param request The request to be logged.
@@ -36,11 +27,10 @@ public abstract class BiomassProducer implements Steppable {
 	public abstract void requestHarvest(HarvestRequest request);
 	
 	/**
-	 * Have the concrete implementation perform the harvest, then restore the agent to the schedule.
+	 * Have the concrete implementation perform the harvest.
 	 */
 	@Override
 	public void step(SimState state) {
 		harvest((ForestSim)state);
-		state.schedule.scheduleOnce(this);
 	}
 }

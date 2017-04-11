@@ -37,9 +37,9 @@
       <position height="21" width="115" x="304" y="315"/>    
     </execution>  
   </object>  
-  <object id="27" language="java" name="edu.mtu.steppables.marketplace.AggregateHarvester" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/marketplace/AggregateHarvester.java" binary="false" 
-    label="aggregateHarvester" type="class" autoSize="true">    
+  <object id="27" language="java" name="edu.mtu.steppables.BiomassRecordKeeper" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/BiomassRecordKeeper.java" binary="false" label="aggregateHarvester" 
+    type="class" autoSize="true">    
     <position height="-1" width="-1" x="552" y="0"/>    
     <execution id="17">      
       <position height="21" width="159" x="309" y="436"/>    
