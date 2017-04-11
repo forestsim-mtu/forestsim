@@ -50,9 +50,9 @@ public abstract class ForestSim extends SimState {
 	private GeomVectorField parcelLayer;
 	
 	// Location of simulation GIS files and their default values
-	private String coverFile = getDefaultCoverFile();
-	private String outputDirectory = getDefaultOutputDirectory();
-	private String parcelFile = getDefaultParcelFile();	
+	private String coverFile;
+	private String outputDirectory;
+	private String parcelFile;	
 		
 	/**
 	 * Create an economic agent for use by the simulation.
@@ -245,6 +245,11 @@ public abstract class ForestSim extends SimState {
 	public void start() {
 		super.start();
 
+		// Hold off on getting these since a user may edit them
+		coverFile = getDefaultCoverFile();
+		outputDirectory = getDefaultOutputDirectory();
+		parcelFile = getDefaultParcelFile();
+		
 		// Import all the GIS layers used in the simulation
 		importVectorLayers();
 		importRasterLayers();
