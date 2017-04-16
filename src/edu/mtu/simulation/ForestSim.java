@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -146,6 +148,8 @@ public abstract class ForestSim extends SimState {
 	 * Get the directory that output files should be written to.
 	 */
 	public String getOutputDirectory() { return outputDirectory; }
+	
+	public List<ParcelAgent> getParcelAgents() { return Arrays.asList(agents); }
 	
 	/**
 	 * Get the parcel layer that is used by the simulation.

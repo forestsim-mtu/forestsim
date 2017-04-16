@@ -1,5 +1,9 @@
 package edu.mtu.simulation;
 
+import java.util.List;
+
+import edu.mtu.steppables.ParcelAgent;
+
 /**
  * This interface is called at the end of each simulation step to build out a score card that is based
  * upon the model state. 
@@ -15,7 +19,7 @@ public interface Scorecard {
 	 * Called at the end of each step, allows for a simulation to collect any information needed to generate
 	 * a score card. 
 	 */
-	public void processTimeStep();
+	public void processTimeStep(List<ParcelAgent> agents);
 	
 	/**
 	 * Called at the end of the simulation, allows for the score card to clean up before shutdown.
