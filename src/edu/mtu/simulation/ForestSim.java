@@ -14,6 +14,7 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
+import edu.mtu.simulation.parameters.ModelParameters;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
@@ -39,10 +40,7 @@ public abstract class ForestSim extends SimState {
 
 	// Array of all agents active in the simulation
 	private ParcelAgent[] agents;
-		
-	// Percentage of economic agents to be created;
-	private double economicAgentPercentage = getDefaultEconomicAgentPercentage();
-	
+			
 	// Geometry representing current land cover at high resolution
 	private GeomGridField coverLayer;
 	
@@ -74,12 +72,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the default path and name of the cover file.
 	 */
 	public abstract String getDefaultCoverFile();
-	
-	/**
-	 * Get the default percentage of economic agents to create. 
-	 */
-	public abstract double getDefaultEconomicAgentPercentage();
-	
+		
 	/**
 	 * Get the default path and name of the output directory.
 	 */
@@ -142,20 +135,6 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-					
-	/**
-	 * Return the interval for the economicAgentPercentage
-	 */
-	public Object domEconomicAgentPercentage() {
-		return new sim.util.Interval(0.0, 1.0);
-	}
-
-	/**
-	 * Return the interval for the ecosystemsAgentHarvestOdds
-	 */
-	public Object domEcosystemsAgentHarvestOdds() {
-		return new sim.util.Interval(0.0, 1.0);
-	}
 	
 	/**
 	 * Return the average NIPF stocking for the model.
@@ -175,14 +154,7 @@ public abstract class ForestSim extends SimState {
 		}
 		return sum / count; 
 	}
-	
-	/**
-	 * Get amount of biomass harvested.
-	 */
-	public double getAggregateBiomass() {
-		return AggregateHarvester.getInstance().getBiomass();
-	}
-		
+			
 	/**
 	 * Get the directory that output files should be written to.
 	 */
@@ -197,13 +169,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the cover file path that is used by the simulation.
 	 */
 	public String getCoverFilePath() { return coverFile; }
-	
-	/**
-	 * Get the target percentage of agents, as a double, that are economic
-	 * optimizers.
-	 */
-	public double getEconomicAgentPercentage() { return economicAgentPercentage; }
-	
+		
 	/**
 	 * Get the parcel file path that is used by the simulation.
 	 */
@@ -218,16 +184,6 @@ public abstract class ForestSim extends SimState {
 	 * Set the cover file path to use for the simulation.
 	 */
 	public void setCoverFilePath(String value) { coverFile = value; }
-	
-	/**
-	 * Set the target percentage of agents, as a double, that are economic
-	 * optimizers.
-	 */
-	public void setEconomicAgentPercentage(double value) {
-		if (value >= 0.0 && value <= 1.0) {
-			economicAgentPercentage = value;
-		}
-	}
 		
 	/**
 	 * Set the path where output files should be stored.
@@ -437,7 +393,7 @@ public abstract class ForestSim extends SimState {
 		agents = new ParcelAgent[parcelGeoms.numObjs];
 		int index = 0;
 		for (Object parcelPolygon : parcelGeoms) {
-			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
+			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, ((ModelParameters)getModelProperties()).getEconomicAgentPercentage());
 			agents[index] = agent;
 			schedule.scheduleRepeating(agent);
 			index++;
