@@ -5,8 +5,9 @@ package edu.mtu.simulation.parameters;
  */
 public class ModelParameters {
 
-	// Percentage of economic agents to be created;
-	private double economicAgentPercentage;
+	private int finalTimeStep;					// Time step that the simulation is allowed to run to
+	private int policyActivationTimeStep;		// Time step at which the policy is introduced
+	private double economicAgentPercentage;		// Percentage of economic agents to be created
 		
 	/**
 	 * Return the interval for the economicAgentPercentage
@@ -30,11 +31,39 @@ public class ModelParameters {
 	}
 	
 	/**
+	 * Get the time step at which the simulation should stop.
+	 */
+	public int getFinalTimeStep() {
+		return finalTimeStep;
+	}
+	
+	/**
+	 * Get the time step at which the policy should be introduced.
+	 */
+	public int policyActiviationStep() {
+		return policyActivationTimeStep;
+	}
+	
+	/**
 	 * Set the target percentage of agents, as a double, that are economic optimizers.
 	 */
 	public void setEconomicAgentPercentage(double value) {
 		if (value >= 0.0 && value <= 1.0) {
 			economicAgentPercentage = value;
 		}
+	}
+	
+	/**
+	 * Set the the time step that the simulation should stop at the end of.
+	 */
+	public void setFinalTimeStep(int value) {
+		finalTimeStep = value;
+	}
+	
+	/**
+	 * Set the time step at which the policy should be introduced.
+	 */
+	public void setPolicyActiviationStep(int value) {
+		policyActivationTimeStep = value;
 	}
 }

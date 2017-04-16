@@ -14,11 +14,12 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
+import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.parameters.ModelParameters;
-import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
@@ -101,6 +102,11 @@ public abstract class ForestSim extends SimState {
 	public abstract Object getModelProperties();
 	
 	/**
+	 * Get the policy that is in place for the simulation.
+	 */
+	public abstract PolicyBase getPolicy();
+	
+	/**
 	 * Get the score card to use for aggregation at the end of each step.
 	 * 
 	 * @return A concrete class that implements the Scorecard interface, or null.
@@ -160,7 +166,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the random number generator that is used by the simulation.
 	 */
 	public MersenneTwisterFast getRandom() { return random; }
-	
+		
 	/**
 	 * Set the cover file path to use for the simulation.
 	 */
@@ -193,7 +199,7 @@ public abstract class ForestSim extends SimState {
 		
 		// Inform the model that it should prepare itself
 		initialize();
-				
+						
 		try {
 			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
