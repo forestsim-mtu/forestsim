@@ -102,7 +102,7 @@ public class ForestSimWithUI extends GUIState {
 //		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
 		
 		// Portray the current stand stocking
-		stockingPortrayal.setField(Forest.getInstance().getStocking().getGrid());
+		stockingPortrayal.setField(Forest.getInstance().getStockingMap().getGrid());
 		stockingPortrayal.setMap(new SimpleColorMap(StockingCondition.getColorMap()));
 		
 		display.reset();

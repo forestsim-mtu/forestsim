@@ -23,6 +23,8 @@ public class AggregateHarvester implements Steppable {
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
 	
 	private double biomass;
+	private int demand;
+	private int harvested;
 	
 	/**
 	 * Constructor.
@@ -52,6 +54,14 @@ public class AggregateHarvester implements Steppable {
 		return Precision.round(biomass / 1000, 2);
 	}
 	
+	public int getDemand() {
+		return demand;
+	}
+	
+	public int getHarvested() {
+		return harvested;
+	}
+	
 	/**
 	 * Get an instance of the harvester agent.
 	 */
@@ -69,7 +79,10 @@ public class AggregateHarvester implements Steppable {
 	 */
 	protected double processHarvestRequests(int capacity) {
 		double totalBiomass = 0;
-		int count = 0;
+		
+		demand = requests.size();
+		harvested = 0;
+		
 		Forest forest = Forest.getInstance();		
 		while (!requests.isEmpty()) {
 			HarvestRequest request = requests.remove(0);
@@ -83,8 +96,8 @@ public class AggregateHarvester implements Steppable {
 			
 			// Update the aggregation
 			totalBiomass += biomass;
-			count++;
-			if (count >= capacity) {
+			harvested++;
+			if (harvested >= capacity) {
 				return totalBiomass;
 			}
 		}

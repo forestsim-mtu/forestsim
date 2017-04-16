@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.mtu.measures.ForestMeasures;
 import edu.mtu.utilities.Constants;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
@@ -38,16 +39,16 @@ public class Forest {
 	private Forest() { }
 	
 	/**
-	 * Get the height of the forest geometry.
+	 * Get the height of the forest geometry (i.e., the map).
 	 */
-	public int getForestHeight() {
+	public int getMapHeight() {
 		return getLandCover().getGrid().getHeight();
 	}
 	
 	/**
-	 * Get the width of the forest geometry.
+	 * Get the width of the forest geometry (i.e., the map).
 	 */
-	public int getForestWidth() {		
+	public int getMapWidth() {		
 		return getLandCover().getGrid().getWidth();
 	}
 	
@@ -89,28 +90,28 @@ public class Forest {
 	/**
 	 * Get the stand DBH for the NLCD pixels in the forest.
 	 */
-	public GeomGridField getStandDbh() { 
+	public GeomGridField getStandDbhMap() { 
 		return standDiameter; 
 	}
 	
 	/**
 	 * Get the geometry that contains the stand diameter.
 	 */
-	public GeomGridField getStandDiameter() {
+	public GeomGridField getStandDiameterMap() {
 		return standDiameter;
 	}
 
 	/**
 	 * Get the stocking for the entire map.
 	 */
-	public GeomGridField getStocking() {
+	public GeomGridField getStockingMap() {
 		return stocking;
 	}
 
 	/**
 	 * Get the tree count for the forest.
 	 */
-	public IntGrid2D getTreeCount() {
+	public IntGrid2D getTreeCountMap() {
 		return treeCount;
 	}
 	
@@ -126,57 +127,31 @@ public class Forest {
 	/**
 	 * Set the age matrix for the forest stands.
 	 */
-	public void setStandAge(IntGrid2D value) { this.standAge = value; } 
+	public void setStandAgeMap(IntGrid2D value) { 
+		standAge = value; 
+	} 
 	
 	/**
 	 * Set the stand diameter for the forest.
 	 */
-	public void setStandDiameter(GeomGridField standDiameter) {
-		this.standDiameter = standDiameter;
+	public void setStandDiameterMap(GeomGridField value) {
+		standDiameter = value;
 	}
 	
 	/**
 	 * Set the stocking for the forest.
 	 */
-	public void setStocking(GeomGridField stocking) {
-		this.stocking = stocking;
+	public void setStockingMap(GeomGridField value) {
+		stocking = value;
 	}
 	
 	/**
 	 * Set the tree count for the forest.
 	 */
-	public void setTreeCount(IntGrid2D treeCount) {
-		this.treeCount = treeCount;
+	public void setTreeCountMap(IntGrid2D value) {
+		treeCount = value;
 	}
-	
-	/**
-	 * Get the biomass at the given stand.
-	 * 
-	 * @param point The geometric coordinates of the stand.
-	 * @return The current biomass of the stand in green tons (GT)
-	 */
-	public double calculateBiomass(Point point) {
-		Stand stand = getStand(point.x, point.y);
-		Species species = growthModel.getSpecies(stand.nlcd);
-		return species.getBiomass(stand.arithmeticMeanDiameter, stand.height) * stand.numberOfTrees;
-	}
-	
-	/**
-	 * Get the total biomass for the forest.
-	 * 
-	 * @return The total biomass for the forest in green tons (GT)
-	 */
-	public double calculateTotalBiomass() {
-		double biomass = 0;
-		for (int ndx = 0; ndx < landCover.getGridWidth(); ndx++) {
-			for (int ndy = 0; ndy < landCover.getGridHeight(); ndy++) {
-				// Only calculate biomass in locations with trees
-				biomass += (treeCount.get(ndx, ndy) != 0) ? calculateBiomass(new Point(ndx, ndy)) : 0; 
-			}
-		}
-		return biomass;
-	}
-	
+		
 	/**
 	 * Store the land cover provided and use it to calculate the initial stands
 	 * 
@@ -201,11 +176,11 @@ public class Forest {
 		growthModel.calculateInitialStands();
 				
 		// Prepare the stocking layer
-		GeomGridField stocking = new GeomGridField(new IntGrid2D(getForestWidth(), getForestHeight(), 0));
+		GeomGridField stocking = new GeomGridField(new IntGrid2D(getMapWidth(), getMapHeight(), 0));
 		stocking.setPixelHeight(landCover.getPixelHeight());
 		stocking.setPixelWidth(landCover.getPixelWidth());
 		stocking.setMBR(landCover.getMBR());
-		Forest.getInstance().setStocking(stocking);
+		Forest.getInstance().setStockingMap(stocking);
 				
 		// Prepare the threads and update the stocking
 		prepareThreads();
@@ -225,9 +200,9 @@ public class Forest {
 			return 0.0;
 		}
 					
-		// Get the basal average basal area per tree
+		// Get the average basal area per tree
 		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-		double basalArea = getBasalArea(dbh);
+		double basalArea = ForestMeasures.calculateBasalArea(dbh);
 		
 		// Get the number of trees per acre, by pixel 
 		int count = treeCount.get(point.x, point.y);
@@ -250,17 +225,7 @@ public class Forest {
 		// Use the largest value for the return
 		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
 	}
-			
-	/**
-	 * Return the basal area per tree in square meters
-	 * 
-	 * @param dbh The diameter at breast height (DBH) in centimeters.
-	 * @return The basal area per tree in square meters.
-	 */
-	public static double getBasalArea(double dbh) {
-		return 0.00007854 * Math.pow(dbh, 2);
-	}
-		
+					
 	/**
 	 * Get the area, in meters, of the pixels in the model.
 	 */
@@ -277,21 +242,7 @@ public class Forest {
 		double area = landCover.getPixelHeight() * landCover.getPixelWidth();
 		return area / Constants.acreInSquareMeters;
 	}
-			
-	/**
-	 * Calculate the biomass in the given stand.
-	 * 
-	 * @param stands The pixels that make up the stand.
-	 * @return The estimated biomass for the stand.
-	 */
-	public double getStandBiomass(Point[] stands) {
-		double biomass = 0;
-		for (Point point : stands) {
-			biomass += calculateBiomass(point);
-		}
-		return biomass;
-	}
-		
+					
 	/**
 	 * Get the DBH of the given stand.
 	 * 
@@ -361,7 +312,7 @@ public class Forest {
 		
 		for (Point point : stands) {
 			// Calculate out the stand biomass
-			biomass += calculateBiomass(point);
+			biomass += ForestMeasures.calculateBiomass(point);
 									
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);

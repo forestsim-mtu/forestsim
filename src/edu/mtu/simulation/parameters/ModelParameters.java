@@ -7,7 +7,7 @@ public class ModelParameters {
 
 	// Percentage of economic agents to be created;
 	private double economicAgentPercentage;
-	
+		
 	/**
 	 * Return the interval for the economicAgentPercentage
 	 */

@@ -135,26 +135,7 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-	
-	/**
-	 * Return the average NIPF stocking for the model.
-	 */
-	public double getAverageNipfStocking() { 
-		if (agents == null) {
-			return 0;
-		}
-		
-		double sum = 0;
-		int count = 0;
-		for (ParcelAgent agent : agents) {
-			for (java.awt.Point point : agent.getParcel()) {
-				sum += Forest.getInstance().calculateStandStocking(point);
-				count++;
-			}
-		}
-		return sum / count; 
-	}
-			
+				
 	/**
 	 * Get the directory that output files should be written to.
 	 */
