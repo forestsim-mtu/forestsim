@@ -61,6 +61,9 @@ analysis <- function (plot, title, ylabel, fancy) {
 }
 
 analysis('biomass', 'Harvested Biomass', 'Green Tons (GT)', T)
-analysis('carbon', 'Carbon Sequestration', expression('Gigatons (GtCO'[2]*')'), F)
+analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Gigatons (GtCO'[2]*')'), F)
+analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Gigatons (GtCO'[2]*')'), F)
+analysis('demand', 'Harvest Demand', 'Owners', F)
+analysis('harvested', 'Harvested Parcels', 'Owners', F)
 analysis('recreation', 'Open Access Forest', 'Forest Area (sq. km.)', T)
 analysis('vip', 'VIP Enrollment', 'Owners', F)

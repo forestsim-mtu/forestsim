@@ -79,8 +79,8 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	@Override
 	public void calculateInitialStands() {
 		// Note the height and width of the grid
-		int height = Forest.getInstance().getForestHeight();
-		int width = Forest.getInstance().getForestWidth();
+		int height = Forest.getInstance().getMapHeight();
+		int width = Forest.getInstance().getMapWidth();
 		
 		// Create a grid with Perlin noise that will act the base of our landscape
 		DoubleGrid2D grid = Perlin.generate(height, width, 8, random);
@@ -124,9 +124,9 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		standDiameter.setMBR(landCover.getMBR());
 				
 		// Pass the updates along to the forest
-		Forest.getInstance().setStandAge(standAge);
-		Forest.getInstance().setTreeCount(treeCount);
-		Forest.getInstance().setStandDiameter(standDiameter);
+		Forest.getInstance().setStandAgeMap(standAge);
+		Forest.getInstance().setTreeCountMap(treeCount);
+		Forest.getInstance().setStandDiameterMap(standDiameter);
 	}
 	
 	/**

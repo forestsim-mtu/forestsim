@@ -14,6 +14,8 @@ public abstract class NipfAgent extends ParcelAgent {
 	private final static double initalMillageRate = 33.1577;			// Based upon the average rate for Houghton county
 	
 	protected boolean vipEnrollee = false;
+	protected int vipAge = 0;
+	
 	protected double harvestOdds;
 	protected double willingnessToJoinVip = 0.1;
 	protected double profitMagin = 0.1;
@@ -55,7 +57,9 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public void setProfitMargin(double value) { profitMagin = value; }
 	
-	
+	/**
+	 * Have the agent investigate if the should harvest or not.
+	 */
 	protected boolean investigateHarvesting() {
 		// Check to see if it is profitable
 		double bid = Economics.getStandValue(getParcel());
@@ -77,7 +81,7 @@ public abstract class NipfAgent extends ParcelAgent {
 		if (!VIP.getInstance().getIsActive()) {
 			return;
 		}
-		
+				
 		// Get the taxes that they expect to pay this year
 		double area = getParcelArea();
 		double currentTaxes = Economics.assessTaxes(area, initalMillageRate);
@@ -91,5 +95,5 @@ public abstract class NipfAgent extends ParcelAgent {
 			VIP.getInstance().enroll(getParcel());
 			vipEnrollee = true;
 		}
-	}		
+	}			
 }

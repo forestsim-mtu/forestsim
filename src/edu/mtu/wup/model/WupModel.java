@@ -2,6 +2,7 @@ package edu.mtu.wup.model;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.GrowthModel;
+import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
@@ -24,9 +25,10 @@ public class WupModel extends ForestSim {
 		super(seed);
 		
 		// Various policy settings
-		parameters.setVipEnabled(false);
-		parameters.setVipBonusEnabled(false);
-		parameters.setOutputDirectory("out/current");
+		parameters.setVipEnabled(true);
+		parameters.setVipBonusEnabled(true);
+		parameters.setLoggingCapacity(1000);
+		parameters.setOutputDirectory("out/vipbonus");
 	}
 	
 	@Override
@@ -81,11 +83,6 @@ public class WupModel extends ForestSim {
 		agent.setHarvestOdds(parameters.getEcosystemsAgentHarvestOdds());
 		return agent;
 	}
-
-	@Override
-	public double getDefaultEconomicAgentPercentage() {
-		return Parameters.defaultEconomicAgentPercentage;
-	}
 	
 	@Override
 	public Object getModelProperties() {
@@ -95,5 +92,10 @@ public class WupModel extends ForestSim {
 	@Override
 	public boolean useAggregateHarvester() {
 		return true;
+	}
+
+	@Override
+	public PolicyBase getPolicy() {
+		return VIP.getInstance();
 	}
 }

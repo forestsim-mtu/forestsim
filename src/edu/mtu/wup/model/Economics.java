@@ -8,6 +8,7 @@ import org.apache.commons.math3.util.Precision;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.environment.StockingCondition;
+import edu.mtu.measures.ForestMeasures;
 
 /**
  * This class provides a means of encapsulating some basic economics for the simulation.
@@ -69,10 +70,10 @@ public class Economics {
 			String key = stand.dominateSpecies.getName();
 			if (volume.containsKey(key)) {
 				double value = volume.get(key);
-				value += forest.calculateBiomass(point);
+				value += ForestMeasures.calculateBiomass(point);
 				volume.put(key, value);
 			} else {
-				volume.put(key, forest.calculateBiomass(point));
+				volume.put(key, ForestMeasures.calculateBiomass(point));
 			}
 		}
 		

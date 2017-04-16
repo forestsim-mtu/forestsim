@@ -1,6 +1,8 @@
 package edu.mtu.wup.model;
 
-public class Parameters {
+import edu.mtu.simulation.parameters.ModelParameters;
+
+public class Parameters extends ModelParameters {
 	// Path to default GIS files used in the simulation
 	public static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
 	public static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
@@ -13,6 +15,13 @@ public class Parameters {
 	public static final double defaultEconomicAgentPercentage = 0.3; 		// Initially 30% of the agents should be economic optimizers
 	private double ecosystemsAgentHarvestOdds = 0.1; 						// Initially 10% of the time, eco-system services agent's will harvest
 
+	/**
+	 * Constructor, set the intial values.
+	 */
+	public Parameters() {
+		setEconomicAgentPercentage(defaultEconomicAgentPercentage);
+	}
+	
 	/**
 	 * Get the agglomeration bonus as mills reduction per 1,000 enrolled.
 	 */
@@ -57,6 +66,13 @@ public class Parameters {
 	 */
 	public Boolean getVipBonusEnabled() {
 		return VIP.getInstance().getIsBonusActive();
+	}
+	
+	/**
+	 * Get the minimum acreage that the VIP permits.
+	 */
+	public int getVipMinimumAcreage() {
+		return VIP.getInstance().getMinimumAcerage();
 	}
 	
 	/**
@@ -120,5 +136,12 @@ public class Parameters {
 	 */
 	public void setVipEnabled(Boolean value) { 
 		VIP.getInstance().setIsActive(value);
+	}
+	
+	/**
+	 * Set the minimum acreage needed to join the VIP.
+	 */
+	public void setVipMinimumAcerage(int value) {
+		VIP.getInstance().setMinimumAcerage(value);
 	}
 }

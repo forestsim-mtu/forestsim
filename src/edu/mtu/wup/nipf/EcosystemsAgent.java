@@ -17,9 +17,18 @@ public class EcosystemsAgent extends NipfAgent {
 
 	@Override
 	protected void doPolicyOperation() {
-		// Return if they are already a member
-		if (vipEnrollee) {
-			return;
+		// If they are a VIP enrollee, see if they need to renew or not
+		if (vipEnrollee && (vipAge % VIP.getInstance().getContractDuration()) == 0) {
+			
+			// Stay enrolled if the tax penalty would be incurred.
+			if (getAverageStandAge() > 35) {
+				return;
+			}
+			
+			// Once in the NIPFO will likley stay
+			if (getRandom().nextDouble() < willingnessToJoinVip) {
+				VIP.getInstance().unenroll(getParcel());
+			}
 		}
 
 		// Is the agent open to harvesting?
