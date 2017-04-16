@@ -2,7 +2,7 @@ package edu.mtu.steppables;
 
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
-import edu.mtu.simulation.parameters.ModelParameters;
+import edu.mtu.simulation.parameters.ParameterBase;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -18,18 +18,20 @@ public class AggregationStep implements Steppable {
 	@Override
 	public void step(SimState state) {
 		// Introduce the policy if it is time
-		ForestSim forestSim = (ForestSim)state;
-		if (((ModelParameters)forestSim.getModelProperties()).policyActiviationStep() <= state.schedule.getSteps()) {
-			forestSim.getPolicy().introduce();
+		long step = state.schedule.getSteps();
+		ParameterBase parameters = ((ForestSim)state).getParameters();
+		
+		if (parameters.policyActiviationStep() <= (step + 1)) {
+			((ForestSim)state).getPolicy().introduce();
 		}
 		
 		// Run the scorecard, if provided
 		if (scorecard != null) {
-			scorecard.processTimeStep(forestSim.getParcelAgents());
+			scorecard.processTimeStep(((ForestSim)state).getParcelAgents());
 		}
 		
 		// Should we end the model?
-		if (state.schedule.getSteps() > 40) {		// TODO Make this configurable
+		if ((step + 1) > parameters.getFinalTimeStep()) {
 			state.finish();
 			return;
 		} 

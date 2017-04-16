@@ -1,9 +1,9 @@
 package edu.mtu.simulation.parameters;
 
 /**
- * Expose various parameters that ForestSim 
+ * Expose various basic parameters that ForestSim uses. 
  */
-public class ModelParameters {
+public class ParameterBase {
 
 	private int finalTimeStep;					// Time step that the simulation is allowed to run to
 	private int policyActivationTimeStep;		// Time step at which the policy is introduced

@@ -17,7 +17,7 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.policy.PolicyBase;
-import edu.mtu.simulation.parameters.ModelParameters;
+import edu.mtu.simulation.parameters.ParameterBase;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
@@ -101,7 +101,7 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Get the object that exposes the properties that are displayed in the UI.
 	 */
-	public abstract Object getModelProperties();
+	public abstract Object getModelParameters();
 	
 	/**
 	 * Get the policy that is in place for the simulation.
@@ -149,7 +149,15 @@ public abstract class ForestSim extends SimState {
 	 */
 	public String getOutputDirectory() { return outputDirectory; }
 	
+	/**
+	 * Get the parcel agents that are in the model.
+	 */
 	public List<ParcelAgent> getParcelAgents() { return Arrays.asList(agents); }
+	
+	/**
+	 * Get the base parameters for the simulation.
+	 */
+	public ParameterBase getParameters() { return (ParameterBase)getModelParameters(); }
 	
 	/**
 	 * Get the parcel layer that is used by the simulation.
@@ -384,7 +392,7 @@ public abstract class ForestSim extends SimState {
 		agents = new ParcelAgent[parcelGeoms.numObjs];
 		int index = 0;
 		for (Object parcelPolygon : parcelGeoms) {
-			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, ((ModelParameters)getModelProperties()).getEconomicAgentPercentage());
+			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
 			agents[index] = agent;
 			schedule.scheduleRepeating(agent);
 			index++;
