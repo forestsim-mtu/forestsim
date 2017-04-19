@@ -1,40 +1,54 @@
 package edu.mtu.wup.nipf;
 
-import java.awt.Point;
+import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.wup.model.Economics;
+import edu.mtu.steppables.marketplace.AggregateHarvester;
+import edu.mtu.wup.model.Harvesting;
 import edu.mtu.wup.model.VIP;
 
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {
-	private final static double initalMillageRate = 33.1577;			// Based upon the average rate for Houghton county
+	private final static double initalMillageRate = 33.1577;	// Based upon the average rate for Houghton county
 	
 	protected boolean vipEnrollee = false;
 	protected int vipAge = 0;
 	
-	protected double harvestOdds;
+	protected double harvestOdds = 0.0;
 	protected double willingnessToJoinVip = 0.1;
+	protected double minimumDbh;
 	protected double profitMagin = 0.1;
+	
+	protected double taxesPaid = 0.0;
+	
+	protected abstract void doAgentPolicyOperation();
 	
 	public NipfAgent(ParcelAgentType type) {
 		super(type);
 	}
 	
-	/**
-	 * Get the average age of all of the stands in the parcel.
-	 */
-	public double getAverageStandAge() {
-		Forest forest = Forest.getInstance();
-		double total = 0;
-		for (Point point : getParcel()) {
-			Stand stand = forest.getStand(point.x, point.y);
-			total += stand.age;
+	@Override
+	public void doHarvestedOperation() {
+		// Just reset the taxes paid on a harvest
+		taxesPaid = 0;
+	}
+	
+	@Override
+	protected void doPolicyOperation() {
+		// Return if there is no VIP
+		if (!VIP.getInstance().getIsActive()) {
+			return;
 		}
-		return total / getParcel().length;
+
+		// Return if the VIP is not introduced
+		if (!VIP.getInstance().isIntroduced()) {
+			return;
+		}
+		
+		doAgentPolicyOperation();
 	}
 	
 	/**
@@ -60,40 +74,44 @@ public abstract class NipfAgent extends ParcelAgent {
 	/**
 	 * Have the agent investigate if the should harvest or not.
 	 */
-	protected boolean investigateHarvesting() {
-		// Check to see if it is profitable
-		double bid = Economics.getStandValue(getParcel());
-		double area = getParcelArea();
-		double currentTaxes = Economics.assessTaxes(area, getMillageRate());
-		
-		// Return true if it is profitable, false otherwise
-		if (bid > currentTaxes * (1 + profitMagin)) {
-			return true;
+	protected void investigateHarvesting() {
+		if (minimumDbh == 0) {
+			throw new IllegalArgumentException("Minimum DBH cannot be zero.");
 		}
-		return false;
-	}
-	
-	/**
-	 * Have the agent investigate the VIP program and join if it reduces their taxes.
-	 */
-	protected void investigateVipProgram() {
-		// If the VIP is not enabled, just return
-		if (!VIP.getInstance().getIsActive()) {
+		
+		// Now determine what sort of DBH we will harvest at
+		double dbh = minimumDbh;
+		if (vipEnrollee) {
+			dbh = VIP.getInstance().getMinimumHarvestingDbh();
+		}
+		
+		// See how much can be harvested at the DBH, this overrides the policy 
+		List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), dbh);
+		double area = stands.size() * Forest.getInstance().getAcresPerPixel();
+		if (area < AggregateHarvester.MinimumHarvestArea) {
 			return;
 		}
-				
-		// Get the taxes that they expect to pay this year
-		double area = getParcelArea();
-		double currentTaxes = Economics.assessTaxes(area, initalMillageRate);
 		
-		// Get the taxes that they would expect to pay if they join the VIP
-		double millage = initalMillageRate - VIP.getInstance().getMillageRateReduction();
-		double expectedTaxes = Economics.assessTaxes(area, millage);
+		// Did we turn a profit compared to our taxes?
+		double value = Harvesting.getHarvestValue(stands);
+		double profit = value - taxesPaid;
 		
-		// Join if VIP saves money
-		if (expectedTaxes < currentTaxes) {
-			VIP.getInstance().enroll(getParcel());
-			vipEnrollee = true;
+		// If we aren't in a VIP keep an eye on the profit margin
+		if (!vipEnrollee) {
+			if (value < taxesPaid * (1 + profitMagin)) { 
+				return;
+			}
 		}
-	}			
+
+		// We can harvest, so enqueue the harvest
+		AggregateHarvester.getInstance().requestHarvest(this, getParcel());
+		
+		// Nobody likes loosing money, if taxes paid exceed the profit from 
+		// harvesting and we are n the VIP, leave it
+		if (vipEnrollee && profit < 0) {
+			VIP.getInstance().unenroll(getParcel());
+			vipEnrollee = false;
+			vipAge = 0;
+		}
+	}		
 }

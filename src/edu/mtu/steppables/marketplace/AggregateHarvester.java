@@ -19,8 +19,9 @@ import sim.engine.Steppable;
 @SuppressWarnings("serial")
 public class AggregateHarvester implements Steppable {
 	private static AggregateHarvester instance = new AggregateHarvester();
-	
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
+	
+	public final static double MinimumHarvestArea = 10.0;		// Minimum area that can be harvested.
 	
 	private double biomass;
 	private int demand;
@@ -48,10 +49,10 @@ public class AggregateHarvester implements Steppable {
 	}
 	
 	/**
-	 * Get the harvested biomass, in metric dry tons
+	 * Get the harvested biomass, in green tons (GT).
 	 */
 	public double getBiomass() {
-		return Precision.round(biomass / 1000, 2);
+		return Precision.round(biomass, 2);
 	}
 	
 	public int getDemand() {
@@ -86,6 +87,7 @@ public class AggregateHarvester implements Steppable {
 		Forest forest = Forest.getInstance();		
 		while (!requests.isEmpty()) {
 			HarvestRequest request = requests.remove(0);
+			request.agent.doHarvestedOperation();
 			
 			// Remove the biomass and deliver it if need be
 			double biomass = forest.harvest(request.stand);

@@ -20,6 +20,11 @@ public abstract class ParcelAgent implements Steppable {
 	private LandUseGeomWrapper landUseWrapper;
 	private MersenneTwisterFast random;
 	private Point[] parcel;
+
+	/**
+	 * Inform the agent that their parcel was harvested.
+	 */
+	public abstract void doHarvestedOperation();
 	
 	/**
 	 * Have the agent perform operations that are related to the policy being investigated.
@@ -62,7 +67,7 @@ public abstract class ParcelAgent implements Steppable {
 	
 	
 	/**
-	 * Get the area, in square meters, of the parcel that the agent owns.
+	 * Get the area, in acres, of the parcel that the agent owns.
 	 */
 	public double getParcelArea() {
 		return parcel.length * Forest.getInstance().getAcresPerPixel();

@@ -38,4 +38,14 @@ public class PinusStrobus implements WesternUPSpecies {
 	public String getDataFile() {
 		return "data/PinusStrobus.csv";
 	}
+	
+	@Override
+	public double getPulpwoodValue() {
+		return 48.45;		// Gwinn Forest MGMT Unit, Q1 2017
+	}
+	
+	@Override
+	public double getSawtimberValue() {
+		return 100.00;		// Gwinn Forest MGMT Unit, Q1 2017
+	}
 }

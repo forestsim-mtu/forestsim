@@ -32,7 +32,8 @@ public class VIP extends PolicyBase {
 	private Boolean isActive = true;
 	private Boolean isBonusActive = true;
 	
-	private int mustHarvestBy = 40;						// When the NIPFO must harvest for biomass
+	private double minimumHarvestDbh = Harvesting.PulpwoodDbh;
+	
 	private int minimumAcerage = baseMinimumAcerage;
 	private int subscriptions = 0;						// Number of subscriptions for the program
 	private double acres = 0;							// Total acres subscribed
@@ -128,8 +129,8 @@ public class VIP extends PolicyBase {
 	/**
 	 * Return the number of years since last harvest that the member must harvest at.
 	 */
-	public int getMustHarvestBy() {
-		return mustHarvestBy;
+	public double getMinimumHarvestingDbh() {
+		return minimumHarvestDbh;
 	}
 	
 	/**
@@ -174,7 +175,7 @@ public class VIP extends PolicyBase {
 	 * Set the year that a stand must be harvested by.
 	 * @param value
 	 */
-	public void setMustHarvestBy(int value) { 
-		mustHarvestBy = value; 
+	public void setMinimumHarvestingDbh(double value) { 
+		minimumHarvestDbh = value; 
 	}
 }

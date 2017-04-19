@@ -72,6 +72,13 @@ public class Forest {
 	public GeomGridField getLandCover() { 
 		return landCover; 
 	}
+	
+	/**
+	 * Get the stand that is in the forest at the given point.
+	 */
+	public Stand getStand(Point point) {
+		return getStand(point.x, point.y);
+	}
 
 	/**
 	 * Get the stand that is in the forest at the geometric x, y coordinate.
@@ -305,7 +312,7 @@ public class Forest {
 	/**
 	 * Harvest the forest stand and return the biomass.
 	 * 
-	 * @return The biomass harvested from the stand.
+	 * @return The biomass harvested from the stand in green tons (GT).
 	 */
 	public double harvest(Point[] stands) {
 		double biomass = 0;

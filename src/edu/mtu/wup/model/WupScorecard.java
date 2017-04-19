@@ -1,14 +1,19 @@
 package edu.mtu.wup.model;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import edu.mtu.environment.Forest;
 import edu.mtu.measures.ForestMeasures;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
+import edu.mtu.utilities.Constants;
+import sim.field.geo.GeomGridField;
+import sim.io.geo.ArcInfoASCGridExporter;
 
 public class WupScorecard implements Scorecard {
 
@@ -56,16 +61,16 @@ public class WupScorecard implements Scorecard {
 		File directory = new File(outputDirectory);
 		directory.mkdirs();
 			
-//		try {				
-//			// Store the initial stocking
-//			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
-//			GeomGridField stocking = Forest.getInstance().getStockingMap();
-//			ArcInfoASCGridExporter.write(stocking, output);
-//			output.close();		
-//		} catch (IOException ex) {
-//			System.err.println("Unhandled IOException: " + ex.toString());
-//			System.exit(-1);
-//		}	
+		try {				
+			// Store the initial stocking
+			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
+			GeomGridField stocking = Forest.getInstance().getStockingMap();
+			ArcInfoASCGridExporter.write(stocking, output);
+			output.close();		
+		} catch (IOException ex) {
+			System.err.println("Unhandled IOException: " + ex.toString());
+			System.exit(-1);
+		}	
 	}
 	
 	@Override
@@ -101,17 +106,27 @@ public class WupScorecard implements Scorecard {
 	private double carbonInBiomassEstiamte(double biomass) {
 		// Use the approximation given by (Magnussen & Reed, 2015) 
 		// 62% moisture content is a rough approximation from (Wenger 1984)
-		return (0.475 * (biomass * 0.62)) / 1000000000;		
+		return (0.475 * greenTonToBoneDryTon(biomass, 0.62)) / Constants.MetricTonToGigaTon; 
+	}
+	
+	/**
+	 * Convert from green tons to bone dry tons on the basis of the moisture provided.
+	 * @param biomass in green tons (GT).
+	 * @param moisture as a number, ex. 0.50.
+	 * @return Biomass in bone dry tons (BDT).
+	 */
+	private double greenTonToBoneDryTon(double biomass, double moisture) {
+		return biomass * (1 - moisture);
 	}
 	
 	// Society: Aesthetics, Environment: Habitat Connectivity
 	private void writeRasterFiles() throws IOException {
 		// TODO Most likely for this we need to know DBH as well as stocking
 		
-//		GeomGridField stocking = Forest.getInstance().getStockingMap();
-//		BufferedWriter output = new BufferedWriter(new FileWriter(String.format(outputDirectory + stockingFile, step)));
-//		ArcInfoASCGridExporter.write(stocking, output);
-//		output.close();
+		GeomGridField stocking = Forest.getInstance().getStockingMap();
+		BufferedWriter output = new BufferedWriter(new FileWriter(String.format(outputDirectory + stockingFile, step)));
+		ArcInfoASCGridExporter.write(stocking, output);
+		output.close();
 	}
 
 	// Society: Recreational Access
@@ -135,6 +150,8 @@ public class WupScorecard implements Scorecard {
 	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvestedBiomass() throws IOException {
 		double biomass = AggregateHarvester.getInstance().getBiomass();
+		// 62% moisture content is a rough approximation from (Wenger 1984)
+		biomass = greenTonToBoneDryTon(biomass, 0.62);
 		appendToCsv(biomassFile, biomass);
 	}
 	

@@ -17,6 +17,7 @@ import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Species;
 import edu.mtu.environment.Stand;
+import edu.mtu.environment.StockingCondition;
 import edu.mtu.utilities.Perlin;
 import edu.mtu.wup.species.AcerRebrum;
 import edu.mtu.wup.species.PinusStrobus;
@@ -220,7 +221,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		
 		// Check the stocking of the stand, if over stocked, thin the number of trees
 		// TODO Determine what the actual ecological constants are to use for this
-		if (stand.stocking > 160) {
+		if (stand.stocking > StockingCondition.Overstocked.getValue()) {
 			// Randomly thin the trees by up to 10%
 			double thinning = random.nextInt(10) / 100.0;
 			stand.numberOfTrees -= stand.numberOfTrees * thinning;

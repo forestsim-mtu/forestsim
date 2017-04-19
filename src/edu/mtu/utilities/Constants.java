@@ -5,9 +5,14 @@ package edu.mtu.utilities;
  */
 public final class Constants {
 	/**
-	 * Size of one acre of land in square meters
+	 * Size of one acre of land in square meters.
 	 */
 	public final static double acreInSquareMeters = 4046.86;
+	
+	/**
+	 * Value to divide by to convert form metric tons to gigatons.
+	 */
+	public final static long MetricTonToGigaTon = 1000000000;
 	
 	/**
 	 * The height of a standard diameter at breast height measurement, in meters.

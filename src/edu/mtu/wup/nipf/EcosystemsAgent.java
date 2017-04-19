@@ -1,8 +1,8 @@
 package edu.mtu.wup.nipf;
 
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Economics;
+import edu.mtu.wup.model.Harvesting;
 import edu.mtu.wup.model.VIP;
 
 @SuppressWarnings("serial")
@@ -13,21 +13,24 @@ public class EcosystemsAgent extends NipfAgent {
 	 */
 	public EcosystemsAgent() {
 		super(ParcelAgentType.ECOSYSTEM);
+		
+		minimumDbh = Harvesting.VeneerDbh;
 	}
 
 	@Override
-	protected void doPolicyOperation() {
+	protected void doAgentPolicyOperation() {
+
 		// If they are a VIP enrollee, see if they need to renew or not
-		if (vipEnrollee && (vipAge % VIP.getInstance().getContractDuration()) == 0) {
-			
-			// Stay enrolled if the tax penalty would be incurred.
-			if (getAverageStandAge() > 35) {
-				return;
-			}
-			
-			// Once in the NIPFO will likley stay
-			if (getRandom().nextDouble() < willingnessToJoinVip) {
-				VIP.getInstance().unenroll(getParcel());
+		if (vipEnrollee) {
+			vipAge++;
+		
+			if (vipAge % VIP.getInstance().getContractDuration() == 0) {
+				// Once in the NIPFO will likely stay
+				if (getRandom().nextDouble() < willingnessToJoinVip) {
+					VIP.getInstance().unenroll(getParcel());
+					vipEnrollee = false;
+					vipAge = 0;
+				}
 			}
 		}
 
@@ -41,27 +44,17 @@ public class EcosystemsAgent extends NipfAgent {
 			return;
 		}
 				
-		// Look into the program, the flag with be updated if they join
-		investigateVipProgram();
+		// We want lower taxes, does the VIP give us that?
+		if (VIP.getInstance().getMillageRateReduction() > 0) {
+			VIP.getInstance().enroll(getParcel());
+			vipEnrollee = true;
+		}
 	}
 
 	@Override
 	protected void doHarvestOperation() {
-		boolean harvesting = false;
-		 
-		if (vipEnrollee && getAverageStandAge() >= VIP.getInstance().getMustHarvestBy()) {
-			// We must harvest if the VIP compels us to
-			harvesting = true;
-		} else if (getRandom().nextDouble() < harvestOdds) {
-			// Agent feels like looking into harvesting
-			if (Economics.minimalHarvestConditions(getParcel())) {
-				harvesting = harvesting || investigateHarvesting();
-			}	
-		}
-			
-		// Queue the request if we are harvesting
-		if (harvesting) {
-			AggregateHarvester.getInstance().requestHarvest(this, getParcel());
-		}	
+		// Note this years taxes
+		taxesPaid = Economics.assessTaxes(getParcelArea(), getMillageRate());
+		investigateHarvesting();
 	}
 }

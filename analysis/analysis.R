@@ -4,6 +4,7 @@ require(ggplot2)
 require(reshape2)
 
 experiments = c('current', 'vip', 'vipbonus')
+timeSteps = 105
 
 colSd <- function (x, na.rm = F) apply(X = x, MARGIN = 2, FUN = sd, na.rm = na.rm)
 
@@ -23,19 +24,20 @@ analysis <- function (plot, title, ylabel, fancy) {
 		path = paste('../out/', experiment, '/', plot, '.csv', sep="")
 		working <- read.csv(path, header=F)
 
-		# Both of these are kind of bad form
+		# This is all kind of bad form
 		# Convert acres to hectares as needed
 		if (plot == "recreation") {
 			working = working / 247.11
 		}
+		
 		# We assume that the number of rows stays the same
 		rows = nrow(working)		
 	
-		data[[experiment]] <- working[, 1:40]
+		data[[experiment]] <- working[, 1:timeSteps]
 	}
 		
 	# Prepare the data farme wit the mean of the data
-	df <- data.frame(Year=1:40,
+	df <- data.frame(Year=1:timeSteps,
 					 'current'=colMeans(data[['current']]),
 					 'vip'=colMeans(data[['vip']]),
 					 'vipbonus'=colMeans(data[['vipbonus']]))
@@ -55,12 +57,16 @@ analysis <- function (plot, title, ylabel, fancy) {
 	if (fancy) {
 		plotted <- plotted + scale_y_continuous(labels = fancy_scientific)
 	}
+	
+	# if (plot == "biomass") {
+		# plotted <- plotted + geom_hline(yintercept = 100000000);
+	# }
 
 	file = paste(plot, '.png', sep="")
 	ggsave(filename = file, plot = plotted)
 }
 
-analysis('biomass', 'Harvested Biomass', 'Green Tons (GT)', T)
+analysis('biomass', 'Harvested Biomass', 'Bone Dry Tons (BDT)', T)
 analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Gigatons (GtCO'[2]*')'), F)
 analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Gigatons (GtCO'[2]*')'), F)
 analysis('demand', 'Harvest Demand', 'Owners', F)

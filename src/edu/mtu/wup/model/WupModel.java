@@ -25,10 +25,14 @@ public class WupModel extends ForestSim {
 		super(seed);
 		
 		// Various policy settings
-		parameters.setVipEnabled(true);
-		parameters.setVipBonusEnabled(true);
+		parameters.setVipEnabled(false);
+		parameters.setVipBonusEnabled(false);
+		parameters.setOutputDirectory("out/current");
+		
+		// Various model settings for all policy approaches
 		parameters.setLoggingCapacity(1000);
-		parameters.setOutputDirectory("out/vipbonus");
+		parameters.setPolicyActiviationStep(5);
+		parameters.setFinalTimeStep(105);
 	}
 	
 	@Override
@@ -85,7 +89,7 @@ public class WupModel extends ForestSim {
 	}
 	
 	@Override
-	public Object getModelProperties() {
+	public Object getModelParameters() {
 		return parameters;
 	}
 

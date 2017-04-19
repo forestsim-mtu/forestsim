@@ -1,8 +1,8 @@
 package edu.mtu.wup.model;
 
-import edu.mtu.simulation.parameters.ModelParameters;
+import edu.mtu.simulation.parameters.ParameterBase;
 
-public class Parameters extends ModelParameters {
+public class Parameters extends ParameterBase {
 	// Path to default GIS files used in the simulation
 	public static final String defaultCoverFile = "shapefiles/WUP Land Cover/WUPLandCover.asc";
 	public static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
@@ -46,8 +46,8 @@ public class Parameters extends ModelParameters {
 	/**
 	 * Get how old the stand may be before it must be harvested.
 	 */
-	public int getMustHarvestBy() { 
-		return VIP.getInstance().getMustHarvestBy();
+	public double getMinimumHarvestingDbh() { 
+		return VIP.getInstance().getMinimumHarvestingDbh();
 	}
 
 	public String getOutputDirectory() {
@@ -113,8 +113,8 @@ public class Parameters extends ModelParameters {
 	/**
 	 * Set how old the stand may be before it must be harvested.
 	 */
-	public void setMustHarvestBy(int value) {
-		VIP.getInstance().setMustHarvestBy(value);
+	public void setMinimumHarvestingDbh(double value) {
+		VIP.getInstance().setMinimumHarvestingDbh(value);
 	}
 	
 	/**

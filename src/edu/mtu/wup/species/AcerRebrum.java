@@ -42,4 +42,14 @@ public class AcerRebrum implements WesternUPSpecies {
 	public String getDataFile() {
 		return "data/AcerRebrum.csv";
 	}
+	
+	@Override
+	public double getPulpwoodValue() {
+		return 37.00;		// Gwinn Forst MGMT Unit, Q1 2017
+	}
+	
+	@Override
+	public  double getSawtimberValue() {
+		return 479.75;		// Baraga Forest MGMT Unit, Q1 2017
+	}
 }
