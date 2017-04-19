@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public abstract class ForestSim extends SimState {
 	private String coverFile;
 	private String outputDirectory;
 	private String parcelFile;	
-		
+			
 	/**
 	 * Create an economic agent for use by the simulation.
 	 * 
@@ -143,7 +144,63 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-				
+	
+	/**
+	 * Get the agents that are neighbors of the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @return Agents that are neighbors of the agent.
+	 */
+	public List<ParcelAgent> getConnectedNeighbors(ParcelAgent agent) {
+		Bag parcels = getConnectedParcels(agent);
+		return prepareNeighbors(parcels);
+	}
+	
+	/**
+	 * Get the agents that are neighbors to the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @param distance The search distance from the agent.
+	 * @return Parcels connected to the agent.
+	 */
+	public List<ParcelAgent> getConnectedNeighbors(ParcelAgent agent, double distance) {
+		Bag parcels = getConnectedParcels(agent, distance);
+		return prepareNeighbors(parcels);
+	}
+	
+	/**
+	 * Convert the bag of parcels to a list of agents
+	 */
+	private List<ParcelAgent> prepareNeighbors(Bag parcels) {
+		List<ParcelAgent> neighbors = new ArrayList<ParcelAgent>();
+		for (Object parcel : parcels) {
+			int index = ((LandUseGeomWrapper)parcel).getIndex();
+			neighbors.add(agents[index]);
+		}
+		return neighbors;
+	}
+	
+	/**
+	 * Get the neighbors that are connected to the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @return Parcels connected to the agent.
+	 */
+	public Bag getConnectedParcels(ParcelAgent agent) {
+		return parcelLayer.getTouchingObjects(agent.getGeometry());
+	}
+	
+	/**
+	 * Get the neighbors that are within the given radius of the agent.
+	 * 
+	 * @param agent The agent to get the neighbors of.
+	 * @param distance The search distance from the agent.
+	 * @return Parcels within the given distance.
+	 */
+	public Bag getConnectedParcels(ParcelAgent agent, double distance) {
+		return parcelLayer.getObjectsWithinDistance(agent.getGeometry(), distance);
+	}
+	
 	/**
 	 * Get the directory that output files should be written to.
 	 */
@@ -275,6 +332,16 @@ public abstract class ForestSim extends SimState {
 	}
 	
 	/**
+	 * Update the global geography with that of the given agent.
+	 * 
+	 * @param agent The agent whose geography has been updated.
+	 */
+	public void updateAgentGeography(ParcelAgent agent) {
+		int index = agent.getGeometry().getIndex();
+		parcelLayer.getGeometries().objs[index] = agent.getGeometry();
+	}
+	
+	/**
 	 * Import the ASCII grid file for NLCD (land cover)
 	 */
 	private void importRasterLayers() {
@@ -387,15 +454,22 @@ public abstract class ForestSim extends SimState {
 	 * Create all of the agents that are used in the model.
 	 */
 	protected void createParcelAgents() {		
-		// Assign one agent to each parcel and then schedule the agent
-		Bag parcelGeoms = parcelLayer.getGeometries();
-		agents = new ParcelAgent[parcelGeoms.numObjs];
-		int index = 0;
-		for (Object parcelPolygon : parcelGeoms) {
-			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
-			agents[index] = agent;
+		Bag geometries = parcelLayer.getGeometries();
+		agents = new ParcelAgent[geometries.numObjs];
+		for (int ndx = 0; ndx < geometries.numObjs; ndx++) {
+			// Create the geometry for the agent and index it
+			LandUseGeomWrapper geometry = (LandUseGeomWrapper)geometries.objs[ndx];
+			geometry.setIndex(ndx);
+			
+			// Create the agent
+			ParcelAgent agent = createAgent(geometry, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
+			
+			// Update the global geometry with the agents updates
+			geometries.objs[ndx] = agent.getGeometry();
+			
+			// Schedule the agent
+			agents[ndx] = agent;
 			schedule.scheduleRepeating(agent);
-			index++;
 		}
 	}
 	

@@ -14,7 +14,7 @@ import edu.mtu.wup.model.VIP;
 public abstract class NipfAgent extends ParcelAgent {
 	private final static double initalMillageRate = 33.1577;	// Based upon the average rate for Houghton county
 	
-	protected boolean vipEnrollee = false;
+	private boolean vipEnrollee = false;
 	protected int vipAge = 0;
 	
 	protected double harvestOdds = 0.0;
@@ -56,10 +56,12 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public double getMillageRate() {
 		if (vipEnrollee) {
-			return initalMillageRate - VIP.getInstance().getMillageRateReduction();
+			return initalMillageRate - VIP.getInstance().getMillageRateReduction(this, state);
 		}
 		return initalMillageRate;
 	}
+	
+	public boolean inVip() { return vipEnrollee; }
 	
 	/**
 	 * Set the odds that the agent will harvest once there is full coverage.
@@ -70,6 +72,22 @@ public abstract class NipfAgent extends ParcelAgent {
 	 * Set the profit margin that the agent will want to get when harvesting.
 	 */
 	public void setProfitMargin(double value) { profitMagin = value; }
+	
+	protected void enrollInVip() {
+		vipEnrollee = true;
+		vipAge = 0;
+		VIP.getInstance().enroll(getParcel());
+		getGeometry().setEnrolledInVip(true);
+		state.updateAgentGeography(this);
+	}
+
+	protected void unenrollInVip() {
+		vipEnrollee = false;
+		vipAge = 0;
+		VIP.getInstance().unenroll(getParcel());
+		getGeometry().setEnrolledInVip(false);
+		state.updateAgentGeography(this);
+	}
 	
 	/**
 	 * Have the agent investigate if the should harvest or not.
@@ -109,9 +127,7 @@ public abstract class NipfAgent extends ParcelAgent {
 		// Nobody likes loosing money, if taxes paid exceed the profit from 
 		// harvesting and we are n the VIP, leave it
 		if (vipEnrollee && profit < 0) {
-			VIP.getInstance().unenroll(getParcel());
-			vipEnrollee = false;
-			vipAge = 0;
+			unenrollInVip();
 		}
 	}		
 }

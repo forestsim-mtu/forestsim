@@ -44,11 +44,11 @@ public class WupScorecard implements Scorecard {
 			writeRecreationalAccess();
 			
 			// Check the step and export as needed
-			step++;
-			if (step == nextExport) {
-				writeRasterFiles();
-				nextExport += 10;
-			}
+//			step++;
+//			if (step == nextExport) {
+//				writeRasterFiles();
+//				nextExport += 10;
+//			}
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -61,16 +61,16 @@ public class WupScorecard implements Scorecard {
 		File directory = new File(outputDirectory);
 		directory.mkdirs();
 			
-		try {				
-			// Store the initial stocking
-			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
-			GeomGridField stocking = Forest.getInstance().getStockingMap();
-			ArcInfoASCGridExporter.write(stocking, output);
-			output.close();		
-		} catch (IOException ex) {
-			System.err.println("Unhandled IOException: " + ex.toString());
-			System.exit(-1);
-		}	
+//		try {				
+//			// Store the initial stocking
+//			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
+//			GeomGridField stocking = Forest.getInstance().getStockingMap();
+//			ArcInfoASCGridExporter.write(stocking, output);
+//			output.close();		
+//		} catch (IOException ex) {
+//			System.err.println("Unhandled IOException: " + ex.toString());
+//			System.exit(-1);
+//		}	
 	}
 	
 	@Override

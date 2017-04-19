@@ -25,9 +25,9 @@ public class WupModel extends ForestSim {
 		super(seed);
 		
 		// Various policy settings
-		parameters.setVipEnabled(false);
-		parameters.setVipBonusEnabled(false);
-		parameters.setOutputDirectory("out/current");
+		parameters.setVipEnabled(true);
+		parameters.setVipBonusEnabled(true);
+		parameters.setOutputDirectory("out/agglomeration");
 		
 		// Various model settings for all policy approaches
 		parameters.setLoggingCapacity(1000);

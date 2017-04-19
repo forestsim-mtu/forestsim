@@ -23,7 +23,7 @@ public class Parameters extends ParameterBase {
 	}
 	
 	/**
-	 * Get the agglomeration bonus as mills reduction per 1,000 enrolled.
+	 * Get the agglomeration bonus as mills reduction for 100% enrolled.
 	 */
 	public double getAgglomerationBonus() { 
 		return VIP.getInstance().getAgglomerationBonus(); 
@@ -91,7 +91,7 @@ public class Parameters extends ParameterBase {
 	}
 
 	/**
-	 * Set the agglomeration bonus as mills reduction per 1,000 enrolled.
+	 * Set the agglomeration bonus as mills reduction for 100% enrolled.
 	 */
 	public void setAgglomerationBonus(double value) { 
 		VIP.getInstance().setAgglomerationBonus(value); 

@@ -20,18 +20,17 @@ public class EconomicAgent extends NipfAgent {
 	@Override
 	protected void doAgentPolicyOperation() {
 		// Return if they are already a member
-		if (vipEnrollee) {
+		if (inVip()) {
 			return;
 		}			
 				
 		// Compare the preferred method of harvesting to the programs
 		double millage = getMillageRate();
 		double prefered = projectProfit(minimumDbh, millage);
-		millage -= VIP.getInstance().getMillageRateReduction();
+		millage -= VIP.getInstance().getMillageRateReduction(this, state);
 		double program = projectProfit(VIP.getInstance().getMinimumHarvestingDbh(), millage);
 		if (program > prefered) {
-			VIP.getInstance().enroll(getParcel());
-			vipEnrollee = true;
+			enrollInVip();
 		}
 	}
 	

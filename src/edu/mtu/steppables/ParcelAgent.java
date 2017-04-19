@@ -20,6 +20,8 @@ public abstract class ParcelAgent implements Steppable {
 	private LandUseGeomWrapper landUseWrapper;
 	private MersenneTwisterFast random;
 	private Point[] parcel;
+	
+	protected ForestSim state;
 
 	/**
 	 * Inform the agent that their parcel was harvested.
@@ -44,7 +46,7 @@ public abstract class ParcelAgent implements Steppable {
 		this.landUseWrapper.setAgentType(type);
 		parcel = null;
 	}
-	
+		
 	/**
 	 * Report what type of agent is being represented.
 	 */
@@ -104,6 +106,8 @@ public abstract class ParcelAgent implements Steppable {
 	 * Allow the agent to perform the rules for the given state.
 	 */
 	public void step(SimState state) {
+		this.state = (ForestSim)state;
+		
 		if (((ForestSim)state).getPolicy().isIntroduced()) {
 			doPolicyOperation();
 		}

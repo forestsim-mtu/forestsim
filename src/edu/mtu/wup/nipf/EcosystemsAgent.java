@@ -21,15 +21,13 @@ public class EcosystemsAgent extends NipfAgent {
 	protected void doAgentPolicyOperation() {
 
 		// If they are a VIP enrollee, see if they need to renew or not
-		if (vipEnrollee) {
+		if (inVip()) {
 			vipAge++;
 		
 			if (vipAge % VIP.getInstance().getContractDuration() == 0) {
 				// Once in the NIPFO will likely stay
 				if (getRandom().nextDouble() < willingnessToJoinVip) {
-					VIP.getInstance().unenroll(getParcel());
-					vipEnrollee = false;
-					vipAge = 0;
+					unenrollInVip();
 				}
 			}
 		}
@@ -45,9 +43,8 @@ public class EcosystemsAgent extends NipfAgent {
 		}
 				
 		// We want lower taxes, does the VIP give us that?
-		if (VIP.getInstance().getMillageRateReduction() > 0) {
-			VIP.getInstance().enroll(getParcel());
-			vipEnrollee = true;
+		if (VIP.getInstance().getMillageRateReduction(this, state) > 0) {
+			enrollInVip();
 		}
 	}
 
