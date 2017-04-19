@@ -30,7 +30,7 @@ public class VIP extends PolicyBase {
 	private final static double agglomeationBonusRate = 1;
 	
 	// MI CFP is set at 40 ac, QFP starts at 20 ac but is based upon stocking
-	private final static int baseMinimumAcerage = 10;
+	public final static int baseMinimumAcerage = 20;
 	
 	private final static int contractDuration = 5;
 	
@@ -42,7 +42,7 @@ public class VIP extends PolicyBase {
 	private int minimumAcerage = baseMinimumAcerage;
 	private int subscriptions = 0;									// Number of subscriptions for the program
 	private double acres = 0;										// Total acres subscribed
-	private double agglomerationBonus = baseMillageRate / 2;		// Bonus millage for 100% enrollment
+	private double agglomerationBonus = agglomeationBonusRate;		// Bonus millage for 100% enrollment
 	private double millageRate = baseMillageRate;
 			
 	/**
@@ -104,7 +104,7 @@ public class VIP extends PolicyBase {
 		
 		// If there are none, base bonus
 		if (agents.isEmpty()) {
-			return baseMillageRate;
+			return millageRate;
 		}
 		
 		// Otherwise, count them
@@ -113,7 +113,7 @@ public class VIP extends PolicyBase {
 			enrolled += ((NipfAgent)agent).inVip() ? 1 : 0;
 		}
 				
-		return baseMillageRate + enrolled * agglomeationBonusRate;
+		return millageRate + enrolled * agglomerationBonus;
 	}
 		
 	/**

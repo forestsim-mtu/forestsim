@@ -13,7 +13,7 @@ import edu.mtu.wup.model.VIP;
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {
 	private final static double initalMillageRate = 33.1577;	// Based upon the average rate for Houghton county
-	
+		
 	private boolean vipEnrollee = false;
 	protected int vipAge = 0;
 	
@@ -38,13 +38,18 @@ public abstract class NipfAgent extends ParcelAgent {
 	
 	@Override
 	protected void doPolicyOperation() {
+		VIP vip = VIP.getInstance();
+		if (getParcelArea() < vip.getMinimumAcerage()) {
+			return;
+		}
+		
 		// Return if there is no VIP
-		if (!VIP.getInstance().getIsActive()) {
+		if (!vip.getIsActive()) {
 			return;
 		}
 
 		// Return if the VIP is not introduced
-		if (!VIP.getInstance().isIntroduced()) {
+		if (!vip.isIntroduced()) {
 			return;
 		}
 		

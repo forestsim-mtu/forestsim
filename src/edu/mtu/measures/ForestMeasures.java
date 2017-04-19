@@ -12,6 +12,7 @@ import sim.field.geo.GeomGridField;
 /**
  * This class contains various measures related to the forest itself.
  */
+// TODO Most of the measures in this class can be updated to be much faster.
 public class ForestMeasures {
 		
 	/**
