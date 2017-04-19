@@ -54,7 +54,8 @@ analysis <- function (plot, title, ylabel, fancy) {
 	
 	plotted <- ggplot(df, aes(Year, value)) +
 				geom_line(aes(colour = Series)) +
-				labs(y = ylabel, title = title)
+				labs(y = ylabel, title = title) +
+				theme(legend.position = "bottom", legend.title = element_blank())
 				
 	if (fancy) {
 		plotted <- plotted + scale_y_continuous(labels = fancy_scientific)
