@@ -1,6 +1,9 @@
 package edu.mtu.wup.model;
 
 import edu.mtu.simulation.parameters.ParameterBase;
+import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipAgglomeration;
+import edu.mtu.wup.vip.VipFactory;
 
 public class Parameters extends ParameterBase {
 	// Path to default GIS files used in the simulation
@@ -26,7 +29,8 @@ public class Parameters extends ParameterBase {
 	 * Get the agglomeration bonus as mills reduction for 100% enrolled.
 	 */
 	public double getAgglomerationBonus() { 
-		return VIP.getInstance().getAgglomerationBonus(); 
+		VipAgglomeration vip = (VipAgglomeration)VipFactory.getInstance().getVip();
+		return vip.getAgglomerationBonus(); 
 	}
 
 	/**
@@ -47,7 +51,8 @@ public class Parameters extends ParameterBase {
 	 * Get how old the stand may be before it must be harvested.
 	 */
 	public double getMinimumHarvestingDbh() { 
-		return VIP.getInstance().getMinimumHarvestingDbh();
+		VIP vip = VipFactory.getInstance().getVip();
+		return vip.getMinimumHarvestingDbh();
 	}
 
 	public String getOutputDirectory() {
@@ -58,21 +63,16 @@ public class Parameters extends ParameterBase {
 	 * Get the number of sq.m. enrolled in the VIP program.
 	 */
 	public double getVipArea() {
-		return VIP.getInstance().getSubscribedArea();
-	}
-
-	/**
-	 * Get the flag that indicates if the VIP agglomeration is active or not.
-	 */
-	public Boolean getVipBonusEnabled() {
-		return VIP.getInstance().getIsBonusActive();
+		VIP vip = VipFactory.getInstance().getVip();
+		return vip.getSubscribedArea();
 	}
 	
 	/**
 	 * Get the minimum acreage that the VIP permits.
 	 */
 	public int getVipMinimumAcreage() {
-		return VIP.getInstance().getMinimumAcerage();
+		VIP vip = VipFactory.getInstance().getVip();
+		return vip.getMinimumAcerage();
 	}
 	
 	/**
@@ -80,21 +80,24 @@ public class Parameters extends ParameterBase {
 	 * @return
 	 */
 	public Boolean getVipEnabled() { 
-		return VIP.getInstance().getIsActive();	
+		VIP vip = VipFactory.getInstance().getVip();
+		return vip.getIsActive();	
 	}
 
 	/**
 	 * Get the number of agents enrolled in the VIP program.
 	 */
 	public int getVipMembership() {
-		return VIP.getInstance().getSubscriptionRate();
+		VIP vip = VipFactory.getInstance().getVip();
+		return vip.getSubscriptionRate();
 	}
 
 	/**
 	 * Set the agglomeration bonus as mills reduction for 100% enrolled.
 	 */
 	public void setAgglomerationBonus(double value) { 
-		VIP.getInstance().setAgglomerationBonus(value); 
+		VipAgglomeration vip = (VipAgglomeration)VipFactory.getInstance().getVip();
+		vip.setAgglomerationBonus(value); 
 	}
 
 	/**
@@ -114,7 +117,8 @@ public class Parameters extends ParameterBase {
 	 * Set how old the stand may be before it must be harvested.
 	 */
 	public void setMinimumHarvestingDbh(double value) {
-		VIP.getInstance().setMinimumHarvestingDbh(value);
+		VIP vip = VipFactory.getInstance().getVip();
+		vip.setMinimumHarvestingDbh(value);
 	}
 	
 	/**
@@ -125,23 +129,18 @@ public class Parameters extends ParameterBase {
 	}
 	
 	/**
-	 * Flag to indicate if the VIP bonus should be enabled or not.
-	 */
-	public void setVipBonusEnabled(Boolean value) {
-		VIP.getInstance().setIsBonusActive(value);
-	}
-
-	/**
 	 * Flag to indicate if the VIP should be enabled or not.
 	 */
 	public void setVipEnabled(Boolean value) { 
-		VIP.getInstance().setIsActive(value);
+		VIP vip = VipFactory.getInstance().getVip();
+		vip.setIsActive(value);
 	}
 	
 	/**
 	 * Set the minimum acreage needed to join the VIP.
 	 */
 	public void setVipMinimumAcerage(int value) {
-		VIP.getInstance().setMinimumAcerage(value);
+		VIP vip = VipFactory.getInstance().getVip();
+		vip.setMinimumAcerage(value);
 	}
 }

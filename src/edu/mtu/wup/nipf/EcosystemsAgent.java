@@ -3,7 +3,8 @@ package edu.mtu.wup.nipf;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.wup.model.Economics;
 import edu.mtu.wup.model.Harvesting;
-import edu.mtu.wup.model.VIP;
+import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipFactory;
 
 @SuppressWarnings("serial")
 public class EcosystemsAgent extends NipfAgent {
@@ -20,11 +21,14 @@ public class EcosystemsAgent extends NipfAgent {
 	@Override
 	protected void doAgentPolicyOperation() {
 
+		// Get the VIP to do calculations
+		VIP vip = VipFactory.getInstance().getVip();
+		
 		// If they are a VIP enrollee, see if they need to renew or not
 		if (inVip()) {
 			vipAge++;
 		
-			if (vipAge % VIP.getInstance().getContractDuration() == 0) {
+			if (vipAge % vip.getContractDuration() == 0) {
 				// Once in the NIPFO will likely stay
 				if (getRandom().nextDouble() < willingnessToJoinVip) {
 					unenrollInVip();
@@ -43,7 +47,7 @@ public class EcosystemsAgent extends NipfAgent {
 		}
 				
 		// We want lower taxes, does the VIP give us that?
-		if (VIP.getInstance().getMillageRateReduction(this, state) > 0) {
+		if (vip.getMillageRateReduction(this, state) > 0) {
 			enrollInVip();
 		}
 	}

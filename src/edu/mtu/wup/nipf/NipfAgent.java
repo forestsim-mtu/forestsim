@@ -8,7 +8,8 @@ import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Harvesting;
-import edu.mtu.wup.model.VIP;
+import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipFactory;
 
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {
@@ -38,7 +39,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	
 	@Override
 	protected void doPolicyOperation() {
-		VIP vip = VIP.getInstance();
+		VIP vip = VipFactory.getInstance().getVip();
 		if (getParcelArea() < vip.getMinimumAcerage()) {
 			return;
 		}
@@ -61,7 +62,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public double getMillageRate() {
 		if (vipEnrollee) {
-			return initalMillageRate - VIP.getInstance().getMillageRateReduction(this, state);
+			return initalMillageRate - VipFactory.getInstance().getVip().getMillageRateReduction(this, state);
 		}
 		return initalMillageRate;
 	}
@@ -81,7 +82,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	protected void enrollInVip() {
 		vipEnrollee = true;
 		vipAge = 0;
-		VIP.getInstance().enroll(getParcel());
+		VipFactory.getInstance().getVip().enroll(getParcel());
 		getGeometry().setEnrolledInVip(true);
 		state.updateAgentGeography(this);
 	}
@@ -89,7 +90,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	protected void unenrollInVip() {
 		vipEnrollee = false;
 		vipAge = 0;
-		VIP.getInstance().unenroll(getParcel());
+		VipFactory.getInstance().getVip().unenroll(getParcel());
 		getGeometry().setEnrolledInVip(false);
 		state.updateAgentGeography(this);
 	}
@@ -105,7 +106,7 @@ public abstract class NipfAgent extends ParcelAgent {
 		// Now determine what sort of DBH we will harvest at
 		double dbh = minimumDbh;
 		if (vipEnrollee) {
-			dbh = VIP.getInstance().getMinimumHarvestingDbh();
+			dbh = VipFactory.getInstance().getVip().getMinimumHarvestingDbh();
 		}
 		
 		// See how much can be harvested at the DBH, this overrides the policy 

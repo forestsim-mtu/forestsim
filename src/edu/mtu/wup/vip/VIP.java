@@ -1,13 +1,12 @@
-package edu.mtu.wup.model;
+package edu.mtu.wup.vip;
 
 import java.awt.Point;
-import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.wup.nipf.NipfAgent;
+import edu.mtu.wup.model.Harvesting;
 
 /**
  * This VIP is based in part on the CFP and QFP but is intended to require biomass harvesting
@@ -21,14 +20,11 @@ import edu.mtu.wup.nipf.NipfAgent;
  * 
  * In consideration of this, NIPFOs are given a tax reduction of 10 mills.
  */
-public class VIP extends PolicyBase {
+public abstract class VIP extends PolicyBase {
 
-	private static VIP instance = new VIP();
-	
 	// MI CFP is set at $1.25/ac while the QFP is a 18 mills, this is a compromise value
 	private final static double baseMillageRate = 5;
-	private final static double agglomeationBonusRate = 1;
-	
+		
 	// MI CFP is set at 40 ac, QFP starts at 20 ac but is based upon stocking
 	public final static int baseMinimumAcerage = 20;
 	
@@ -42,13 +38,11 @@ public class VIP extends PolicyBase {
 	private int minimumAcerage = baseMinimumAcerage;
 	private int subscriptions = 0;									// Number of subscriptions for the program
 	private double acres = 0;										// Total acres subscribed
-	private double agglomerationBonus = agglomeationBonusRate;		// Bonus millage for 100% enrollment
-	private double millageRate = baseMillageRate;
-			
-	/**
-	 * Constructor.
-	 */
-	private VIP() { }
+	
+	// TODO Fix this
+	protected double millageRate = baseMillageRate;
+				
+	public abstract double getMillageRateReduction(ParcelAgent enrollee, ForestSim state);
 	
 	/**
 	 * Enroll in the VIP program.
@@ -62,21 +56,7 @@ public class VIP extends PolicyBase {
 		subscriptions--;
 		acres -= (parcel.length * Forest.getInstance().getPixelArea());
 	}
-	
-	/**
-	 * Get an instance of the VIP object.
-	 */
-	public static VIP getInstance() {
-		return instance;
-	}
-	
-	/**
-	 * The agglomeration bonus millage rate reduction for 109% neighbor enrollment.
-	 */
-	public double getAgglomerationBonus() { 
-		return agglomerationBonus; 
-	}
-	
+			
 	public double getContractDuration() {
 		return contractDuration;
 	}
@@ -94,28 +74,7 @@ public class VIP extends PolicyBase {
 	public Boolean getIsActive() { 
 		return isActive; 
 	}
-	
-	/**
-	 * Get the millage rate reduction for joining.
-	 */
-	public double getMillageRateReduction(ParcelAgent enrollee, ForestSim state) {
-		// Get the neighbors
-		List<ParcelAgent> agents = state.getConnectedNeighbors(enrollee);
-		
-		// If there are none, base bonus
-		if (agents.isEmpty()) {
-			return millageRate;
-		}
-		
-		// Otherwise, count them
-		int enrolled = 0;
-		for (ParcelAgent agent : agents) {
-			enrolled += ((NipfAgent)agent).inVip() ? 1 : 0;
-		}
-				
-		return millageRate + enrolled * agglomerationBonus;
-	}
-		
+			
 	/**
 	 * Get the minimum permitted acerage.
 	 */
@@ -153,14 +112,7 @@ public class VIP extends PolicyBase {
 		subscriptions = 0;
 		acres = 0;
 	}
-	
-	/**
-	 * Set the agglomeration bonus millage rate reduction per 100% neighbor enrollment.
-	 */
-	public void setAgglomerationBonus(double value) { 
-		agglomerationBonus = value; 
-	}
-	
+		
 	/**
 	 * Set the VIP to true if it is active, false otherwise.
 	 */
@@ -171,7 +123,7 @@ public class VIP extends PolicyBase {
 	/**
 	 * Set to true if the agglomeration bonus is active, false otherwise.
 	 */
-	public void setIsBonusActive(Boolean value) { 
+	protected void setIsBonusActive(Boolean value) { 
 		isBonusActive = value; 
 	}
 	

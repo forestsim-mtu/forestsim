@@ -9,7 +9,7 @@ import org.apache.commons.math3.util.Precision;
 import edu.mtu.environment.Forest;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.wup.model.VIP;
+import edu.mtu.wup.vip.VIP;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 

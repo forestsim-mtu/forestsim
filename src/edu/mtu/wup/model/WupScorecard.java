@@ -12,6 +12,8 @@ import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.utilities.Constants;
+import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipFactory;
 import sim.field.geo.GeomGridField;
 import sim.io.geo.ArcInfoASCGridExporter;
 
@@ -131,7 +133,7 @@ public class WupScorecard implements Scorecard {
 
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
-		VIP vip = VIP.getInstance();
+		VIP vip = VipFactory.getInstance().getVip();
 		appendToCsv(recreationFile, vip.getSubscribedArea());
 		appendToCsv(vipFile, vip.getSubscriptionRate());
 	}

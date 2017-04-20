@@ -8,6 +8,8 @@ import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
+import edu.mtu.wup.vip.VipFactory;
+import edu.mtu.wup.vip.VipFactory.VipPrograms;
 
 /**
  * This is an aggregate model of the Western Upper Peninsula of Michigan, USA. 
@@ -26,7 +28,7 @@ public class WupModel extends ForestSim {
 		
 		// Various policy settings
 		parameters.setVipEnabled(true);
-		parameters.setVipBonusEnabled(true);
+		VipFactory.getInstance().selectVip(VipPrograms.TaxIncentiveWithAgglomerationBonus);
 		parameters.setOutputDirectory("out/agglomeration");
 		
 		// Various model settings for all policy approaches
@@ -42,7 +44,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public void initialize() {
-		VIP.getInstance().reset();
+		VipFactory.getInstance().getVip().reset();
 	}
 
 	@Override
@@ -100,6 +102,6 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public PolicyBase getPolicy() {
-		return VIP.getInstance();
+		return VipFactory.getInstance().getVip();
 	}
 }
