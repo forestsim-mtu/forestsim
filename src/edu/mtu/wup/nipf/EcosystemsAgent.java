@@ -56,6 +56,11 @@ public class EcosystemsAgent extends NipfAgent {
 	protected void doHarvestOperation() {
 		// Note this years taxes
 		taxesPaid = Economics.assessTaxes(getParcelArea(), getMillageRate());
-		investigateHarvesting();
+		
+		// Should we investigate harvesting?
+		if (inVip() || (getRandom().nextDouble() < harvestOdds)) 
+		{		
+			investigateHarvesting();
+		}
 	}
 }
