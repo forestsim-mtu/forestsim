@@ -3,36 +3,35 @@ package edu.mtu.wup.nipf;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.wup.model.Economics;
 import edu.mtu.wup.model.Harvesting;
-import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 
 @SuppressWarnings("serial")
 public class EcosystemsAgent extends NipfAgent {
+	
+	private double harvestOdds = 0.0;				// Set on initialization
+	private double profitMargin = 1.0;				// Set on initialization
+	private double willingnessToJoinVip = 0.1;		// Default value
 	
 	/**
 	 * Constructor.
 	 */
 	public EcosystemsAgent() {
 		super(ParcelAgentType.ECOSYSTEM);
-		
-		minimumDbh = Harvesting.VeneerDbh;
 	}
 
 	@Override
 	protected void doAgentPolicyOperation() {
 
 		// Get the VIP to do calculations
-		VIP vip = VipFactory.getInstance().getVip();
+		VipBase vip = VipFactory.getInstance().getVip();
 		
 		// If they are a VIP enrollee, see if they need to renew or not
-		if (inVip()) {
-			vipAge++;
-		
-			if (vipAge % vip.getContractDuration() == 0) {
-				// Once in the NIPFO will likely stay
-				if (getRandom().nextDouble() < willingnessToJoinVip) {
-					unenrollInVip();
-				}
+		if (inVip() && vipHarvested) {
+			// Once in the NIPFO will likely stay
+			if (getRandom().nextDouble() < willingnessToJoinVip) {
+				unenrollInVip();
+				return;
 			}
 		}
 
@@ -62,5 +61,23 @@ public class EcosystemsAgent extends NipfAgent {
 		{		
 			investigateHarvesting();
 		}
+	}
+
+	@Override
+	protected double getMinimumDbh() {
+		return Harvesting.VeneerDbh;
+	}
+
+	@Override
+	protected double getProfitMargin() {
+		return profitMargin;
+	}
+	
+	public void setHarvestOdds(double value) {
+		harvestOdds = value;
+	}
+	
+	public void setProfitMargin(double value) {
+		profitMargin = value;
 	}
 }

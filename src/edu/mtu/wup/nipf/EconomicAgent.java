@@ -2,8 +2,9 @@ package edu.mtu.wup.nipf;
 
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.wup.model.Economics;
+import edu.mtu.wup.model.HarvestProjectionDto;
 import edu.mtu.wup.model.Harvesting;
-import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 
 @SuppressWarnings("serial")
@@ -14,8 +15,6 @@ public class EconomicAgent extends NipfAgent {
 	 */
 	public EconomicAgent() {
 		super(ParcelAgentType.ECONOMIC);
-		
-		minimumDbh = Harvesting.SawtimberDbh;
 	}
 		
 	@Override
@@ -26,11 +25,11 @@ public class EconomicAgent extends NipfAgent {
 		}			
 				
 		// Get the VIP to do calculations
-		VIP vip = VipFactory.getInstance().getVip();
+		VipBase vip = VipFactory.getInstance().getVip();
 		
 		// Compare the preferred method of harvesting to the programs
 		double millage = getMillageRate();
-		double prefered = projectProfit(minimumDbh, millage);
+		double prefered = projectProfit(getMinimumDbh(), millage);
 		millage -= vip.getMillageRateReduction(this, state);
 		double program = projectProfit(vip.getMinimumHarvestingDbh(), millage);
 		if (program > prefered) {
@@ -38,9 +37,8 @@ public class EconomicAgent extends NipfAgent {
 		}
 	}
 	
-	@SuppressWarnings("static-access")
 	private double projectProfit(double dbh, double millage) {
-		Harvesting.HarvestProjectionDto dto = Harvesting.estimateTimeToHarvest(getParcel(), dbh);
+		HarvestProjectionDto dto = Harvesting.estimateTimeToHarvest(getParcel(), dbh);
 		double taxes = taxesPaid;
 		taxes += Economics.assessTaxes(getParcelArea(), millage) * dto.years;
 		return dto.value - taxes;
@@ -51,5 +49,15 @@ public class EconomicAgent extends NipfAgent {
 		// Note our taxes since last harvest
 		taxesPaid += Economics.assessTaxes(getParcelArea(), getMillageRate());
 		investigateHarvesting();
+	}
+
+	@Override
+	protected double getMinimumDbh() {
+		return Harvesting.SawtimberDbh;
+	}
+
+	@Override
+	protected double getProfitMargin() {
+		return 0.1;
 	}
 }

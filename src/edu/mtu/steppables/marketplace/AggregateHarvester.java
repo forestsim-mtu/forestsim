@@ -9,7 +9,7 @@ import org.apache.commons.math3.util.Precision;
 import edu.mtu.environment.Forest;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipBase;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -22,7 +22,7 @@ public class AggregateHarvester implements Steppable {
 	private static AggregateHarvester instance = new AggregateHarvester();
 	private List<HarvestRequest> requests = new ArrayList<HarvestRequest>();
 	
-	public final static double MinimumHarvestArea = VIP.baseMinimumAcerage;		// Minimum area that can be harvested.
+	public final static double MinimumHarvestArea = VipBase.baseAcerage;		// Minimum area that can be harvested.
 	
 	private double biomass;
 	private int demand;

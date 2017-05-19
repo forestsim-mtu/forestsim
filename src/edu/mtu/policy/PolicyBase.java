@@ -10,7 +10,7 @@ public abstract class PolicyBase {
 	/**
 	 * Called when the simulation resets to allow the policy to reset itself.
 	 */
-	public abstract void doOnReset();
+	public abstract void doReset();
 	
 	/**
 	 * Called when the policy is introduced into the simulation.
@@ -31,6 +31,6 @@ public abstract class PolicyBase {
 	 */
 	public final void reset() {
 		isIntroduced = false;
-		doOnReset();
+		doReset();
 	}
 }

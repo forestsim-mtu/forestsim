@@ -6,35 +6,10 @@ import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.wup.nipf.NipfAgent;
 
-public class VipAgglomeration extends VIP {
+public class VipAgglomeration extends VipBase {
 	
-	private final static double agglomeationBonusRate = 1;
-	private double agglomerationBonus = agglomeationBonusRate;		// Bonus millage for 100% enrollment
+	private final static int agglomerationBonus = 25;
 	
-	/**
-	 * Constructor.
-	 */
-	public VipAgglomeration() {
-		setIsBonusActive(true);
-	}
-	
-	/**
-	 * The agglomeration bonus millage rate reduction for 109% neighbor enrollment.
-	 */
-	public double getAgglomerationBonus() { 
-		return agglomerationBonus; 
-	}
-	
-	/**
-	 * Set the agglomeration bonus millage rate reduction per 100% neighbor enrollment.
-	 */
-	public void setAgglomerationBonus(double value) { 
-		agglomerationBonus = value; 
-	}
-	
-	/**
-	 * Get the millage rate reduction for joining.
-	 */
 	@Override
 	public double getMillageRateReduction(ParcelAgent enrollee, ForestSim state) {
 		// Get the neighbors
@@ -42,20 +17,20 @@ public class VipAgglomeration extends VIP {
 		
 		// If there are none, base bonus
 		if (agents.isEmpty()) {
-			return millageRate;
+			return baseBonus;
 		}
 		
-		// Otherwise, count them
-		int enrolled = 0;
+		// Return the agglomeration bonus if a neighbor is enrolled, base bonus otherwise
 		for (ParcelAgent agent : agents) {
-			enrolled += ((NipfAgent)agent).inVip() ? 1 : 0;
+			if (((NipfAgent)agent).inVip()) {
+				return agglomerationBonus;
+			}
 		}
-				
-		return millageRate + enrolled * agglomerationBonus;
+		return baseBonus;
 	}
-	
+		
 	@Override
 	public String toString() {
-		return "Tax incentive with agglomeration bonus";
+		return "Agglomeration bonus";
 	}
 }

@@ -8,24 +8,24 @@ import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Harvesting;
-import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.model.parameters.WupParameters;
+import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 
 @SuppressWarnings("serial")
 public abstract class NipfAgent extends ParcelAgent {
-	private final static double initalMillageRate = 33.1577;	// Based upon the average rate for Houghton county
-		
+
+	// VIP attributes
 	private boolean vipEnrollee = false;
-	protected int vipAge = 0;
+	protected boolean vipHarvested = false;
 	
-	protected double harvestOdds = 0.0;
-	protected double willingnessToJoinVip = 0.1;
-	protected double minimumDbh;
-	protected double profitMagin = 0.1;
-	
+	// Harvest profitability attributes	
+	private double profit = 0.0;
 	protected double taxesPaid = 0.0;
-	
+		
 	protected abstract void doAgentPolicyOperation();
+	protected abstract double getMinimumDbh();
+	protected abstract double getProfitMargin();
 	
 	public NipfAgent(ParcelAgentType type) {
 		super(type);
@@ -33,24 +33,34 @@ public abstract class NipfAgent extends ParcelAgent {
 	
 	@Override
 	public void doHarvestedOperation() {
-		// Just reset the taxes paid on a harvest
-		taxesPaid = 0;
+		// Set the flag indicating we harvested since enrolling in the VIP
+		vipHarvested = vipEnrollee;
+		
+		// Nobody likes loosing money, if taxes paid exceed the profit from 
+		// harvesting and we are n the VIP, leave it
+		if (vipEnrollee && profit < 0) {
+			unenrollInVip();
+		}
+		
+		// Reset the taxes
+		taxesPaid = 0;		
 	}
 	
 	@Override
 	protected void doPolicyOperation() {
-		VIP vip = VipFactory.getInstance().getVip();
-		if (getParcelArea() < vip.getMinimumAcerage()) {
+		// Return if there is no policy
+		if (!VipFactory.getInstance().policyExists()) {
 			return;
 		}
 		
-		// Return if there is no VIP
-		if (!vip.getIsActive()) {
+		// Return if the VIP is not introduced
+		VipBase vip = VipFactory.getInstance().getVip();
+		if (!vip.isIntroduced()) {
 			return;
 		}
-
-		// Return if the VIP is not introduced
-		if (!vip.isIntroduced()) {
+		
+		// Return if we don't have enough area
+		if (getParcelArea() < vip.getMinimumAcerage()) {
 			return;
 		}
 		
@@ -62,26 +72,16 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public double getMillageRate() {
 		if (vipEnrollee) {
-			return initalMillageRate - VipFactory.getInstance().getVip().getMillageRateReduction(this, state);
+			return WupParameters.MillageRate - VipFactory.getInstance().getVip().getMillageRateReduction(this, state);
 		}
-		return initalMillageRate;
+		return WupParameters.MillageRate;
 	}
 	
 	public boolean inVip() { return vipEnrollee; }
-	
-	/**
-	 * Set the odds that the agent will harvest once there is full coverage.
-	 */
-	public void setHarvestOdds(double value) { harvestOdds = value; }
-	
-	/**
-	 * Set the profit margin that the agent will want to get when harvesting.
-	 */
-	public void setProfitMargin(double value) { profitMagin = value; }
-	
+		
 	protected void enrollInVip() {
 		vipEnrollee = true;
-		vipAge = 0;
+		vipHarvested = false;
 		VipFactory.getInstance().getVip().enroll(getParcel());
 		getGeometry().setEnrolledInVip(true);
 		state.updateAgentGeography(this);
@@ -89,7 +89,6 @@ public abstract class NipfAgent extends ParcelAgent {
 
 	protected void unenrollInVip() {
 		vipEnrollee = false;
-		vipAge = 0;
 		VipFactory.getInstance().getVip().unenroll(getParcel());
 		getGeometry().setEnrolledInVip(false);
 		state.updateAgentGeography(this);
@@ -99,12 +98,12 @@ public abstract class NipfAgent extends ParcelAgent {
 	 * Have the agent investigate if the should harvest or not.
 	 */
 	protected void investigateHarvesting() {
-		if (minimumDbh == 0) {
+		if (getMinimumDbh() == 0) {
 			throw new IllegalArgumentException("Minimum DBH cannot be zero.");
 		}
 		
 		// Now determine what sort of DBH we will harvest at
-		double dbh = minimumDbh;
+		double dbh = getMinimumDbh();
 		if (vipEnrollee) {
 			dbh = VipFactory.getInstance().getVip().getMinimumHarvestingDbh();
 		}
@@ -118,22 +117,16 @@ public abstract class NipfAgent extends ParcelAgent {
 		
 		// Did we turn a profit compared to our taxes?
 		double value = Harvesting.getHarvestValue(stands);
-		double profit = value - taxesPaid;
+		profit = value - taxesPaid;
 		
 		// If we aren't in a VIP keep an eye on the profit margin
 		if (!vipEnrollee) {
-			if (value < taxesPaid * (1 + profitMagin)) { 
+			if (value < taxesPaid * (1 + getProfitMargin())) { 
 				return;
 			}
 		}
 
 		// We can harvest, so enqueue the harvest
 		AggregateHarvester.getInstance().requestHarvest(this, getParcel());
-		
-		// Nobody likes loosing money, if taxes paid exceed the profit from 
-		// harvesting and we are n the VIP, leave it
-		if (vipEnrollee && profit < 0) {
-			unenrollInVip();
-		}
 	}		
 }

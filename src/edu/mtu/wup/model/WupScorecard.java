@@ -12,7 +12,7 @@ import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.utilities.Constants;
-import edu.mtu.wup.vip.VIP;
+import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 import sim.field.geo.GeomGridField;
 import sim.io.geo.ArcInfoASCGridExporter;
@@ -133,9 +133,9 @@ public class WupScorecard implements Scorecard {
 
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
-		VIP vip = VipFactory.getInstance().getVip();
-		appendToCsv(recreationFile, vip.getSubscribedArea());
-		appendToCsv(vipFile, vip.getSubscriptionRate());
+		VipBase vip = VipFactory.getInstance().getVip();
+		appendToCsv(recreationFile, (vip != null) ? vip.getSubscribedArea() : 0);
+		appendToCsv(vipFile, (vip != null) ? vip.getSubscriptionRate() : 0);
 	}
 
 	// Environment: Carbon Sequestration

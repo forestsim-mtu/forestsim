@@ -4,13 +4,16 @@ public class VipFactory {
 	
 	private static VipFactory instance = new VipFactory();
 	
-	private VIP vip;
+	private boolean policy = false;
+	private VipBase vip = null;
 	
-	public enum VipPrograms {
-		None,
-		TaxIncentive,
-		TaxIncentiveWithGlobalBonus,
-		TaxIncentiveWithAgglomerationBonus
+	/**
+	 * The list of policy regimes that may be selected.
+	 */
+	public enum VipRegime {
+		NONE,
+		DISCOUNT,
+		AGGLOMERATION
 	}
 	
 	/**
@@ -26,23 +29,37 @@ public class VipFactory {
 	/**
 	 * Get the VIP that is currently in place.
 	 */
-	public VIP getVip() {
+	public VipBase getVip() {
 		if (vip == null) {
 			throw new IllegalStateException("Either the current regime (i.e., no VIP) or a VIP needs to be selected.");
 		}
 		return vip;
 	}
 	
-	public void selectVip(VipPrograms program) {
+	/**
+	 * True if a policy exists, false otherwise.
+	 */
+	public boolean policyExists() {
+		return policy;
+	}
+	
+	/**
+	 * Select the VIP for this model.
+	 * 
+	 * @param program The program 
+	 */
+	public void selectVip(VipRegime program) {
 		switch (program) {
-		case None: 
-			vip = new NoVip();
+		case NONE: 
+			policy = false;
+			vip = null;
 			break;
-		case TaxIncentive:
-			throw new IllegalArgumentException(program.toString());
-		case TaxIncentiveWithGlobalBonus:
-			throw new IllegalArgumentException(program.toString());
-		case TaxIncentiveWithAgglomerationBonus:
+		case DISCOUNT:
+			policy = true;
+			vip = new VipDiscount();
+			break;
+		case AGGLOMERATION:
+			policy = true;
 			vip = new VipAgglomeration();
 			break;
 		}

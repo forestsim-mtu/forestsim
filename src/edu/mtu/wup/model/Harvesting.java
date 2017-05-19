@@ -16,12 +16,7 @@ public class Harvesting {
 	public static double ChipNSaw = 25.4;			// cm
 	public static double SawtimberDbh = 35.56;		// cm
 	public static double VeneerDbh = 40.64;			// cm
-	
-	public static class HarvestProjectionDto {
-		public static int years;
-		public static double value;
-	}
-	
+		
 	/**
 	 * 
 	 * @param parcel

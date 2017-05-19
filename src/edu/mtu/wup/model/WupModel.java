@@ -6,10 +6,11 @@ import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.wup.model.parameters.NoneParameters;
+import edu.mtu.wup.model.parameters.WupParameters;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
 import edu.mtu.wup.vip.VipFactory;
-import edu.mtu.wup.vip.VipFactory.VipPrograms;
 
 /**
  * This is an aggregate model of the Western Upper Peninsula of Michigan, USA. 
@@ -17,24 +18,14 @@ import edu.mtu.wup.vip.VipFactory.VipPrograms;
 @SuppressWarnings("serial")
 public class WupModel extends ForestSim {
 
-	private Parameters parameters = new Parameters();
-	
+	private WupParameters parameters = new NoneParameters();
+			
 	/**
 	 * Constructor.
 	 * @param seed
 	 */
 	public WupModel(long seed) {
 		super(seed);
-		
-		// Various policy settings
-		parameters.setVipEnabled(true);
-		VipFactory.getInstance().selectVip(VipPrograms.TaxIncentiveWithAgglomerationBonus);
-		parameters.setOutputDirectory("out/agglomeration");
-		
-		// Various model settings for all policy approaches
-		parameters.setLoggingCapacity(1000);
-		parameters.setPolicyActiviationStep(5);
-		parameters.setFinalTimeStep(105);
 	}
 	
 	@Override
@@ -54,7 +45,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public String getDefaultCoverFile() {
-		return Parameters.defaultCoverFile;
+		return WupParameters.defaultCoverFile;
 	}
 
 	@Override
@@ -64,7 +55,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public String getDefaultParcelFile() {
-		return Parameters.defaultParcelFile;
+		return WupParameters.defaultParcelFile;
 	}
 
 	@Override
@@ -81,12 +72,15 @@ public class WupModel extends ForestSim {
 	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
 		EcosystemsAgent agent = new EcosystemsAgent();
 
-		// Generate a random, normally distributed with a mean of 0.15
+		// Generate a random, normally distributed around the mean
+		double mean = parameters.getEcosystemsAgentProfitMean();
 		double rand = random.nextGaussian();
-		rand = (rand * (0.15 / 3)) + 0.15;
+		rand = (rand * (mean / 3)) + mean;
 		agent.setProfitMargin(rand);
 
+		// Set the harvest odds
 		agent.setHarvestOdds(parameters.getEcosystemsAgentHarvestOdds());
+		
 		return agent;
 	}
 	
