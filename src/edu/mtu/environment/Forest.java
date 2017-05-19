@@ -95,19 +95,23 @@ public class Forest {
 	}
 	
 	/**
+	 * Get the stand age map for the entire map.
+	 */
+	public GeomGridField getStandAgeMap() {
+		GeomGridField map = new GeomGridField(standAge);
+		map.setPixelHeight(landCover.getPixelHeight());
+		map.setPixelWidth(landCover.getPixelWidth());
+		map.setMBR(landCover.getMBR()); 
+		return map;
+	}
+	
+	/**
 	 * Get the stand DBH for the NLCD pixels in the forest.
 	 */
 	public GeomGridField getStandDbhMap() { 
 		return standDiameter; 
 	}
 	
-	/**
-	 * Get the geometry that contains the stand diameter.
-	 */
-	public GeomGridField getStandDiameterMap() {
-		return standDiameter;
-	}
-
 	/**
 	 * Get the stocking for the entire map.
 	 */

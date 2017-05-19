@@ -306,7 +306,7 @@ public abstract class ForestSim extends SimState {
 		// Get the score card and create the aggregation step if one is provided 
 		Scorecard scoreCard = getScoreCard();
 		if (scoreCard != null) {
-			scoreCard.processInitialization();
+			scoreCard.processInitialization(this);
 			AggregationStep aggregation = new AggregationStep();
 			aggregation.setScorecard(getScoreCard());
 			schedule.scheduleOnce(aggregation);
@@ -327,7 +327,7 @@ public abstract class ForestSim extends SimState {
 		
 		Scorecard scorecard = getScoreCard();
 		if (scorecard != null) {
-			scorecard.processFinalization();
+			scorecard.processFinalization(this);
 		}
 	}
 	

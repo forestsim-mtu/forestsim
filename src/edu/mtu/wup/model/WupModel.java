@@ -21,6 +21,8 @@ public class WupModel extends ForestSim {
 	private WupParameters parameters = new NoneParameters();
 	//private WupParameters parameters = new WupDiscount();
 	//private WupParameters parameters = new WupAgglomeration();
+	
+	private WupScorecard scorecard = null;
 			
 	/**
 	 * Constructor.
@@ -28,6 +30,7 @@ public class WupModel extends ForestSim {
 	 */
 	public WupModel(long seed) {
 		super(seed);
+		parameters.setSeed(seed);
 	}
 	
 	@Override
@@ -45,7 +48,10 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public Scorecard getScoreCard() {
-		return new WupScorecard(getOutputDirectory());
+		if (scorecard == null) {
+			scorecard = new WupScorecard(getOutputDirectory()); 
+		}
+		return scorecard;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class AggregationStep implements Steppable {
 		
 		// Run the scorecard, if provided
 		if (scorecard != null) {
-			scorecard.processTimeStep(((ForestSim)state).getParcelAgents());
+			scorecard.processTimeStep(((ForestSim)state));
 		}
 		
 		// Should we end the model?

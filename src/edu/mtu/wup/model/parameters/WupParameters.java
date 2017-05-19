@@ -22,6 +22,7 @@ public abstract class WupParameters extends ParameterBase {
 	private int loggingCapacity = 0;
 	private double ecosystemsNipfoHarvestOdds = 0.0;
 	private double ecosystemsNipfoProfitMean = 0.0;
+	private long seed = 0;
 	private String outputDirectory = null;
 	private VipRegime vip;
 			
@@ -53,7 +54,14 @@ public abstract class WupParameters extends ParameterBase {
 	public String getOutputDirectory() {
 		return outputDirectory;
 	}
-		
+	
+	/**
+	 * Get the random seed for this model.
+	 */
+	public long getSeed() {
+		return seed;
+	}
+	
 	/**
 	 * Get the VIP that is being run.
 	 */
@@ -90,7 +98,14 @@ public abstract class WupParameters extends ParameterBase {
 	public void setOutputDirectory(String value) {
 		outputDirectory = value;
 	}
-			
+
+	/**
+	 * Set the random seed for this model.
+	 */
+	public void setSeed(long value) {
+		this.seed = value;
+	}
+	
 	/**
 	 * Set the VIP to run for the model.
 	 */

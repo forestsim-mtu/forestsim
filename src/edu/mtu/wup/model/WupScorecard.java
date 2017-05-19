@@ -4,10 +4,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.measures.ForestMeasures;
+import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
@@ -16,41 +18,48 @@ import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 import sim.field.geo.GeomGridField;
 import sim.io.geo.ArcInfoASCGridExporter;
+import sim.io.geo.ShapeFileExporter;
 
 public class WupScorecard implements Scorecard {
 
+	private final static String ageFile = "/age%1$d.asc";
 	private final static String biomassFile = "/biomass.csv";
 	private final static String carbonAgentsFile = "/carbonAgents.csv";
 	private final static String carbonGlobalFile = "/carbonGlobal.csv";
+	private final static String dbhFile = "/dbh%1$d.asc";
 	private final static String demandFile = "/demand.csv";
 	private final static String harvestedFile = "/harvested.csv";
+	private final static String nipfoFile = "/nipfo%1$d.shp";
 	private final static String recreationFile = "/recreation.csv";
 	private final static String stockingFile = "/stocking%1$d.asc";
 	private final static String vipFile = "/vip.csv";
-		
+	
+	private final static int captureInterval = 5;
+	
 	private static int step = 0;
-	private static int nextExport = 10;
 	
 	private String outputDirectory;
+	private String filesDirectory;
 	
 	public WupScorecard(String directory) {
 		outputDirectory = directory;
+		Date dt = new Date();
+		filesDirectory = outputDirectory + "/" + dt.getTime();
 	}
 	
 	@Override
-	public void processTimeStep(List<ParcelAgent> agents) {
+	public void processTimeStep(ForestSim state) {
 		try {
-			writeCarbonSequestration(agents);
+			writeCarbonSequestration(state.getParcelAgents());
 			writeHarvestedBiomass();
 			writeHarvesting();
 			writeRecreationalAccess();
 			
 			// Check the step and export as needed
-//			step++;
-//			if (step == nextExport) {
-//				writeRasterFiles();
-//				nextExport += 10;
-//			}
+			step++;
+			if (step % captureInterval == 0) {
+				writeGisFiles(state);
+			}
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -58,25 +67,21 @@ public class WupScorecard implements Scorecard {
 	}
 
 	@Override
-	public void processInitialization() {
+	public void processInitialization(ForestSim state) {
 		// Bootstrap any relevant paths
-		File directory = new File(outputDirectory);
+		File directory = new File(filesDirectory);
 		directory.mkdirs();
 			
-//		try {				
-//			// Store the initial stocking
-//			BufferedWriter output = new BufferedWriter(new FileWriter(outputDirectory + "/stocking0.asc"));
-//			GeomGridField stocking = Forest.getInstance().getStockingMap();
-//			ArcInfoASCGridExporter.write(stocking, output);
-//			output.close();		
-//		} catch (IOException ex) {
-//			System.err.println("Unhandled IOException: " + ex.toString());
-//			System.exit(-1);
-//		}	
+		try {				
+			writeGisFiles(state);
+		} catch (IOException ex) {
+			System.err.println("Unhandled IOException: " + ex.toString());
+			System.exit(-1);
+		}	
 	}
-	
+		
 	@Override
-	public void processFinalization() {
+	public void processFinalization(ForestSim state) {
 		try {
 			String[] files = new String[] { biomassFile, carbonAgentsFile, carbonGlobalFile, recreationFile, vipFile, demandFile, harvestedFile };
 			for (String file : files) {
@@ -84,6 +89,7 @@ public class WupScorecard implements Scorecard {
 				writer.write(System.lineSeparator());
 				writer.close();
 			}
+			writeGisFiles(state);
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -121,14 +127,26 @@ public class WupScorecard implements Scorecard {
 		return biomass * (1 - moisture);
 	}
 	
+	/**
+	 * Store the raster data to disk.
+	 */
+	private void storeRaster(String fileName, GeomGridField grid) throws IOException {
+		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
+		ArcInfoASCGridExporter.write(grid, output);
+		output.close();	
+	}
+	
 	// Society: Aesthetics, Environment: Habitat Connectivity
-	private void writeRasterFiles() throws IOException {
-		// TODO Most likely for this we need to know DBH as well as stocking
+	private void writeGisFiles(ForestSim state) throws IOException {
+		// Store the forest raster files
+		Forest forest = Forest.getInstance();
+		storeRaster(String.format(filesDirectory + ageFile, step), forest.getStandAgeMap());
+		storeRaster(String.format(filesDirectory + dbhFile, step), forest.getStandDbhMap());
+		storeRaster(String.format(filesDirectory + stockingFile, step), forest.getStockingMap());
 		
-		GeomGridField stocking = Forest.getInstance().getStockingMap();
-		BufferedWriter output = new BufferedWriter(new FileWriter(String.format(outputDirectory + stockingFile, step)));
-		ArcInfoASCGridExporter.write(stocking, output);
-		output.close();
+		// Store the agent parcels
+		String fileName = String.format(filesDirectory + nipfoFile, step);
+		ShapeFileExporter.write(fileName, state.getParcelLayer());
 	}
 
 	// Society: Recreational Access
