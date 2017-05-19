@@ -12,7 +12,6 @@ public class Environment implements Steppable {
 	/**
 	 * Update the forest with new growth and aggregate statistics.
 	 */
-	@Override
 	public void step(SimState state) {
 		try {
 			Forest.getInstance().grow();

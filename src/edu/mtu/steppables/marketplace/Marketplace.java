@@ -97,7 +97,6 @@ public class Marketplace implements Steppable {
 		transporters.add(agent);
 	}
 
-	@Override
 	public void step(SimState state) {
 		scheduleMarketplace((ForestSim)state);
 		state.schedule.scheduleOnce(this);

@@ -35,7 +35,6 @@ public abstract class BiomassConsumer implements Steppable {
 	/**
 	 * Have the concrete implementation perform production operations, then restore the agent to the schedule.
 	 */
-	@Override
 	public void step(SimState state) {
 		produce((ForestSim)state);
 		state.schedule.scheduleOnce(this);		

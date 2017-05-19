@@ -351,14 +351,12 @@ public class Forest {
 			final int start = ndx * range;
 			final int end = (ndx < threadCount - 1) ? (ndx + 1) * range : standDiameter.getGridHeight();
 			growthThreads.add(new Callable<Void>() {
-				@Override
 				public Void call() throws Exception {
 					grow(start, end);
 					return null;
 				}	
 			});
 			stockingThreads.add(new Callable<Void>() {
-				@Override
 				public Void call() throws Exception {
 					updateStocking(start, end);
 					return null;

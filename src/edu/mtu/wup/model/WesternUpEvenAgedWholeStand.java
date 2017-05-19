@@ -77,7 +77,6 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		this.random = random;
 	}
 	
-	@Override
 	public void calculateInitialStands() {
 		// Note the height and width of the grid
 		int height = Forest.getInstance().getMapHeight();
@@ -155,7 +154,6 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return result;
 	}
 	
-	@Override
 	public Species getSpecies(int nlcd) {
 		Species reference;
 		if (nlcd == NlcdClassification.MixedForest.getValue()) {
@@ -176,12 +174,10 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return Forest.getInstance().getLandCover();
 	}
 	
-	@Override
 	public List<double[]> getStockingGuide(Species species) {
 		return stockingGuides.get(species);
 	}
 
-	@Override
 	public List<double[]> getStockingGuide(int nlcd) {
 		WesternUPSpecies species;
 				
@@ -197,7 +193,6 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return stockingGuides.get(species);
 	}
 
-	@Override
 	public Stand growStand(Stand stand) {
 		// Prepare the random number generator, if better randomness is needed this is where to start
 		Normal generator = new Normal(0, 0, random);

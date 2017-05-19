@@ -47,7 +47,6 @@ public class WupScorecard implements Scorecard {
 		filesDirectory = outputDirectory + "/" + dt.getTime();
 	}
 	
-	@Override
 	public void processTimeStep(ForestSim state) {
 		try {
 			writeCarbonSequestration(state.getParcelAgents());
@@ -66,7 +65,6 @@ public class WupScorecard implements Scorecard {
 		}
 	}
 
-	@Override
 	public void processInitialization(ForestSim state) {
 		// Bootstrap any relevant paths
 		File directory = new File(filesDirectory);
@@ -80,7 +78,6 @@ public class WupScorecard implements Scorecard {
 		}	
 	}
 		
-	@Override
 	public void processFinalization(ForestSim state) {
 		try {
 			String[] files = new String[] { biomassFile, carbonAgentsFile, carbonGlobalFile, recreationFile, vipFile, demandFile, harvestedFile };

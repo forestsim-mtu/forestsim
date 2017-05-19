@@ -38,7 +38,6 @@ public abstract class BiomassProducer implements Steppable {
 	/**
 	 * Have the concrete implementation perform the harvest, then restore the agent to the schedule.
 	 */
-	@Override
 	public void step(SimState state) {
 		harvest((ForestSim)state);
 		state.schedule.scheduleOnce(this);

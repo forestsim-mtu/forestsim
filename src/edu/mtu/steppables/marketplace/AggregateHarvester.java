@@ -36,7 +36,6 @@ public class AggregateHarvester implements Steppable {
 	/**
 	 * 
 	 */
-	@Override
 	public void step(SimState state) {
 		// Process the requests
 		int capacity = ((ForestSim)state).getHarvestCapacity();

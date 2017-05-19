@@ -16,7 +16,6 @@ public class AggregationStep implements Steppable {
 
 	private Scorecard scorecard = null;
 	
-	@Override
 	public void step(SimState state) {
 		// Introduce the policy if it is time
 		long step = state.schedule.getSteps();
