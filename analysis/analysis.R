@@ -3,7 +3,7 @@
 require(ggplot2)
 require(reshape2)
 
-experiments = c('current', 'vip', 'vipbonus', 'agglomeration')
+experiments = c('none', 'discount', 'agglomeration')
 timeSteps = 105
 
 colSd <- function (x, na.rm = F) apply(X = x, MARGIN = 2, FUN = sd, na.rm = na.rm)
@@ -38,16 +38,14 @@ analysis <- function (plot, title, ylabel, fancy) {
 		
 	# Prepare the data farme wit the mean of the data
 	df <- data.frame(Year=1:timeSteps,
-					 'current'=colMeans(data[['current']]),
-					 'vip'=colMeans(data[['vip']]),
-					 'vipbonus'=colMeans(data[['vipbonus']]),
+					 'none'=colMeans(data[['none']]),
+					 'discount'=colMeans(data[['discount']]),
 					 'agglomeration'=colMeans(data[['agglomeration']]))
 	
 	df <- melt(df, id.vars = 'Year', variable.name = 'Series')
 	df$Series <- as.character(df$Series)
-	df$Series[df$Series == "current"] <- "Current"
-	df$Series[df$Series == "vip"] <- "VIP, no bonus"
-	df$Series[df$Series == "vipbonus"] <- "VIP, global enrollment bonus"
+	df$Series[df$Series == "none"] <- "No VIP"
+	df$Series[df$Series == "discount"] <- "VIP, millage bonus"
 	df$Series[df$Series == "agglomeration"] <- "VIP, agglomeration bonus"
 	
 	title = sprintf("%s (mean of %i runs)", title, rows)
