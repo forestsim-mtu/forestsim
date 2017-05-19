@@ -1,5 +1,6 @@
 package edu.mtu.steppables;
 
+import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.simulation.parameters.ParameterBase;
@@ -22,7 +23,10 @@ public class AggregationStep implements Steppable {
 		ParameterBase parameters = ((ForestSim)state).getParameters();
 		
 		if (parameters.policyActiviationStep() <= (step + 1)) {
-			((ForestSim)state).getPolicy().introduce();
+			PolicyBase policy =	((ForestSim)state).getPolicy();
+			if (policy != null) {
+				policy.introduce();
+			}
 		}
 		
 		// Run the scorecard, if provided

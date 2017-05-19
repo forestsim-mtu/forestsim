@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
+import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -108,7 +109,8 @@ public abstract class ParcelAgent implements Steppable {
 	public void step(SimState state) {
 		this.state = (ForestSim)state;
 		
-		if (((ForestSim)state).getPolicy().isIntroduced()) {
+		PolicyBase policy = ((ForestSim)state).getPolicy();
+		if (policy != null && policy.isIntroduced()) {
 			doPolicyOperation();
 		}
 		doHarvestOperation();

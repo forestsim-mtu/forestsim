@@ -6,10 +6,10 @@ import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.wup.model.parameters.NoneParameters;
-import edu.mtu.wup.model.parameters.WupParameters;
+import edu.mtu.wup.model.parameters.*;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
+import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 
 /**
@@ -19,6 +19,8 @@ import edu.mtu.wup.vip.VipFactory;
 public class WupModel extends ForestSim {
 
 	private WupParameters parameters = new NoneParameters();
+	//private WupParameters parameters = new WupDiscount();
+	//private WupParameters parameters = new WupAgglomeration();
 			
 	/**
 	 * Constructor.
@@ -35,7 +37,10 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public void initialize() {
-		VipFactory.getInstance().getVip().reset();
+		VipBase vip = VipFactory.getInstance().getVip();
+		if (vip != null) {
+			vip.reset();
+		}
 	}
 
 	@Override

@@ -30,9 +30,6 @@ public class VipFactory {
 	 * Get the VIP that is currently in place.
 	 */
 	public VipBase getVip() {
-		if (vip == null) {
-			throw new IllegalStateException("Either the current regime (i.e., no VIP) or a VIP needs to be selected.");
-		}
 		return vip;
 	}
 	
