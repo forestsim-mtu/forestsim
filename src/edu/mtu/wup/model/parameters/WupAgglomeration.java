@@ -10,11 +10,14 @@ public class WupAgglomeration extends WupParameters {
 	public WupAgglomeration() {
 		// Select the policy
 		setVipProgram(VipRegime.AGGLOMERATION);
+		setVipCoolDown(10);
 		setOutputDirectory("out/agglomeration");
 		
 		// Set the model variables
 		setEconomicAgentPercentage(0.3);
 		setEcosystemsAgentHarvestOdds(0.1);
+		setNipfoWthMean(523.23);
+		setNipfoWthSd(123.12);
 		setLoggingCapacity(1000);
 		
 		// Set the ForestSim configuration

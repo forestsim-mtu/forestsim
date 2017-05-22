@@ -76,21 +76,27 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public ParcelAgent createEconomicAgent(MersenneTwisterFast random) {
-		return new EconomicAgent();
+		// Create the agent and set the basic parameters
+		EconomicAgent agent = new EconomicAgent();
+		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
+		return agent;
 	}
 
 	@Override
 	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
+		// Create the agent and set basic parameters
 		EcosystemsAgent agent = new EcosystemsAgent();
+		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
 
-		// Generate a random, normally distributed around the mean
-		double mean = parameters.getEcosystemsAgentProfitMean();
-		double rand = random.nextGaussian();
-		rand = (rand * (mean / 3)) + mean;
-		agent.setProfitMargin(rand);
+		// Set the WTH, X~N(mean, sd)
+		double mean = parameters.getNipfoWthMean();
+		double sd = parameters.getNipfoWthSd();
+		double rand = random.nextGaussian() * sd + mean;
+		agent.setWthPerAcre(rand);
 
-		// Set the harvest odds
-		agent.setHarvestOdds(parameters.getEcosystemsAgentHarvestOdds());
+		// Set the harvest odds, X~U(0, value)
+		rand = random.nextDouble() * parameters.getEcosystemsAgentHarvestOdds();
+		agent.setHarvestOdds(rand);
 		
 		return agent;
 	}

@@ -10,11 +10,14 @@ public class NoneParameters extends WupParameters {
 	public NoneParameters() {
 		// Select the policy
 		setVipProgram(VipRegime.NONE);
+		setVipCoolDown(10);
 		setOutputDirectory("out/none");
 		
 		// Set the model variables
 		setEconomicAgentPercentage(0.3);
 		setEcosystemsAgentHarvestOdds(0.1);
+		setNipfoWthMean(523.23);
+		setNipfoWthSd(123.12);
 		setLoggingCapacity(1000);
 		
 		// Set the ForestSim configuration

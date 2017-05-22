@@ -20,8 +20,10 @@ public abstract class WupParameters extends ParameterBase {
 	public final static double PropertyValue = 1000.0;
 
 	private int loggingCapacity = 0;
+	private int vipCoolDown = 0;
 	private double ecosystemsNipfoHarvestOdds = 0.0;
-	private double ecosystemsNipfoProfitMean = 0.0;
+	private double nipfoWthMean = 0.0;
+	private double nipfoWthSd = 0.0;
 	private long seed = 0;
 	private String outputDirectory = null;
 	private VipRegime vip;
@@ -32,20 +34,26 @@ public abstract class WupParameters extends ParameterBase {
 	public double getEcosystemsAgentHarvestOdds() { 
 		return ecosystemsNipfoHarvestOdds; 
 	}
-	
-	/**
-	 * Get the mean profit for an ecosystems NIPFO.
-	 * @return
-	 */
-	public double getEcosystemsAgentProfitMean() {
-		return ecosystemsNipfoProfitMean;
-	}
-	
+		
 	/**
 	 * Get the total logging capacity for the region.
 	 */
 	public int getLoggingCapacity() {
 		return loggingCapacity;
+	}
+	
+	/**
+	 * Get the mean WTH per acre for NIPFOs.
+	 */
+	public double getNipfoWthMean() {
+		return nipfoWthMean;
+	}
+
+	/**
+	 * Get the standard deviation WTH per acre for NIFPOs 
+	 */
+	public double getNipfoWthSd() {
+		return nipfoWthSd;
 	}
 
 	/**
@@ -63,6 +71,13 @@ public abstract class WupParameters extends ParameterBase {
 	}
 	
 	/**
+	 * Get the VIP cool down rate.
+	 */
+	public int getVipCoolDown() {
+		return vipCoolDown;
+	}
+	
+	/**
 	 * Get the VIP that is being run.
 	 */
 	public VipRegime getVipProgram() {
@@ -77,19 +92,26 @@ public abstract class WupParameters extends ParameterBase {
 			ecosystemsNipfoHarvestOdds = value;
 		}
 	}
-
-	/**
-	 * Set the mean for ecosystems NIPFO profits on harvest.
-	 */
-	public void setEcosystemsAgentProfitMean(double value) {
-		this.ecosystemsNipfoProfitMean = value;
-	}
 	
 	/**
 	 * Set the logging capacity for the harvester.
 	 */
 	public void setLoggingCapacity(int value) {
 		loggingCapacity = value;
+	}
+	
+	/**
+	 * Set the mean WTH per acre for NIPFOs
+	 */
+	public void setNipfoWthMean(double value) {
+		nipfoWthMean = value;
+	}
+
+	/**
+	 * Set the standard deviation WTH per acre for NIFPOs
+	 */
+	public void setNipfoWthSd(double value) {
+		nipfoWthSd = value;
 	}
 		
 	/**
@@ -112,5 +134,12 @@ public abstract class WupParameters extends ParameterBase {
 	public void setVipProgram(VipRegime value) {
 		VipFactory.getInstance().selectVip(value);
 		vip = value;
+	}
+
+	/**
+	 * Set the VIP cool down rate.
+	 */
+	public void setVipCoolDown(int value) {
+		vipCoolDown = value;
 	}
 }

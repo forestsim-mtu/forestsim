@@ -1,13 +1,7 @@
 package edu.mtu.wup.nipf;
 
-import java.util.List;
-
-import edu.mtu.environment.Forest;
-import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.steppables.marketplace.AggregateHarvester;
-import edu.mtu.wup.model.Harvesting;
 import edu.mtu.wup.model.parameters.WupParameters;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
@@ -16,17 +10,20 @@ import edu.mtu.wup.vip.VipFactory;
 public abstract class NipfAgent extends ParcelAgent {
 
 	// VIP attributes
+	private boolean vipAware = false;
 	private boolean vipEnrollee = false;
 	protected boolean vipHarvested = false;
-	
-	// Harvest profitability attributes	
-	private double profit = 0.0;
-	protected double taxesPaid = 0.0;
+	private int vipCoolDown = 0;
+	private int vipCoolDownDuration = 0;
+	private double vipInformedRate = 0.1;
+				
+	// WTH attributes
+	private double wthPerAcre = 0.0;
+	protected double wthForParcel = 0.0;
 		
 	protected abstract void doAgentPolicyOperation();
 	protected abstract double getMinimumDbh();
-	protected abstract double getProfitMargin();
-	
+		
 	public NipfAgent(ParcelAgentType type) {
 		super(type);
 	}
@@ -35,19 +32,11 @@ public abstract class NipfAgent extends ParcelAgent {
 	public void doHarvestedOperation() {
 		// Set the flag indicating we harvested since enrolling in the VIP
 		vipHarvested = vipEnrollee;
-		
-		// Nobody likes loosing money, if taxes paid exceed the profit from 
-		// harvesting and we are n the VIP, leave it
-		if (vipEnrollee && profit < 0) {
-			unenrollInVip();
-		}
-		
-		// Reset the taxes
-		taxesPaid = 0;		
 	}
 	
 	@Override
 	protected void doPolicyOperation() {
+		
 		// Return if there is no policy
 		if (!VipFactory.getInstance().policyExists()) {
 			return;
@@ -61,6 +50,20 @@ public abstract class NipfAgent extends ParcelAgent {
 		
 		// Return if we don't have enough area
 		if (getParcelArea() < vip.getMinimumAcerage()) {
+			return;
+		}
+
+		// If we aren't aware if the VIP see if we should be
+		if (!vipAware) {
+			if (vipInformedRate < getRandom().nextDouble()) {
+				return;
+			}
+			vipAware = true;
+		}
+		
+		// Update the cool down for the VIP and return if the agent is still cooling down
+		vipCoolDown -= (vipCoolDown > 0) ? 1 : 0;
+		if (vipCoolDown > 0) {
 			return;
 		}
 		
@@ -89,44 +92,38 @@ public abstract class NipfAgent extends ParcelAgent {
 
 	protected void unenrollInVip() {
 		vipEnrollee = false;
+		vipCoolDown = vipCoolDownDuration;
 		VipFactory.getInstance().getVip().unenroll(getParcel());
 		getGeometry().setEnrolledInVip(false);
 		state.updateAgentGeography(this);
 	}
 	
-	/**
-	 * Have the agent investigate if the should harvest or not.
-	 */
-	protected void investigateHarvesting() {
+	protected double getHarvestDbh() {
 		if (getMinimumDbh() == 0) {
 			throw new IllegalArgumentException("Minimum DBH cannot be zero.");
 		}
-		
+
 		// Now determine what sort of DBH we will harvest at
 		double dbh = getMinimumDbh();
 		if (vipEnrollee) {
 			dbh = VipFactory.getInstance().getVip().getMinimumHarvestingDbh();
 		}
-		
-		// See how much can be harvested at the DBH, this overrides the policy 
-		List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), dbh);
-		double area = stands.size() * Forest.getInstance().getAcresPerPixel();
-		if (area < AggregateHarvester.MinimumHarvestArea) {
-			return;
-		}
-		
-		// Did we turn a profit compared to our taxes?
-		double value = Harvesting.getHarvestValue(stands);
-		profit = value - taxesPaid;
-		
-		// If we aren't in a VIP keep an eye on the profit margin
-		if (!vipEnrollee) {
-			if (value < taxesPaid * (1 + getProfitMargin())) { 
-				return;
-			}
-		}
 
-		// We can harvest, so enqueue the harvest
-		AggregateHarvester.getInstance().requestHarvest(this, getParcel());
+		return dbh;		
+	}
+	
+	/**
+	 * Set the VIP cool down duration.
+	 */
+	public void setVipCoolDownDuration(int value) {
+		vipCoolDownDuration = value;
+	}
+
+	/**
+	 * Set the WTH for the agent and calculate how much they want for the parcel
+	 */
+	public void setWthPerAcre(double value) {
+		wthPerAcre = value;
+		wthForParcel = wthPerAcre * getParcelArea();
 	}		
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.math3.util.Precision;
 
 import edu.mtu.environment.Forest;
+import edu.mtu.environment.Stand;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.wup.vip.VipBase;
@@ -115,6 +116,20 @@ public class AggregateHarvester implements Steppable {
 	public void requestHarvest(ParcelAgent agent, Point[] stand) {
 		requestHarvest(agent, stand, null);
 	}
+	
+	/**
+	 * Allow an agent to request that the forest stands indicated be harvested
+	 * 
+	 * @param agent The agent that is requesting the harvest.
+	 * @param stands The stands that are to be harvested.
+	 */
+	public void requestHarvest(ParcelAgent agent, List<Stand> stands) {
+		List<Point> points = new ArrayList<Point>();
+		for (Stand stand : stands) {
+			points.add(stand.point);
+		}
+		requestHarvest(agent, (Point[])points.toArray(), null);
+	}	
 	
 	/**
 	 * Allow an agent to request that the forest stand indicated be harvested.

@@ -20,4 +20,16 @@ public class Economics {
 		double taxes = (av / 1000) * millageRate;
 		return Precision.round(taxes, 2);
 	} 
+	
+	/**
+	 * Net present value
+	 * 
+	 * @param c Current value
+	 * @param r Discount rate
+	 * @param t Time periods
+	 * @return
+	 */
+	public static double npv(double c, double r, long t) {
+		return Math.pow(c / (1 + r), t);
+	}
 }

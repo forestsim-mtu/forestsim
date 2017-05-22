@@ -85,6 +85,7 @@ public class Forest {
 	 */
 	public Stand getStand(int x, int y) {
 		Stand stand = new Stand();
+		stand.point = new Point(x, y);
 		stand.nlcd = ((IntGrid2D)landCover.getGrid()).get(x, y);
 		stand.arithmeticMeanDiameter = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
 		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);

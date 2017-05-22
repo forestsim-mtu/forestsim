@@ -18,67 +18,47 @@ public class Harvesting {
 	public static double VeneerDbh = 40.64;			// cm
 		
 	/**
+	 * Project the possible state of the stands at the given year.
 	 * 
-	 * @param parcel
-	 * @param minDbh
-	 * @return
+	 * @param stands The list of stands to be grown.
+	 * @param years The number of years to run for.
+	 * @return The stands at the given year.
 	 */
-	@SuppressWarnings("static-access")
-	public static HarvestProjectionDto estimateTimeToHarvest(Point[] parcel, double dbh) {
-		final int limiter = 100;
-		
-		// Get the stands for each of the parcels
-		List<Stand> stands = new ArrayList<Stand>();
-		for (Point point : parcel) {
-			stands.add(Forest.getInstance().getStand(point));
+	public static List<Stand> projectStands(List<Stand> stands, int years) {
+		List<Stand> results = new ArrayList<Stand>(stands);
+		for (int ndx = 0; ndx < years; ndx++) {
+			for (int ndy = 0; ndy < results.size(); ndy++) {
+				results.set(ndy, Forest.getInstance().getGrowthModel().growStand(results.get(ndy)));
+			}
 		}
-		
-		// Iterate until we return or hit the limiter
-		int years = 0;
-		while (years < limiter) {
-			
-			// Check to see if the stands are all harvestable
-			boolean flag = true;
-			for (Stand stand : stands) {
-				if (stand.arithmeticMeanDiameter < dbh || stand.stocking < StockingCondition.Full.getValue()) {
-					flag = false;
-					break;
-				}
-			}
-			if (flag) {
-				break;
-			}
-			
-			// Grow the stands
-			for (int ndx = 0; ndx < stands.size(); ndx++) {
-				stands.set(ndx, Forest.getInstance().getGrowthModel().growStand(stands.get(ndx)));
-			}
-			years++;
-		}
-		
-		// Put the DTO together and return
-		HarvestProjectionDto dto = new HarvestProjectionDto();
-		dto.years = years;
-		dto.value = getHarvestValue(stands);
-		return dto;
+		return results;
 	}
-		
+				
 	/**
 	 * Get the harvestable stands, these are defined as those whose DBH matches the value provided and are fully stocked.
-	 * 
-	 * @param parcel
-	 * @param dbh
-	 * @return
 	 */
 	public static List<Stand> getHarvestableStands(Point[] parcel, double dbh) {
-		List<Stand> stands = new ArrayList<Stand>(); 
+		List<Stand> harvestable = new ArrayList<Stand>(); 
 		for (Point point : parcel) {
 			Stand stand = Forest.getInstance().getStand(point);
 			if (stand.arithmeticMeanDiameter >= dbh && stand.stocking >= StockingCondition.Full.getValue()) {
-				stands.add(stand);
+				harvestable.add(stand);
 			}
 		}
-		return stands;
+		return harvestable;
+	}
+	
+	/**
+	 * Get the harvestable stands, these are defined as those whose DBH matches the value provided and are fully stocked.
+	 */
+	public static List<Stand> getHarvestableStands(List<Stand> stands, double dbh) {
+		List<Stand> harvestable = new ArrayList<Stand>();
+		for (Stand stand : stands) {
+			if (stand.arithmeticMeanDiameter >= dbh && stand.stocking >= StockingCondition.Full.getValue()) {
+				harvestable.add(stand);
+			}
+		}
+		return harvestable;
 	}
 	
 	public static double getHarvestBiomass(List<Point> stands) {

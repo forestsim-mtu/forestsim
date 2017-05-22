@@ -1,7 +1,11 @@
 package edu.mtu.wup.nipf;
 
+import java.util.List;
+
+import edu.mtu.environment.Forest;
+import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgentType;
-import edu.mtu.wup.model.Economics;
+import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Harvesting;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
@@ -10,8 +14,6 @@ import edu.mtu.wup.vip.VipFactory;
 public class EcosystemsAgent extends NipfAgent {
 	
 	private double harvestOdds = 0.0;				// Set on initialization
-	private double profitMargin = 1.0;				// Set on initialization
-	private double willingnessToJoinVip = 0.1;		// Default value
 	
 	/**
 	 * Constructor.
@@ -22,14 +24,11 @@ public class EcosystemsAgent extends NipfAgent {
 
 	@Override
 	protected void doAgentPolicyOperation() {
-
-		// Get the VIP to do calculations
-		VipBase vip = VipFactory.getInstance().getVip();
 		
 		// If they are a VIP enrollee, see if they need to renew or not
 		if (inVip() && vipHarvested) {
-			// Once in the NIPFO will likely stay
-			if (getRandom().nextDouble() < willingnessToJoinVip) {
+			// Once harvested, unenroll at the same likelihood to harvest
+			if (harvestOdds < getRandom().nextDouble()) {
 				unenrollInVip();
 				return;
 			}
@@ -39,13 +38,9 @@ public class EcosystemsAgent extends NipfAgent {
 		if (harvestOdds < getRandom().nextDouble()) {
 			return;
 		}
-		
-		// Is the agent even willing to join a VIP?
-		if (willingnessToJoinVip < getRandom().nextDouble()) {
-			return;
-		}
-				
+						
 		// We want lower taxes, does the VIP give us that?
+		VipBase vip = VipFactory.getInstance().getVip();
 		if (vip.getMillageRateReduction(this, state) > 0) {
 			enrollInVip();
 		}
@@ -53,31 +48,39 @@ public class EcosystemsAgent extends NipfAgent {
 
 	@Override
 	protected void doHarvestOperation() {
-		// Note this years taxes
-		taxesPaid = Economics.assessTaxes(getParcelArea(), getMillageRate());
+		// Return if we are not in a VIP or wanting to harvest
+		if (!inVip() && (harvestOdds < getRandom().nextDouble())) {
+			return;
+		}
 		
-		// Should we investigate harvesting?
-		if (inVip() || (getRandom().nextDouble() < harvestOdds)) 
-		{		
-			investigateHarvesting();
+		// Get the bid from the harvester, return if there is none
+		double dbh = getHarvestDbh();
+		
+		// See how much can be harvested at the DBH, this overrides the policy 
+		List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), dbh);
+		double area = stands.size() * Forest.getInstance().getAcresPerPixel();
+		if (area < AggregateHarvester.MinimumHarvestArea) {
+			return;
+		}
+
+		// Get the bid for the area, check it against our WTH
+		double bid = Harvesting.getHarvestValue(stands);
+		if (bid == 0) {
+			return;
+		}
+		
+		// If it exceeds our WTH, request a harvest
+		if (bid >= wthForParcel) {
+			AggregateHarvester.getInstance().requestHarvest(this, stands);
 		}
 	}
 
 	@Override
 	protected double getMinimumDbh() {
-		return Harvesting.VeneerDbh;
-	}
-
-	@Override
-	protected double getProfitMargin() {
-		return profitMargin;
+		return Harvesting.SawtimberDbh;
 	}
 	
 	public void setHarvestOdds(double value) {
 		harvestOdds = value;
-	}
-	
-	public void setProfitMargin(double value) {
-		profitMargin = value;
 	}
 }
