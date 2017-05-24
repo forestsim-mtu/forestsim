@@ -2,9 +2,7 @@ package edu.mtu.steppables;
 
 import java.awt.Point;
 
-import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
-import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -17,9 +15,10 @@ import sim.util.IntBag;
  */
 @SuppressWarnings("serial")
 public abstract class ParcelAgent implements Steppable {
-	private ParcelAgentType type;
+	
+	private final ParcelAgentType type = null;
+	
 	private LandUseGeomWrapper landUseWrapper;
-	private MersenneTwisterFast random;
 	private Point[] parcel;
 	
 	protected ForestSim state;
@@ -76,14 +75,7 @@ public abstract class ParcelAgent implements Steppable {
 	public void setLandUseWrapper(LandUseGeomWrapper landUseWrapper) {
 		this.landUseWrapper = landUseWrapper;
 	}
-	
-	/**
-	 * Set the random number generator to be used by this agent.
-	 */
-	public void setRandom(MersenneTwisterFast random) {
-		this.random = random;
-	}
-	
+		
 	/**
 	 * Add the given points to the agents for the parcel that it controls.
 	 * 
@@ -102,18 +94,9 @@ public abstract class ParcelAgent implements Steppable {
 	 */
 	public void step(SimState state) {
 		this.state = (ForestSim)state;
-		
-		PolicyBase policy = ((ForestSim)state).getPolicy();
-		if (policy != null && policy.isIntroduced()) {
-			doPolicyOperation();
-		}
+		doPolicyOperation();
 		doHarvestOperation();
 	}
-		
-	/**
-	 * Get the random number generator associated with this agent.
-	 */
-	protected MersenneTwisterFast getRandom() { return random; }
 		
 	/**
 	 * Update the shape file to reflect the agent's attributes.

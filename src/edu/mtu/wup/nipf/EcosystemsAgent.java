@@ -28,14 +28,14 @@ public class EcosystemsAgent extends NipfAgent {
 		// If they are a VIP enrollee, see if they need to renew or not
 		if (inVip() && vipHarvested) {
 			// Once harvested, unenroll at the same likelihood to harvest
-			if (harvestOdds < getRandom().nextDouble()) {
+			if (harvestOdds < state.random.nextDouble()) {
 				unenrollInVip();
 				return;
 			}
 		}
 
 		// Is the agent open to harvesting?
-		if (harvestOdds < getRandom().nextDouble()) {
+		if (harvestOdds < state.random.nextDouble()) {
 			return;
 		}
 						
@@ -49,7 +49,7 @@ public class EcosystemsAgent extends NipfAgent {
 	@Override
 	protected void doHarvestOperation() {
 		// Return if we are not in a VIP or wanting to harvest
-		if (!inVip() && (harvestOdds < getRandom().nextDouble())) {
+		if (!inVip() && (harvestOdds < state.random.nextDouble())) {
 			return;
 		}
 		

@@ -42,9 +42,7 @@ public class WupScorecard implements Scorecard {
 	private Map<String, BufferedCsvWriter> writers;
 		
 	private final static int captureInterval = 10;
-	
-	private static int step = 0;
-	
+		
 	private String outputDirectory;
 	private String filesDirectory;
 	
@@ -57,13 +55,11 @@ public class WupScorecard implements Scorecard {
 	public void processTimeStep(ForestSim state) {
 		try {
 			writeCarbonSequestration(state.getParcelAgents());
-			writeHarvestedBiomass();
 			writeHarvesting();
 			writeRecreationalAccess();
 			
 			// Check the step and export as needed
-			step++;
-			if (step % captureInterval == 0) {
+			if (state.schedule.getSteps() % captureInterval == 0) {
 				for (String key : writers.keySet()) {
 					writers.get(key).flush();
 				}
@@ -96,8 +92,6 @@ public class WupScorecard implements Scorecard {
 			writers.put(recreationFile, new BufferedCsvWriter(outputDirectory + recreationFile, true));
 			writers.put(vipFile, new BufferedCsvWriter(outputDirectory + vipFile, true));
 			
-			// Write the initial GIS files
-			writeGisFiles(state);
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -141,6 +135,7 @@ public class WupScorecard implements Scorecard {
 	private void writeGisFiles(ForestSim state) throws IOException {
 		// Store the forest raster files
 		Forest forest = Forest.getInstance();
+		long step = state.schedule.getSteps();
 		storeRaster(String.format(filesDirectory + ageFile, step), forest.getStandAgeMap());
 		storeRaster(String.format(filesDirectory + dbhFile, step), forest.getStandDbhMap());
 		storeRaster(String.format(filesDirectory + stockingFile, step), forest.getStockingMap());
@@ -168,15 +163,11 @@ public class WupScorecard implements Scorecard {
 		carbon = carbonInBiomassEstiamte(biomass);
 		writers.get(carbonAgentsFile).write(carbon);
 	}
-
-	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
-	private void writeHarvestedBiomass() throws IOException {
-		double biomass = AggregateHarvester.getInstance().getBiomass();
-		writers.get(biomassFile).write(biomass);
-	}
 	
+	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvesting() throws IOException {
 		AggregateHarvester harvester = AggregateHarvester.getInstance();
+		writers.get(biomassFile).write(harvester.getBiomass());
 		writers.get(demandFile).write(harvester.getDemand());
 		writers.get(harvestedFile).write(harvester.getHarvested());
 	}

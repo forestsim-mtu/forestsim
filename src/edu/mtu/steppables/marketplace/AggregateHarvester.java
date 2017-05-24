@@ -39,12 +39,10 @@ public class AggregateHarvester implements Steppable {
 	public void step(SimState state) {
 		// Process the requests
 		int capacity = ((ForestSim)state).getHarvestCapacity();
-		biomass = processHarvestRequests(capacity);
-		
-		// Clear the request list
-		requests = new ArrayList<HarvestRequest>();		
-		
+		processHarvestRequests(capacity);
+				
 		// Restore the harvester to the schedule
+		requests = new ArrayList<HarvestRequest>();
 		state.schedule.scheduleOnce(this);
 	}
 	
@@ -78,10 +76,9 @@ public class AggregateHarvester implements Steppable {
 	 * @param capacity The total capacity for harvests.
 	 * @return The total biomass harvested in green tons (GT)
 	 */
-	protected double processHarvestRequests(int capacity) {
-		double totalBiomass = 0;
-		
+	protected void processHarvestRequests(int capacity) {
 		demand = requests.size();
+		biomass = 0;
 		harvested = 0;
 		
 		Forest forest = Forest.getInstance();		
@@ -89,21 +86,15 @@ public class AggregateHarvester implements Steppable {
 			HarvestRequest request = requests.remove(0);
 			request.agent.doHarvestedOperation();
 			
-			// Remove the biomass and deliver it if need be
-			double biomass = forest.harvest(request.stand);
-			if (request.deliverTo != null) 
-			{
-				request.deliverTo.receive(biomass);
-			}
-			
-			// Update the aggregation
-			totalBiomass += biomass;
+			// Harvest the biomass, update the total
+			biomass += forest.harvest(request.stand);
 			harvested++;
+			
+			// Return if we are done
 			if (harvested >= capacity) {
-				return totalBiomass;
+				return;
 			}
 		}
-		return totalBiomass;
 	}
 	
 	/**

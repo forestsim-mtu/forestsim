@@ -14,30 +14,36 @@ import sim.engine.Steppable;
 @SuppressWarnings("serial")
 public class AggregationStep implements Steppable {
 
+	private boolean policyIntroduced = false;
 	private Scorecard scorecard = null;
 	
 	public void step(SimState state) {
-		// Introduce the policy if it is time
-		long step = state.schedule.getSteps();
+		// What's our time-step?
+		long step = state.schedule.getSteps() + 1;						// Steps is zero indexed
 		ParameterBase parameters = ((ForestSim)state).getParameters();
 		
-		if (parameters.policyActiviationStep() <= (step + 1)) {
+		// Should we end the model?
+		if (step == parameters.getFinalTimeStep()) {
+			if (scorecard != null) {
+				scorecard.processFinalization((ForestSim)state);
+			}
+			state.finish();
+			return;
+		} 
+		
+		// Introduce the policy if it is time
+		if (!policyIntroduced && parameters.policyActiviationStep() == step) {
 			PolicyBase policy =	((ForestSim)state).getPolicy();
 			if (policy != null) {
 				policy.introduce();
 			}
+			policyIntroduced = true;
 		}
-		
+			
 		// Run the scorecard, if provided
 		if (scorecard != null) {
 			scorecard.processTimeStep(((ForestSim)state));
 		}
-		
-		// Should we end the model?
-		if ((step + 1) > parameters.getFinalTimeStep()) {
-			state.finish();
-			return;
-		} 
 		
 		// Put us back in the queue
 		state.schedule.scheduleOnce(this);		

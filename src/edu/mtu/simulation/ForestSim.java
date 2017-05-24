@@ -318,18 +318,6 @@ public abstract class ForestSim extends SimState {
 		parcelLayer.setMBR(globalMBR);
 		coverLayer.setMBR(globalMBR);
 	}
-
-	/**
-	 * Wrap-up the model operation.
-	 */
-	public void finish() {
-		super.finish();
-		
-		Scorecard scorecard = getScoreCard();
-		if (scorecard != null) {
-			scorecard.processFinalization(this);
-		}
-	}
 	
 	/**
 	 * Update the global geography with that of the given agent.
@@ -395,7 +383,6 @@ public abstract class ForestSim extends SimState {
 			 agent = createEcosystemsAgent(random);
 		}
 		agent.setLandUseWrapper(lu);
-		agent.setRandom(random);
 		agent = createAgentParcel(agent);
 		agent.getGeometry().updateShpaefile();
 		return agent;

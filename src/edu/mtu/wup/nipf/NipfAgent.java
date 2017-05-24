@@ -10,6 +10,7 @@ import edu.mtu.wup.vip.VipFactory;
 public abstract class NipfAgent extends ParcelAgent {
 
 	// VIP attributes
+	private boolean vipDisqualifed = false;
 	private boolean vipAware = false;
 	private boolean vipEnrollee = false;
 	protected boolean vipHarvested = false;
@@ -35,6 +36,10 @@ public abstract class NipfAgent extends ParcelAgent {
 	
 	@Override
 	protected void doPolicyOperation() {
+		// Return if the VIP doesn't apply to us
+		if (vipDisqualifed) {
+			return;
+		}
 		
 		// Return if there is no policy
 		if (!VipFactory.getInstance().policyExists()) {
@@ -49,12 +54,13 @@ public abstract class NipfAgent extends ParcelAgent {
 		
 		// Return if we don't have enough area
 		if (getParcelArea() < vip.getMinimumAcerage()) {
+			vipDisqualifed = true;
 			return;
 		}
 
 		// If we aren't aware if the VIP see if we should be
 		if (!vipAware) {
-			if (vipInformedRate < getRandom().nextDouble()) {
+			if (vipInformedRate < state.random.nextDouble()) {
 				return;
 			}
 			vipAware = true;
