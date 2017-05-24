@@ -8,6 +8,7 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.environment.StockingCondition;
 import edu.mtu.measures.ForestMeasures;
+import edu.mtu.utilities.Precision;
 import edu.mtu.wup.species.WesternUPSpecies;
 
 public class Harvesting {
@@ -79,11 +80,8 @@ public class Harvesting {
 			double height = stand.dominateSpecies.getHeight(stand.arithmeticMeanDiameter);
 			
 			// Convert DBH and height to imperial units and round
-			double dbh = stand.arithmeticMeanDiameter * 0.39;
-			dbh = Math.round(dbh * 100.0) / 100.0;
-			
-			height = height * 3.28084;
-			height = Math.round(height * 100.0) / 100.0;
+			double dbh = Precision.round(stand.arithmeticMeanDiameter * 0.39, 2);
+			height = Precision.round(height * 3.28084, 2);
 			
 			// Estimate the number of board feet using Scribner Decimal C log rule
 			double boardFeet = (0.79 * Math.pow(dbh, 2) - 2 * dbh - 4) * (height / 16);
@@ -96,8 +94,7 @@ public class Harvesting {
 		}
 		
 		// Round the value off and return
-		value = Math.round(value * 100.0) / 100.0;
-		return value;
+		return Precision.round(value, 2);
 	}
 		
 	/**

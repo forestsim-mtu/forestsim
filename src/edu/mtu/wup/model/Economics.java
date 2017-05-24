@@ -1,7 +1,6 @@
 package edu.mtu.wup.model;
 
-import org.apache.commons.math3.util.Precision;
-
+import edu.mtu.utilities.Precision;
 import edu.mtu.wup.model.parameters.WupParameters;
 
 /**

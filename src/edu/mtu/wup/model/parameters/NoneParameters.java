@@ -7,7 +7,7 @@ import edu.mtu.wup.vip.VipFactory.VipRegime;
  */
 public class NoneParameters extends WupParameters {
 
-	public NoneParameters() {
+	public NoneParameters() {	
 		// Select the policy
 		setVipProgram(VipRegime.NONE);
 		setVipCoolDown(10);

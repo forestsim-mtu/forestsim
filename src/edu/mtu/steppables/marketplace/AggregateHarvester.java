@@ -4,12 +4,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.util.Precision;
-
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.utilities.Precision;
 import edu.mtu.wup.vip.VipBase;
 import sim.engine.SimState;
 import sim.engine.Steppable;
