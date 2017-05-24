@@ -5,15 +5,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.mtu.environment.Forest;
-import edu.mtu.measures.ForestMeasures;
 import edu.mtu.measures.ForestMeasuresParallel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
+import edu.mtu.utilities.BufferedCsvWriter;
 import edu.mtu.utilities.Constants;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
@@ -25,17 +27,20 @@ import sim.io.geo.ShapeFileExporter;
 public class WupScorecard implements Scorecard {
 
 	private final static String ageFile = "/age%1$d.asc";
+	private final static String dbhFile = "/dbh%1$d.asc";
+	private final static String nipfoFile = "/nipfo%1$d";			// ArcGIS disapproves of .shp.shp
+	private final static String stockingFile = "/stocking%1$d.asc";
+	
 	private final static String biomassFile = "/biomass.csv";
 	private final static String carbonAgentsFile = "/carbonAgents.csv";
 	private final static String carbonGlobalFile = "/carbonGlobal.csv";
-	private final static String dbhFile = "/dbh%1$d.asc";
 	private final static String demandFile = "/demand.csv";
 	private final static String harvestedFile = "/harvested.csv";
-	private final static String nipfoFile = "/nipfo%1$d";			// ArcGIS disapproves of .shp.shp
 	private final static String recreationFile = "/recreation.csv";
-	private final static String stockingFile = "/stocking%1$d.asc";
 	private final static String vipFile = "/vip.csv";
 	
+	private Map<String, BufferedCsvWriter> writers;
+		
 	private final static int captureInterval = 10;
 	
 	private static int step = 0;
@@ -59,6 +64,10 @@ public class WupScorecard implements Scorecard {
 			// Check the step and export as needed
 			step++;
 			if (step % captureInterval == 0) {
+				for (String key : writers.keySet()) {
+					writers.get(key).flush();
+				}
+								
 				writeGisFiles(state);
 			}
 		} catch (IOException ex) {
@@ -71,11 +80,23 @@ public class WupScorecard implements Scorecard {
 	}
 
 	public void processInitialization(ForestSim state) {
-		// Bootstrap any relevant paths
-		File directory = new File(filesDirectory);
-		directory.mkdirs();
 			
-		try {				
+		try {
+			// Bootstrap any relevant paths
+			File directory = new File(filesDirectory);
+			directory.mkdirs();
+
+			// Create the buffered file writers
+			writers = new HashMap<String, BufferedCsvWriter>();
+			writers.put(biomassFile, new BufferedCsvWriter(outputDirectory + biomassFile, true));
+			writers.put(carbonAgentsFile, new BufferedCsvWriter(outputDirectory + carbonAgentsFile, true));
+			writers.put(carbonGlobalFile, new BufferedCsvWriter(outputDirectory + carbonGlobalFile, true));
+			writers.put(demandFile, new BufferedCsvWriter(outputDirectory + demandFile, true));
+			writers.put(harvestedFile, new BufferedCsvWriter(outputDirectory + harvestedFile, true));
+			writers.put(recreationFile, new BufferedCsvWriter(outputDirectory + recreationFile, true));
+			writers.put(vipFile, new BufferedCsvWriter(outputDirectory + vipFile, true));
+			
+			// Write the initial GIS files
 			writeGisFiles(state);
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
@@ -85,28 +106,17 @@ public class WupScorecard implements Scorecard {
 		
 	public void processFinalization(ForestSim state) {
 		try {
-			String[] files = new String[] { biomassFile, carbonAgentsFile, carbonGlobalFile, recreationFile, vipFile, demandFile, harvestedFile };
-			for (String file : files) {
-				FileWriter writer = new FileWriter(outputDirectory + file, true);
-				writer.write(System.lineSeparator());
-				writer.close();
+			for (String key : writers.keySet()) {
+				writers.get(key).close();
 			}
+			
 			writeGisFiles(state);
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
 		}
 	}
-	
-	/**
-	 * Append the given value to the CSV file.
-	 */
-	private void appendToCsv(String fileName, double value) throws IOException {
-		FileWriter writer = new FileWriter(outputDirectory + fileName, true);
-		writer.write(value + ",");
-		writer.close();
-	}
-	
+		
 	/**
 	 * Find the approximate amount of carbon in the woody biomass.
 	 * 
@@ -144,32 +154,30 @@ public class WupScorecard implements Scorecard {
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
 		VipBase vip = VipFactory.getInstance().getVip();
-		appendToCsv(recreationFile, (vip != null) ? vip.getSubscribedArea() : 0);
-		appendToCsv(vipFile, (vip != null) ? vip.getSubscriptionRate() : 0);
+		writers.get(recreationFile).write(vip != null ? vip.getSubscribedArea() : 0);
+		writers.get(vipFile).write(vip != null ? vip.getSubscriptionRate() : 0);
 	}
 
 	// Environment: Carbon Sequestration
-	private void writeCarbonSequestration(List<ParcelAgent> agents) throws IOException, InterruptedException {
-		//double biomass = ForestMeasures.calculateTotalBiomass();
-		
+	private void writeCarbonSequestration(List<ParcelAgent> agents) throws IOException, InterruptedException {		
 		double biomass = ForestMeasuresParallel.calculateBiomass();
 		double carbon = carbonInBiomassEstiamte(biomass);
-		appendToCsv(carbonGlobalFile, carbon);
+		writers.get(carbonGlobalFile).write(carbon);
 		
-		biomass = ForestMeasures.calculateTotalAgentBiomass(agents);
+		biomass = ForestMeasuresParallel.calculateBiomass(agents);
 		carbon = carbonInBiomassEstiamte(biomass);
-		appendToCsv(carbonAgentsFile, carbon);
+		writers.get(carbonAgentsFile).write(carbon);
 	}
 
 	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvestedBiomass() throws IOException {
 		double biomass = AggregateHarvester.getInstance().getBiomass();
-		appendToCsv(biomassFile, biomass);
+		writers.get(biomassFile).write(biomass);
 	}
 	
 	private void writeHarvesting() throws IOException {
 		AggregateHarvester harvester = AggregateHarvester.getInstance();
-		appendToCsv(demandFile, harvester.getDemand());
-		appendToCsv(harvestedFile, harvester.getHarvested());
+		writers.get(demandFile).write(harvester.getDemand());
+		writers.get(harvestedFile).write(harvester.getHarvested());
 	}
 }
