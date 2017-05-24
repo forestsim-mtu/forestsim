@@ -35,7 +35,7 @@ public class WupScorecard implements Scorecard {
 	private final static String stockingFile = "/stocking%1$d.asc";
 	private final static String vipFile = "/vip.csv";
 	
-	private final static int captureInterval = 5;
+	private final static int captureInterval = 10;
 	
 	private static int step = 0;
 	
@@ -111,20 +111,9 @@ public class WupScorecard implements Scorecard {
 	 */
 	private double carbonInBiomassEstiamte(double biomass) {
 		// Use the approximation given by (Magnussen & Reed, 2015) 
-		// 62% moisture content is a rough approximation from (Wenger 1984)
-		return (0.475 * greenTonToBoneDryTon(biomass, 0.62)) / Constants.MetricTonToGigaTon; 
+		return (0.475 * biomass) / Constants.MetricTonToGigaTon; 
 	}
-	
-	/**
-	 * Convert from green tons to bone dry tons on the basis of the moisture provided.
-	 * @param biomass in green tons (GT).
-	 * @param moisture as a number, ex. 0.50.
-	 * @return Biomass in bone dry tons (BDT).
-	 */
-	private double greenTonToBoneDryTon(double biomass, double moisture) {
-		return biomass * (1 - moisture);
-	}
-	
+		
 	/**
 	 * Store the raster data to disk.
 	 */
@@ -169,8 +158,6 @@ public class WupScorecard implements Scorecard {
 	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvestedBiomass() throws IOException {
 		double biomass = AggregateHarvester.getInstance().getBiomass();
-		// 62% moisture content is a rough approximation from (Wenger 1984)
-		biomass = greenTonToBoneDryTon(biomass, 0.62);
 		appendToCsv(biomassFile, biomass);
 	}
 	

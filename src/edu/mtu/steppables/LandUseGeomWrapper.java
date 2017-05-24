@@ -63,6 +63,7 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	public void updateShpaefile() {
 		this.addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
 		this.addDoubleAttribute("LANDUSE", landUse);
-		this.addAttribute("AGENT_TYPE", agentType);
+		int type = (agentType != null) ? agentType.getValue() : -1;
+		this.addIntegerAttribute("AGENT_TYPE", type);
 	}
 }
