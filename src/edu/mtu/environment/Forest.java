@@ -386,8 +386,7 @@ public class Forest {
 			// Calculate the biomass
 			Stand stand = getStand(plan.point.x, plan.point.y);
 			Species species = growthModel.getSpecies(stand.nlcd);
-			double height = species.getHeight(stand.arithmeticMeanDiameter);
-			biomass += species.getBiomass(stand.arithmeticMeanDiameter, height) * difference * getPixelArea();
+			biomass += species.getBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
 		}
 				
 		// Return the biomass

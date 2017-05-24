@@ -8,12 +8,12 @@ public interface WesternUPSpecies extends Species {
 	String getDataFile();
 	
 	/**
-	 * Get the value of one cunit of pulpwood.
+	 * Get the bid of one cord of pulpwood.
 	 */
 	double getPulpwoodValue();
 	
 	/**
-	 * Get the value of one cunit of sawtimber.
+	 * Get the bid per thousand board feet (MBF) of sawtimber.
 	 */
 	double getSawtimberValue();
 }

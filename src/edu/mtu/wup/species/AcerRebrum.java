@@ -8,8 +8,9 @@ import edu.mtu.utilities.Constants;
 // http://www.nrs.fs.fed.us/pubs/rp/rp_nc257.pdf 
 // http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
 public class AcerRebrum implements WesternUPSpecies {		
-	public double getBiomass(double dbh, double height) {
-		// Note that we are ignoring the height for now.
+	
+	public double getBiomass(double dbh) {
+		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -2.0127, beta1 = 2.4342;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}

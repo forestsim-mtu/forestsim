@@ -75,15 +75,21 @@ public class Harvesting {
 		double value = 0.0;
 		
 		for (Stand stand : stands) {
-			// Get the biomass for the stand
+			// Get the height of the tree
 			double height = stand.dominateSpecies.getHeight(stand.arithmeticMeanDiameter);
-			double biomass = stand.dominateSpecies.getBiomass(stand.arithmeticMeanDiameter, height) * stand.numberOfTrees;
 			
-			// Covert to cunit, assume that 1,000 kg is 1.4 m^3
-			double cunit = (biomass / 1000) * 35.3147;
+			// Convert DBH and height to imperial units
+			double dbh = stand.arithmeticMeanDiameter * 0.39;
+			height = height * 0.03;
 			
-			// Use the bid as the price paid per cunit
-			value += (cunit * getStandBid(stand));
+			// Estimate the number of board feet using Scribner Decimal C log rule
+			double boardFeet = (0.79 * dbh - 2 * dbh - 4) * (height / 16);
+			
+			// Convert to thousands of board feet for the bid
+			double mbf = boardFeet / 1000;
+			
+			// Update the bid
+			value += (mbf * getStandBid(stand));
 		}
 		
 		return value;
@@ -98,9 +104,8 @@ public class Harvesting {
 		if (stand.arithmeticMeanDiameter >= SawtimberDbh) {
 			return ((WesternUPSpecies)stand.dominateSpecies).getSawtimberValue();
 		}
-		if (stand.arithmeticMeanDiameter > PulpwoodDbh) {
-			return ((WesternUPSpecies)stand.dominateSpecies).getPulpwoodValue();
-		}
+
+		// Only bidding on saw timber
 		return 0.0;
 	}
 }

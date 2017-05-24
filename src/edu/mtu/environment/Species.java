@@ -6,18 +6,17 @@ package edu.mtu.environment;
  */
 public interface Species {
 	/**
-	 * Calculate the total above ground biomass for a tree given the height and DBH.
+	 * Calculate the total above ground biomass for a tree.
 	 * 
-	 * @param dbh The DBH of the tree in meters.
-	 * @param height The height of the tree in meters.
-	 * @return The total biomass of the tree in green tons (GT)
+	 * @param dbh The DBH of the tree, in cm.
+	 * @return Total above ground biomass of the tree in kg dry weight
 	 */
-	double getBiomass(double dbh, double height);
-	
+	double getBiomass(double dbh);
+		
 	/**
 	 * Get the height of a representative tree given the DBH.
 	 * 
-	 * @param dbh The DBH of the given tree.
+	 * @param dbh The DBH of the given tree, in cm.
 	 * @return Approximate height of the given tree, in cm.
 	 */
 	double getHeight(double dbh);

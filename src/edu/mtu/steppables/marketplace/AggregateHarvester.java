@@ -124,11 +124,11 @@ public class AggregateHarvester implements Steppable {
 	 * @param stands The stands that are to be harvested.
 	 */
 	public void requestHarvest(ParcelAgent agent, List<Stand> stands) {
-		List<Point> points = new ArrayList<Point>();
-		for (Stand stand : stands) {
-			points.add(stand.point);
+		Point[] points = new Point[stands.size()];
+		for (int ndx = 0; ndx < stands.size(); ndx++) {
+			points[ndx] = stands.get(ndx).point; 
 		}
-		requestHarvest(agent, (Point[])points.toArray(), null);
+		requestHarvest(agent, points, null);
 	}	
 	
 	/**

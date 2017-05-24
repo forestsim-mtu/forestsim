@@ -70,6 +70,7 @@ public class EcosystemsAgent extends NipfAgent {
 		}
 		
 		// If it exceeds our WTH, request a harvest
+		double wthForParcel = wthPerAcre * getParcelArea();
 		if (bid >= wthForParcel) {
 			AggregateHarvester.getInstance().requestHarvest(this, stands);
 		}

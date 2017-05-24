@@ -337,6 +337,7 @@ public abstract class ForestSim extends SimState {
 	 * @param agent The agent whose geography has been updated.
 	 */
 	public void updateAgentGeography(ParcelAgent agent) {
+		agent.getGeometry().updateShpaefile();
 		int index = agent.getGeometry().getIndex();
 		parcelLayer.getGeometries().objs[index] = agent.getGeometry();
 	}
@@ -395,7 +396,9 @@ public abstract class ForestSim extends SimState {
 		}
 		agent.setLandUseWrapper(lu);
 		agent.setRandom(random);
-		return createAgentParcel(agent);
+		agent = createAgentParcel(agent);
+		agent.getGeometry().updateShpaefile();
+		return agent;
 	}
 
 	/**
@@ -444,9 +447,8 @@ public abstract class ForestSim extends SimState {
 			}
 		}
 
-		// Pass the agent the indexes of the pixels the agent's parcel
-		// covers
-		agent.createCoverPoints(xPos, yPos);
+		// Pass the agent the indexes of the pixels the agent's parcel covers
+		agent.createCoverPoints(xPos, yPos);		
 		return agent;
 	}
 

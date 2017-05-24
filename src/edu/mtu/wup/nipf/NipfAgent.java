@@ -18,8 +18,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	private double vipInformedRate = 0.1;
 				
 	// WTH attributes
-	private double wthPerAcre = 0.0;
-	protected double wthForParcel = 0.0;
+	protected double wthPerAcre = 0.0;
 		
 	protected abstract void doAgentPolicyOperation();
 	protected abstract double getMinimumDbh();
@@ -124,6 +123,5 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public void setWthPerAcre(double value) {
 		wthPerAcre = value;
-		wthForParcel = wthPerAcre * getParcelArea();
 	}		
 }

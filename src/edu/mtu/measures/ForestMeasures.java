@@ -51,15 +51,14 @@ public class ForestMeasures {
 	 * Get the biomass at the given stand.
 	 * 
 	 * @param point The geometric coordinates of the stand.
-	 * @return The current biomass of the stand in green tons (GT)
+	 * @return The current biomass of the stand in kg dry weight.
 	 */
 	public static double calculateBiomass(Point point) {
 		Forest forest = Forest.getInstance();
 		
 		Stand stand = forest.getStand(point.x, point.y);
 		Species species = forest.getGrowthModel().getSpecies(stand.nlcd);
-		double height = species.getHeight(stand.arithmeticMeanDiameter);
-		return species.getBiomass(stand.arithmeticMeanDiameter, height) * stand.numberOfTrees;
+		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
 	}
 	
 	/**

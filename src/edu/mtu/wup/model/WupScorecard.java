@@ -17,6 +17,7 @@ import edu.mtu.utilities.Constants;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomVectorField;
 import sim.io.geo.ArcInfoASCGridExporter;
 import sim.io.geo.ShapeFileExporter;
 
@@ -143,7 +144,8 @@ public class WupScorecard implements Scorecard {
 		
 		// Store the agent parcels
 		String fileName = String.format(filesDirectory + nipfoFile, step);
-		ShapeFileExporter.write(fileName, state.getParcelLayer());
+		GeomVectorField parcels = state.getParcelLayer();
+		ShapeFileExporter.write(fileName, parcels);
 	}
 
 	// Society: Recreational Access

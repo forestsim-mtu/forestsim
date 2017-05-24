@@ -5,8 +5,9 @@ import edu.mtu.utilities.Constants;
 // https://www.na.fs.fed.us/spfo/pubs/silvics_manual/Volume_1/pinus/strobus.htm
 // http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
 public class PinusStrobus implements WesternUPSpecies {
-	public double getBiomass(double dbh, double height) {
-		// Note that we are ignoring the height for now.
+	
+	public double getBiomass(double dbh) {
+		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -2.5356, beta1 = 2.4349;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}
