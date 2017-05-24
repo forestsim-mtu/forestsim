@@ -1,11 +1,14 @@
 package edu.mtu.wup.model;
 
+import org.javatuples.Pair;
+
 import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.utilities.RandomDistribution;
 import edu.mtu.wup.model.parameters.*;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
@@ -79,6 +82,12 @@ public class WupModel extends ForestSim {
 		// Create the agent and set the basic parameters
 		EconomicAgent agent = new EconomicAgent();
 		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
+		
+		// Set the discount rate, X~N(mean, sd);
+		Pair<Double, Double> rate = parameters.getEconomicNvpDiscountRate();
+		double rand = RandomDistribution.NormalDistribution(rate.getValue0(), rate.getValue1(), random);
+		agent.setDiscountRate(rand);
+				
 		return agent;
 	}
 
@@ -89,9 +98,8 @@ public class WupModel extends ForestSim {
 		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
 
 		// Set the WTH, X~N(mean, sd)
-		double mean = parameters.getNipfoWthMean();
-		double sd = parameters.getNipfoWthSd();
-		double rand = random.nextGaussian() * sd + mean;
+		Pair<Double, Double> wth = parameters.getNipfoWth();		
+		double rand = RandomDistribution.NormalDistribution(wth.getValue0(), wth.getValue1(), random);
 		agent.setWthPerAcre(rand);
 
 		// Set the harvest odds, X~U(0, value)

@@ -1,5 +1,7 @@
 package edu.mtu.wup.model.parameters;
 
+import org.javatuples.Pair;
+
 import edu.mtu.simulation.parameters.ParameterBase;
 import edu.mtu.wup.vip.VipFactory;
 import edu.mtu.wup.vip.VipFactory.VipRegime;
@@ -22,9 +24,10 @@ public abstract class WupParameters extends ParameterBase {
 	private int loggingCapacity = 0;
 	private int vipCoolDown = 0;
 	private double ecosystemsNipfoHarvestOdds = 0.0;
-	private double nipfoWthMean = 0.0;
-	private double nipfoWthSd = 0.0;
 	private long seed = 0;
+
+	private Pair<Double, Double> economicNvpDiscountRate = Pair.with(0.0, 0.0);
+	private Pair<Double, Double> nipfoWth = Pair.with(0.0, 0.0);
 	private String outputDirectory = null;
 	private VipRegime vip;
 			
@@ -33,6 +36,13 @@ public abstract class WupParameters extends ParameterBase {
 	 */
 	public double getEcosystemsAgentHarvestOdds() { 
 		return ecosystemsNipfoHarvestOdds; 
+	}
+	
+	/**
+	 * Return the NVP discount rate for economic NIPFOs as a pair of &lt;mean, SD&gt;
+	 */
+	public Pair<Double, Double> getEconomicNvpDiscountRate() {
+		return economicNvpDiscountRate;
 	}
 		
 	/**
@@ -43,17 +53,10 @@ public abstract class WupParameters extends ParameterBase {
 	}
 	
 	/**
-	 * Get the mean WTH per acre for NIPFOs.
+	 * Return WTH for the NIPFOs as a pair of &lt;mean, SD&gt;
 	 */
-	public double getNipfoWthMean() {
-		return nipfoWthMean;
-	}
-
-	/**
-	 * Get the standard deviation WTH per acre for NIFPOs 
-	 */
-	public double getNipfoWthSd() {
-		return nipfoWthSd;
+	public Pair<Double, Double> getNipfoWth() {
+		return nipfoWth;
 	}
 
 	/**
@@ -85,6 +88,13 @@ public abstract class WupParameters extends ParameterBase {
 	}
 
 	/**
+	 * Set the mean and SD for the economic NVP discount rate.
+	 */
+	public void setEconomicNpvDiscountRate(double mean, double sd) {
+		economicNvpDiscountRate = Pair.with(mean, sd);
+	}
+	
+	/**
 	 * Set the odds that an ecosystems NIPFO will harvest.
 	 */
 	public void setEcosystemsAgentHarvestOdds(double value) {
@@ -101,19 +111,12 @@ public abstract class WupParameters extends ParameterBase {
 	}
 	
 	/**
-	 * Set the mean WTH per acre for NIPFOs
+	 * Set the mean and SD for the WTH per acre for NIPFOs.
 	 */
-	public void setNipfoWthMean(double value) {
-		nipfoWthMean = value;
+	public void setNipfoWth(double mean, double sd) {
+		nipfoWth = Pair.with(mean, sd);
 	}
-
-	/**
-	 * Set the standard deviation WTH per acre for NIFPOs
-	 */
-	public void setNipfoWthSd(double value) {
-		nipfoWthSd = value;
-	}
-		
+			
 	/**
 	 * Set the output directory for the scorecard.
 	 */

@@ -76,7 +76,8 @@ public class Harvesting {
 		
 		for (Stand stand : stands) {
 			// Get the biomass for the stand
-			double biomass = stand.dominateSpecies.getBiomass(stand.arithmeticMeanDiameter, stand.height) * stand.numberOfTrees;
+			double height = stand.dominateSpecies.getHeight(stand.arithmeticMeanDiameter);
+			double biomass = stand.dominateSpecies.getBiomass(stand.arithmeticMeanDiameter, height) * stand.numberOfTrees;
 			
 			// Covert to cunit, assume that 1,000 kg is 1.4 m^3
 			double cunit = (biomass / 1000) * 35.3147;

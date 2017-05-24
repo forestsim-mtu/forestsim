@@ -15,7 +15,6 @@ public class Stand {
 	public double siteIndex;
 	
 	// Stand Attributes
-	public double height;
 	public double minimumDiameter;
 	public double arithmeticMeanDiameter;
 	public double quadraticMeanDiameter;

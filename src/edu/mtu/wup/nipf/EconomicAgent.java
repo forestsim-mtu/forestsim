@@ -17,8 +17,8 @@ import edu.mtu.wup.vip.VipFactory;
 public class EconomicAgent extends NipfAgent {
 			
 	private final static int projectionWindow = 100;
-	private final static double rate = 0.08; 			// http://www.sewall.com/files/timberlandreport/v8n3.pdf	
 	
+	private double rate = 0.0;	
 	private long nextHarvest = -1;
 	
 	/**
@@ -102,5 +102,12 @@ public class EconomicAgent extends NipfAgent {
 		
 		// Note the harvest year and return
 		nextHarvest = state.schedule.getSteps() + year;
+	}
+	
+	/**
+	 * Set the NVP discount rate.
+	 */
+	public void setDiscountRate(double value) {
+		rate = value;
 	}
 }

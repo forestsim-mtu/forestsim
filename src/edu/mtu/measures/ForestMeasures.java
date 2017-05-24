@@ -58,7 +58,8 @@ public class ForestMeasures {
 		
 		Stand stand = forest.getStand(point.x, point.y);
 		Species species = forest.getGrowthModel().getSpecies(stand.nlcd);
-		return species.getBiomass(stand.arithmeticMeanDiameter, stand.height) * stand.numberOfTrees;
+		double height = species.getHeight(stand.arithmeticMeanDiameter);
+		return species.getBiomass(stand.arithmeticMeanDiameter, height) * stand.numberOfTrees;
 	}
 	
 	/**
