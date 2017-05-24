@@ -12,8 +12,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source />
-					<target />
+					<source>7</source>
+					<target>7</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -25,7 +25,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>edu.mtu.wup.ModelNoUi</mainClass>
+							<mainClass>edu.mtu.wup.launch.ModelNoUi</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

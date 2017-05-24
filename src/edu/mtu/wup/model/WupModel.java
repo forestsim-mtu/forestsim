@@ -19,22 +19,15 @@ import edu.mtu.wup.vip.VipFactory;
  * This is an aggregate model of the Western Upper Peninsula of Michigan, USA. 
  */
 @SuppressWarnings("serial")
-public class WupModel extends ForestSim {
+public abstract class WupModel extends ForestSim {
 
-	private WupParameters parameters = new NoneParameters();
-	//private WupParameters parameters = new WupDiscount();
-	//private WupParameters parameters = new WupAgglomeration();
+	public abstract WupParameters getParameters();
 	
-	private WupScorecard scorecard = null;
-			
-	/**
-	 * Constructor.
-	 * @param seed
-	 */
 	public WupModel(long seed) {
 		super(seed);
-		parameters.setSeed(seed);
 	}
+
+	private WupScorecard scorecard = null;
 	
 	@Override
 	public GrowthModel getGrowthModel() {
@@ -64,7 +57,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public String getDefaultOutputDirectory() {
-		return parameters.getOutputDirectory();
+		return getParameters().getOutputDirectory();
 	}
 
 	@Override
@@ -74,17 +67,17 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public int getHarvestCapacity() {
-		return parameters.getLoggingCapacity();
+		return getParameters().getLoggingCapacity();
 	}
 
 	@Override
 	public ParcelAgent createEconomicAgent(MersenneTwisterFast random) {
 		// Create the agent and set the basic parameters
 		EconomicAgent agent = new EconomicAgent();
-		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
+		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
 		
 		// Set the discount rate, X~N(mean, sd);
-		Pair<Double, Double> rate = parameters.getEconomicNvpDiscountRate();
+		Pair<Double, Double> rate = getParameters().getEconomicNvpDiscountRate();
 		double rand = RandomDistribution.NormalDistribution(rate.getValue0(), rate.getValue1(), random);
 		agent.setDiscountRate(rand);
 				
@@ -95,15 +88,15 @@ public class WupModel extends ForestSim {
 	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
 		// Create the agent and set basic parameters
 		EcosystemsAgent agent = new EcosystemsAgent();
-		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
+		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
 
 		// Set the WTH, X~N(mean, sd)
-		Pair<Double, Double> wth = parameters.getNipfoWth();		
+		Pair<Double, Double> wth = getParameters().getNipfoWth();		
 		double rand = RandomDistribution.NormalDistribution(wth.getValue0(), wth.getValue1(), random);
 		agent.setWthPerAcre(rand);
 
 		// Set the harvest odds, X~U(0, value)
-		rand = random.nextDouble() * parameters.getEcosystemsAgentHarvestOdds();
+		rand = random.nextDouble() * getParameters().getEcosystemsAgentHarvestOdds();
 		agent.setHarvestOdds(rand);
 		
 		return agent;
@@ -111,7 +104,7 @@ public class WupModel extends ForestSim {
 	
 	@Override
 	public Object getModelParameters() {
-		return parameters;
+		return getParameters();
 	}
 
 	@Override
