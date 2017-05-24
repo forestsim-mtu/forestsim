@@ -1,7 +1,6 @@
 package edu.mtu.wup.model;
 
 import java.awt.Point;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 

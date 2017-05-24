@@ -11,8 +11,9 @@ import sim.field.geo.GeomGridField;
 
 /**
  * This class contains various measures related to the forest itself.
+ * 
+ * Note that when doing these processes on a regular basis the use of ForestMeasuresParallel is recommended.
  */
-// TODO Most of the measures in this class can be updated to be much faster.
 public class ForestMeasures {
 	
 	/**
