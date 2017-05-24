@@ -30,6 +30,6 @@ public class Economics {
 	 * @return
 	 */
 	public static double npv(double c, double r, long t) {
-		return Math.pow(c / (1 + r), t);
+		return c / Math.pow(1 + r, t);
 	}
 }

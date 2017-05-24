@@ -73,6 +73,7 @@ public class EconomicAgent extends NipfAgent {
 	 */
 	private void projectHarvests() {
 		int year = 0;
+		int down = 0;
 		double value = 0;
 		
 		// Note the stands for the projection
@@ -93,9 +94,18 @@ public class EconomicAgent extends NipfAgent {
 			harvestable = Harvesting.getHarvestableStands(projection, dbh);
 			double bid = Harvesting.getHarvestValue(harvestable);
 			double npv = Economics.npv(bid, rate, ndx);
+			
+			// If the NPV is greater than what we currently have update
 			if (npv > value) {
 				value = npv;
 				year = ndx;
+				down = 0;
+			}
+			
+			// If the NPV has gone down for five years, assume we are done
+			down += (npv < value) ? 1 : 0;
+			if (down >= 5) {
+				break;
 			}
 		}
 		

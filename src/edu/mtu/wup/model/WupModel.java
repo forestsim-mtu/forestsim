@@ -22,8 +22,8 @@ import edu.mtu.wup.vip.VipFactory;
 public class WupModel extends ForestSim {
 
 	//private WupParameters parameters = new NoneParameters();
-	private WupParameters parameters = new WupDiscount();
-	//private WupParameters parameters = new WupAgglomeration();
+	//private WupParameters parameters = new WupDiscount();
+	private WupParameters parameters = new WupAgglomeration();
 	
 	private WupScorecard scorecard = null;
 			

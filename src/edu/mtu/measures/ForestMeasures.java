@@ -14,7 +14,7 @@ import sim.field.geo.GeomGridField;
  */
 // TODO Most of the measures in this class can be updated to be much faster.
 public class ForestMeasures {
-		
+	
 	/**
 	 * Calculate the average stocking of parcels held by the parcel agents.
 	 * 
@@ -58,6 +58,9 @@ public class ForestMeasures {
 		
 		Stand stand = forest.getStand(point.x, point.y);
 		Species species = forest.getGrowthModel().getSpecies(stand.nlcd);
+		if (species == null) { 
+			return 0;
+		}
 		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
 	}
 	
@@ -101,8 +104,7 @@ public class ForestMeasures {
 		double biomass = 0;
 		for (int ndx = 0; ndx < landCover.getGridWidth(); ndx++) {
 			for (int ndy = 0; ndy < landCover.getGridHeight(); ndy++) {
-				// Only calculate biomass in locations with trees
-				biomass += (forest.getTreeCountMap().get(ndx, ndy) != 0) ?  calculateBiomass(new Point(ndx, ndy)) : 0; 
+				biomass += calculateBiomass(new Point(ndx, ndy)); 
 			}
 		}
 		return biomass;

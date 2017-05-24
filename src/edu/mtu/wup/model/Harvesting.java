@@ -96,6 +96,8 @@ public class Harvesting {
 			value += (mbf * getStandBid(stand));
 		}
 		
+		// Round the value off and return
+		value = Math.round(value * 100.0) / 100.0;
 		return value;
 	}
 		

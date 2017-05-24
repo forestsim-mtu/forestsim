@@ -9,6 +9,7 @@ import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.measures.ForestMeasures;
+import edu.mtu.measures.ForestMeasuresParallel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
@@ -62,6 +63,9 @@ public class WupScorecard implements Scorecard {
 			}
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
+			System.exit(-1);
+		} catch (InterruptedException ex) {
+			System.err.println("Unhandled InterruptedException: " + ex.toString());
 			System.exit(-1);
 		}
 	}
@@ -145,8 +149,10 @@ public class WupScorecard implements Scorecard {
 	}
 
 	// Environment: Carbon Sequestration
-	private void writeCarbonSequestration(List<ParcelAgent> agents) throws IOException {
-		double biomass = ForestMeasures.calculateTotalBiomass();
+	private void writeCarbonSequestration(List<ParcelAgent> agents) throws IOException, InterruptedException {
+		//double biomass = ForestMeasures.calculateTotalBiomass();
+		
+		double biomass = ForestMeasuresParallel.calculateBiomass();
 		double carbon = carbonInBiomassEstiamte(biomass);
 		appendToCsv(carbonGlobalFile, carbon);
 		
