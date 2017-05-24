@@ -64,12 +64,6 @@ public abstract class ParcelAgent implements Steppable {
 	public LandUseGeomWrapper getGeometry() { return landUseWrapper; }
 	
 	/**
-	 * Get the current land use for the agent's parcel.
-	 */
-	public double getLandUse() { return landUseWrapper.getLandUse(); }
-	
-	
-	/**
 	 * Get the area, in acres, of the parcel that the agent owns.
 	 */
 	public double getParcelArea() {
@@ -120,11 +114,6 @@ public abstract class ParcelAgent implements Steppable {
 	 * Get the random number generator associated with this agent.
 	 */
 	protected MersenneTwisterFast getRandom() { return random; }
-	
-	/**
-	 * Set the land use for the agent's parcel.
-	 */
-	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
 		
 	/**
 	 * Update the shape file to reflect the agent's attributes.

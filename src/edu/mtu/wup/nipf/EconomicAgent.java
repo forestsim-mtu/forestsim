@@ -44,7 +44,6 @@ public class EconomicAgent extends NipfAgent {
 	
 	@Override
 	protected void doHarvestOperation() {
-		double dbh = getHarvestDbh();
 				
 		// Determine when the next harvest should be
 		if (nextHarvest == -1) {
@@ -53,7 +52,7 @@ public class EconomicAgent extends NipfAgent {
 			
 		// If it is time for the next harvest, do so
 		if (state.schedule.getSteps() >= nextHarvest) {
-			List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), dbh);
+			List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), getHarvestDbh());
 			AggregateHarvester.getInstance().requestHarvest(this, stands);
 		}
 	}

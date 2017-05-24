@@ -5,7 +5,6 @@ import sim.util.geo.MasonGeometry;
 @SuppressWarnings("serial")
 public class LandUseGeomWrapper extends MasonGeometry {
 
-	private double landUse = 1.0;
 	private int enrolledInVip = 0;
 	private int index = -1;
 	private ParcelAgentType agentType;
@@ -31,12 +30,7 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	 * Get the unique index of this agent in the simulation.
 	 */
 	public int getIndex() { return index; }
-	
-	/**
-	 * Get the current land use for the agent's parcel.
-	 */
-	public double getLandUse() { return landUse; }
-		
+			
 	/**
 	 * Set the type of agent in the parcel.
 	 */
@@ -51,19 +45,13 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	 * Set the unique index of the agent in the simulation.
 	 */
 	public void setIndex(int value) { index = value; }
-	
-	/**
-	 * Set the current land use for the agent's parcel.
-	 */
-	public void setLandUse(double value) { landUse = value; }
 		
 	/**
 	 * Update the shape file with the agent's information.
 	 */
 	public void updateShpaefile() {
-		this.addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
-		this.addDoubleAttribute("LANDUSE", landUse);
 		int type = (agentType != null) ? agentType.getValue() : -1;
 		this.addIntegerAttribute("AGENT_TYPE", type);
+		this.addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
 	}
 }

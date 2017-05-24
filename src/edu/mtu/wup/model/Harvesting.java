@@ -1,6 +1,7 @@
 package edu.mtu.wup.model;
 
 import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,12 +79,15 @@ public class Harvesting {
 			// Get the height of the tree
 			double height = stand.dominateSpecies.getHeight(stand.arithmeticMeanDiameter);
 			
-			// Convert DBH and height to imperial units
+			// Convert DBH and height to imperial units and round
 			double dbh = stand.arithmeticMeanDiameter * 0.39;
-			height = height * 0.03;
+			dbh = Math.round(dbh * 100.0) / 100.0;
+			
+			height = height * 3.28084;
+			height = Math.round(height * 100.0) / 100.0;
 			
 			// Estimate the number of board feet using Scribner Decimal C log rule
-			double boardFeet = (0.79 * dbh - 2 * dbh - 4) * (height / 16);
+			double boardFeet = (0.79 * Math.pow(dbh, 2) - 2 * dbh - 4) * (height / 16);
 			
 			// Convert to thousands of board feet for the bid
 			double mbf = boardFeet / 1000;

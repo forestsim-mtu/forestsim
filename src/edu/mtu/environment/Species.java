@@ -17,7 +17,7 @@ public interface Species {
 	 * Get the height of a representative tree given the DBH.
 	 * 
 	 * @param dbh The DBH of the given tree, in cm.
-	 * @return Approximate height of the given tree, in cm.
+	 * @return Approximate height of the given tree, in m.
 	 */
 	double getHeight(double dbh);
 	

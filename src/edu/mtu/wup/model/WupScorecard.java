@@ -30,7 +30,7 @@ public class WupScorecard implements Scorecard {
 	private final static String dbhFile = "/dbh%1$d.asc";
 	private final static String demandFile = "/demand.csv";
 	private final static String harvestedFile = "/harvested.csv";
-	private final static String nipfoFile = "/nipfo%1$d.shp";
+	private final static String nipfoFile = "/nipfo%1$d";			// ArcGIS disapproves of .shp.shp
 	private final static String recreationFile = "/recreation.csv";
 	private final static String stockingFile = "/stocking%1$d.asc";
 	private final static String vipFile = "/vip.csv";
