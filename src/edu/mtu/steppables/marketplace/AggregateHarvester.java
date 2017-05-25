@@ -4,11 +4,12 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.javatuples.Pair;
+
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.utilities.Precision;
 import edu.mtu.wup.vip.VipBase;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -24,9 +25,10 @@ public class AggregateHarvester implements Steppable {
 	
 	public final static double MinimumHarvestArea = VipBase.baseAcerage;		// Minimum area that can be harvested.
 	
-	private double biomass;
-	private int demand;
-	private int harvested;
+	private double stemBiomass;
+	private double totalBiomass;
+	private int harvestsRequested;
+	private int pracelsHarvested;
 	
 	/**
 	 * Constructor.
@@ -47,18 +49,32 @@ public class AggregateHarvester implements Steppable {
 	}
 	
 	/**
-	 * Get the harvested biomass, in kilograms dry weight (kg).
+	 * Get the stem biomass, in kg (dry weight) 
+	 * @return
 	 */
-	public double getBiomass() {
-		return Precision.round(biomass, 2);
+	public double getStemBiomass() {
+		return stemBiomass;
 	}
 	
-	public int getDemand() {
-		return demand;
+	/**
+	 * Get the harvested biomass, in kg (dry weight)
+	 */
+	public double getTotalBiomass() {
+		return totalBiomass;
 	}
 	
-	public int getHarvested() {
-		return harvested;
+	/**
+	 * Get the number of harvest requests.
+	 */
+	public int getHarvestedRequested() {
+		return harvestsRequested;
+	}
+	
+	/**
+	 * Get the number of parcels harvested.
+	 */
+	public int getPracelsHarvested() {
+		return pracelsHarvested;
 	}
 	
 	/**
@@ -77,21 +93,28 @@ public class AggregateHarvester implements Steppable {
 	 * @return The total biomass harvested in kilograms dry weight (kg)
 	 */
 	protected void processHarvestRequests(int capacity) {
-		demand = requests.size();
-		biomass = 0;
-		harvested = 0;
+		harvestsRequested = requests.size();
+		
+		// Reset
+		stemBiomass = 0;
+		totalBiomass = 0;
+		pracelsHarvested = 0;
 		
 		Forest forest = Forest.getInstance();		
 		while (!requests.isEmpty()) {
+			
+			// Harvest the biomass from the parcel, update the totals
 			HarvestRequest request = requests.remove(0);
+			Pair<Double, Double> result = forest.harvest(request.stands);
+			stemBiomass += result.getValue0();
+			totalBiomass += result.getValue1();
+			pracelsHarvested++;
+			
+			// Inform the agent
 			request.agent.doHarvestedOperation();
 			
-			// Harvest the biomass, update the total
-			biomass += forest.harvest(request.stand);
-			harvested++;
-			
 			// Return if we are done
-			if (harvested >= capacity) {
+			if (pracelsHarvested >= capacity) {
 				return;
 			}
 		}
@@ -132,7 +155,7 @@ public class AggregateHarvester implements Steppable {
 		// Wrap the data in a request
 		HarvestRequest request = new HarvestRequest();
 		request.agent = agent;
-		request.stand = stand;
+		request.stands = stand;
 		request.deliverTo = null;
 		
 		// Queue it to be processed later

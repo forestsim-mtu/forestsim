@@ -9,7 +9,7 @@ import edu.mtu.steppables.ParcelAgent;
  */
 public class HarvestRequest {
 	public ParcelAgent agent;
-	public Point[] stand;
+	public Point[] stands;
 	public int queueOrder;
 	public BiomassConsumer deliverTo;
 }

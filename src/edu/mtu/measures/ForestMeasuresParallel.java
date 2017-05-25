@@ -25,15 +25,16 @@ public class ForestMeasuresParallel {
 	private int agentCount;
 	private ParcelAgent[] agents;
 	
-	private volatile double[] sums = new double[threadCount]; 
+	private volatile double[] sums;
 	
 	/**
 	 * Calculate the biomass for all forests.
 	 * 
-	 * @return The total biomass in kilograms of dry weight.
+	 * @return The total biomass in kg (dry weight).
 	 */
 	public static synchronized double calculateBiomass() throws InterruptedException {
 		// Map
+		instance.sums = new double[instance.threadCount];
 		instance.service.invokeAll(instance.biomassThreads);
 				
 		// Reduce
@@ -44,13 +45,14 @@ public class ForestMeasuresParallel {
 	 * Calculate the biomass for all of the agents.
 	 * 
 	 * @param agents The agents that are in the model.
-	 * @return The total biomass in kilograms of dry weight.
+	 * @return The total biomass in kg (dry weight).
 	 */
 	public static synchronized double calculateBiomass(List<ParcelAgent> agents) throws InterruptedException {
 		// Prepare
 		instance.prepareAgentThreads(agents);
 		
 		// Map
+		instance.sums = new double[instance.threadCount];
 		instance.agents = (ParcelAgent[])agents.toArray();
 		instance.service.invokeAll(instance.agentThreads);
 		
@@ -119,7 +121,7 @@ public class ForestMeasuresParallel {
 	 */
 	private double sum() {
 		double result = 0;
-		for (double value : instance.sums) {
+		for (double value : sums) {
 			result += value;
 		}
 		return result;
@@ -129,9 +131,8 @@ public class ForestMeasuresParallel {
 	 * Calculate the sum of the biomass for agent parcels in the portion provided it and write it to the given array index.
 	 */
 	private void sumAgentBiomass(int start, int end, int index) {
-		sums[index] = 0;
 		for (int ndx = start; ndx < end; ndx++) {
-			sums[index] += ForestMeasures.calculateStandBiomass(agents[ndx].getParcel());
+			sums[ndx] += ForestMeasures.calculateStandBiomass(agents[ndx].getParcel());
 		}
 	}
 	
@@ -139,7 +140,6 @@ public class ForestMeasuresParallel {
 	 * Calculate the sum of biomass in the portion provided and write it to the given array index.
 	 */
 	private void sumBiomass(int start, int end, int index) {
-		sums[index] = 0;
 		for (int ndx = 0; ndx < Forest.getInstance().getMapWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				sums[index] += ForestMeasures.calculateBiomass(ndx, ndy);

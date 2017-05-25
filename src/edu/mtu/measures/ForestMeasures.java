@@ -3,8 +3,9 @@ package edu.mtu.measures;
 import java.awt.Point;
 import java.util.List;
 
+import org.javatuples.Pair;
+
 import edu.mtu.environment.Forest;
-import edu.mtu.environment.Species;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
 import sim.field.geo.GeomGridField;
@@ -52,7 +53,7 @@ public class ForestMeasures {
 	 * Get the biomass at the given stand.
 	 * 
 	 * @param point The geometric coordinates of the stand.
-	 * @return The current biomass of the stand in kg dry weight.
+	 * @return The current biomass of the stand in kg (dry weight).
 	 */
 	public static double calculateBiomass(Point point) {
 		return calculateBiomass(point.x, point.y);
@@ -61,23 +62,37 @@ public class ForestMeasures {
 	/**
 	 * Get the biomass at the given stand.
 	 * 
-	 * @return The current biomass of the stand in kg dry weight.
+	 * @return The current biomass of the stand in kg (dry weight).
 	 */
 	public static double calculateBiomass(int ndx, int ndy) {
-		Forest forest = Forest.getInstance();
-		Stand stand = forest.getStand(ndx, ndy);
-		Species species = forest.getGrowthModel().getSpecies(stand.nlcd);
-		if (species == null) { 
+		Stand stand = Forest.getInstance().getStand(ndx, ndy);
+		if (stand.dominateSpecies == null) { 
 			return 0;
 		}
-		return species.getBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
+		return stand.dominateSpecies.getAboveGroundBiomass(stand.arithmeticMeanDiameter) * stand.numberOfTrees;
+	}
+	
+	/**
+	 * Calculate the harvest biomass of the stand.
+	 * 
+	 * @return A pair of weights in kg (dry weight), [stem wood, total aboveground]
+	 */
+	public static Pair<Double, Double> calculateHarvestBiomass(int ndx, int ndy) {
+		Forest forest = Forest.getInstance();
+		Stand stand = forest.getStand(ndx, ndy);
+		if (stand.dominateSpecies == null) {
+			return null;
+		}
+		double ratio = stand.dominateSpecies.getStemWoodBiomassRatio(stand.arithmeticMeanDiameter);
+		double biomass = stand.dominateSpecies.getAboveGroundBiomass(stand.arithmeticMeanDiameter);
+		return new Pair<Double, Double>(biomass * ratio, biomass);
 	}
 	
 	/**
 	 * Calculate the biomass in the given stand.
 	 * 
 	 * @param stands The pixels that make up the stand.
-	 * @return The estimated biomass for the stand.
+	 * @return The estimated biomass for the stand in kg (dry weight).
 	 */
 	public static double calculateStandBiomass(Point[] stands) {
 		double biomass = 0;

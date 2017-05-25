@@ -4,7 +4,8 @@ require(ggplot2)
 require(reshape2)
 
 experiments = c('none', 'discount', 'agglomeration')
-timeSteps = 105
+policyIntroduction = 60
+timeSteps = 200
 
 colSd <- function (x, na.rm = F) apply(X = x, MARGIN = 2, FUN = sd, na.rm = na.rm)
 
@@ -23,13 +24,7 @@ analysis <- function (plot, title, ylabel, fancy) {
 	for (experiment in experiments) {
 		path = paste('../out/', experiment, '/', plot, '.csv', sep="")
 		working <- read.csv(path, header=F)
-
-		# This is all kind of bad form
-		# Convert acres to hectares as needed
-		if (plot == "recreation") {
-			working = working / 247.11
-		}
-		
+	
 		# We assume that the number of rows stays the same
 		rows = nrow(working)		
 	
@@ -51,6 +46,7 @@ analysis <- function (plot, title, ylabel, fancy) {
 	title = sprintf("%s (mean of %i runs)", title, rows)
 	
 	plotted <- ggplot(df, aes(Year, value)) +
+				geom_vline(xintercept = policyIntroduction) +
 				geom_line(aes(colour = Series)) +
 				labs(y = ylabel, title = title) +
 				theme(legend.position = "bottom", legend.title = element_blank())
@@ -58,19 +54,16 @@ analysis <- function (plot, title, ylabel, fancy) {
 	if (fancy) {
 		plotted <- plotted + scale_y_continuous(labels = fancy_scientific)
 	}
-	
-	# if (plot == "biomass") {
-		# plotted <- plotted + geom_hline(yintercept = 100000000);
-	# }
 
 	file = paste(plot, '.png', sep="")
 	ggsave(filename = file, plot = plotted)
 }
 
-analysis('biomass', 'Harvested Biomass', 'Metric Tons Dry Weight (MT)', T)
+analysis('biomass', 'Harvested Biomass', 'Metric Tons (MT) Dry Weight', T)
+analysis('stems', 'Harvested Stems', 'Metric Tons (MT) Dry Weight', T);
 analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('demand', 'Harvest Demand', 'Owners', F)
 analysis('harvested', 'Harvested Parcels', 'Owners', F)
-analysis('recreation', 'Open Access Forest', 'Forest Area (sq. km.)', T)
+analysis('recreation', 'Open Access Forest', 'Forest Area (sq. km.)', F)
 analysis('vip', 'VIP Enrollment', 'Owners', F)

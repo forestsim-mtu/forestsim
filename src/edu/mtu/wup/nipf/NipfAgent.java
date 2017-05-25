@@ -20,7 +20,7 @@ public abstract class NipfAgent extends ParcelAgent {
 				
 	// WTH attributes
 	protected double wthPerAcre = 0.0;
-		
+			
 	protected abstract void doAgentPolicyOperation();
 	protected abstract double getMinimumDbh();
 		

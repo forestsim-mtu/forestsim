@@ -12,6 +12,11 @@ public abstract class WupParameters extends ParameterBase {
 	public static final String defaultParcelFile = "file:shapefiles/WUP Parcels/WUPParcels.shp";
 	
 	/**
+	 * Land Tenure phase in rate for the model.
+	 */
+	public final static double LandTenurePhaseInRate = 0.02;
+	
+	/**
 	 * Base millage rate for the model.
 	 */
 	public final static int MillageRate = 35;

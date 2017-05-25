@@ -55,15 +55,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	}
 	
 	// The set of reference stocking guides for the growth patterns
-	private final static HashMap<String, double[][]> stockingGuides;
-	static {
-		HashMap<String, double[][]> map = new HashMap<String, double[][]>();
-		WesternUPSpecies key = new AcerRebrum();
-		map.put(key.getName(), readStockingGuide(key.getDataFile()));
-		key = new PinusStrobus();
-		map.put(key.getName(), readStockingGuide(key.getDataFile()));
-		stockingGuides = map;
-	}
+	private HashMap<String, double[][]> stockingGuides = null;
 	
 	private MersenneTwisterFast random;
 	
@@ -75,6 +67,14 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	}
 	
 	public void calculateInitialStands() {
+		// Load the stocking guide
+		double multiplier = Forest.getInstance().getAcresPerPixel();
+		stockingGuides = new HashMap<String, double[][]>();
+		WesternUPSpecies key = new AcerRebrum();
+		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), multiplier));
+		key = new PinusStrobus();
+		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), multiplier));
+		
 		// Note the height and width of the grid
 		int height = Forest.getInstance().getMapHeight();
 		int width = Forest.getInstance().getMapWidth();
@@ -89,7 +89,6 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		// height (DBH) in the process. This will act as the basis for the height estimation. Also,
 		// note that while the NLCD says that the stands should be at least five meters in height, 
 		// we allow the variability since harvests may have occurred.
-		double multiplier = Forest.getInstance().getAcresPerPixel();
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
@@ -105,7 +104,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 				grid.set(ndx, ndy, dbh);
 				
 				// Use the DBH to determine the number of trees in the pixel
-				int count = (int)(calculateTargetStocking(reference, dbh) * multiplier);
+				int count = calculateTargetStocking(reference, dbh);
 				treeCount.set(ndx, ndy, count);
 				
 				// Calculate the expected average age of the stands, as a loose estimation, 
@@ -206,9 +205,10 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	 * Read the stocking guide for the species.
 	 * 
 	 * @param fileName The path to the stocking guide for the species. 
+	 * @param multiplier The value to use to convert the guide from acres to stands.
 	 * @return A matrix containing the stocking guide.
 	 */
-	public static double[][] readStockingGuide(String fileName) {
+	public static double[][] readStockingGuide(String fileName, double multiplier) {
 		try {
 			// Read the CSV file in
 			Reader file = new FileReader(fileName);
@@ -221,12 +221,12 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 						Double.parseDouble(record.get(2)) });
 			}
 			
-			// Convert it to a matrix and return
+			// Convert it to a matrix, scale from acres to pixels, and return
 			double[][] results = new double[working.size()][3];
 			for (int ndx = 0; ndx < working.size(); ndx++) {
 				results[ndx][0] = working.get(ndx)[0];
 				results[ndx][1] = working.get(ndx)[1];
-				results[ndx][2] = working.get(ndx)[2];
+				results[ndx][2] = working.get(ndx)[2] * multiplier;
 			}
 			return results;
 		} catch (FileNotFoundException ex) {

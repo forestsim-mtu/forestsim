@@ -31,7 +31,7 @@ public class WupScorecard implements Scorecard {
 	
 	private BufferedCsvWriter[] writers;
 		
-	private final static int captureInterval = 10;
+	private final static int captureInterval = 20;
 		
 	private String outputDirectory;
 	private String filesDirectory;
@@ -97,12 +97,12 @@ public class WupScorecard implements Scorecard {
 	/**
 	 * Find the approximate amount of carbon in the woody biomass.
 	 * 
-	 * @param biomass The woody biomass in green tons.
+	 * @param biomass The woody biomass in kg (dry tons)
 	 * @return The carbon content of the vegetation in gigatons (Gt)
 	 */
 	private double carbonInBiomassEstiamte(double biomass) {
 		// Use the approximation given by (Magnussen & Reed, 2015) 
-		return (0.475 * biomass) / Constants.KilogramToMetricTon; 
+		return 0.475 * biomass; 
 	}
 		
 	/**
@@ -116,23 +116,26 @@ public class WupScorecard implements Scorecard {
 	
 	// Society: Aesthetics, Environment: Habitat Connectivity
 	private void writeGisFiles(ForestSim state) throws IOException {
-		// Store the forest raster files
-		Forest forest = Forest.getInstance();
-		long step = state.schedule.getSteps();
-		storeRaster(String.format(filesDirectory + ageFile, step), forest.getStandAgeMap());
-		storeRaster(String.format(filesDirectory + dbhFile, step), forest.getStandDbhMap());
-		storeRaster(String.format(filesDirectory + stockingFile, step), forest.getStockingMap());
-		
-		// Store the agent parcels
-		String fileName = String.format(filesDirectory + nipfoFile, step);
-		GeomVectorField parcels = state.getParcelLayer();
-		ShapeFileExporter.write(fileName, parcels);
+//		// Store the forest raster files
+//		Forest forest = Forest.getInstance();
+//		long step = state.schedule.getSteps();
+//		storeRaster(String.format(filesDirectory + ageFile, step), forest.getStandAgeMap());
+//		storeRaster(String.format(filesDirectory + dbhFile, step), forest.getStandDbhMap());
+//		storeRaster(String.format(filesDirectory + stockingFile, step), forest.getStockingMap());
+//		
+//		// Store the agent parcels
+//		String fileName = String.format(filesDirectory + nipfoFile, step);
+//		GeomVectorField parcels = state.getParcelLayer();
+//		ShapeFileExporter.write(fileName, parcels);
 	}
 
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
 		VipBase vip = VipFactory.getInstance().getVip();
-		writers[Indicators.VipRecreation.getValue()].write(vip != null ? vip.getSubscribedArea() : 0);
+		
+		double area = vip != null ? vip.getSubscribedArea() / Constants.SquareMetersToSquareKilometers : 0;
+		writers[Indicators.VipRecreation.getValue()].write(area);
+		
 		writers[Indicators.VipEnrollment.getValue()].write(vip != null ? vip.getSubscriptionRate() : 0);
 	}
 
@@ -150,9 +153,14 @@ public class WupScorecard implements Scorecard {
 	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvesting() throws IOException {
 		AggregateHarvester harvester = AggregateHarvester.getInstance();
-		double biomass = harvester.getBiomass() / Constants.KilogramToMetricTon;		
+		
+		double biomass = harvester.getTotalBiomass() / Constants.KilogramToMetricTon;		
 		writers[Indicators.HarvestedBiomass.getValue()].write(biomass);
-		writers[Indicators.HarvestDemand.getValue()].write(harvester.getDemand());
-		writers[Indicators.HarvestedParcels.getValue()].write(harvester.getHarvested());
+		
+		biomass = harvester.getStemBiomass() / Constants.KilogramToMetricTon;
+		writers[Indicators.HarvestedStems.getValue()].write(biomass);
+		        
+		writers[Indicators.HarvestDemand.getValue()].write(harvester.getHarvestedRequested());
+		writers[Indicators.HarvestedParcels.getValue()].write(harvester.getPracelsHarvested());
 	}
 }

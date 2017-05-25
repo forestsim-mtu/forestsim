@@ -7,6 +7,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.javatuples.Pair;
+
 import edu.mtu.measures.ForestMeasures;
 import edu.mtu.utilities.Constants;
 import sim.field.geo.GeomGridField;
@@ -314,14 +316,17 @@ public class Forest {
 	/**
 	 * Harvest the forest stand and return the biomass.
 	 * 
-	 * @return The biomass harvested from the stand in kilograms dry weight (kg)
+	 * @param stands The stands to be harvested
+	 * @return A pair of weights in kg (dry weight), [stem wood, total aboveground]
 	 */
-	public double harvest(Point[] stands) {
-		double biomass = 0;
+	public Pair<Double, Double> harvest(Point[] stands) {
+		double biomass = 0, stem = 0;
 		
 		for (Point point : stands) {
 			// Calculate out the stand biomass
-			biomass += ForestMeasures.calculateBiomass(point);
+			Pair<Double, Double> result = ForestMeasures.calculateHarvestBiomass(point.x, point.y);
+			stem += result.getValue0();
+			biomass += result.getValue1();
 									
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
@@ -333,8 +338,7 @@ public class Forest {
 			standAge.set(point.x, point.y, 0);
 		}
 		
-		// Return the biomass
-		return biomass;
+		return new Pair<Double, Double>(stem, biomass);
 	}
 		
 	/**
@@ -383,7 +387,7 @@ public class Forest {
 			// Calculate the biomass
 			Stand stand = getStand(plan.point.x, plan.point.y);
 			Species species = growthModel.getSpecies(stand.nlcd);
-			biomass += species.getBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
+			biomass += species.getAboveGroundBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
 		}
 				
 		// Return the biomass

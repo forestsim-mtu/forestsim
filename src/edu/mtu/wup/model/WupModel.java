@@ -13,6 +13,7 @@ import edu.mtu.wup.model.parameters.*;
 import edu.mtu.wup.model.scorecard.WupScorecard;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
+import edu.mtu.wup.nipf.NipfAgent;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
 
@@ -70,26 +71,24 @@ public abstract class WupModel extends ForestSim {
 	public int getHarvestCapacity() {
 		return getParameters().getLoggingCapacity();
 	}
-
+	
 	@Override
 	public ParcelAgent createEconomicAgent(MersenneTwisterFast random) {
-		// Create the agent and set the basic parameters
+
 		EconomicAgent agent = new EconomicAgent();
-		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
 		
 		// Set the discount rate, X~N(mean, sd);
 		Pair<Double, Double> rate = getParameters().getEconomicNvpDiscountRate();
 		double rand = RandomDistribution.NormalDistribution(rate.getValue0(), rate.getValue1(), random);
 		agent.setDiscountRate(rand);
 				
-		return agent;
+		return updateNipfAttributes(agent);
 	}
 
 	@Override
 	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
-		// Create the agent and set basic parameters
+
 		EcosystemsAgent agent = new EcosystemsAgent();
-		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
 
 		// Set the WTH, X~N(mean, sd)
 		Pair<Double, Double> wth = getParameters().getNipfoWth();		
@@ -100,12 +99,21 @@ public abstract class WupModel extends ForestSim {
 		rand = random.nextDouble() * getParameters().getEcosystemsAgentHarvestOdds();
 		agent.setHarvestOdds(rand);
 		
-		return agent;
+		return updateNipfAttributes(agent);
 	}
 	
 	@Override
 	public Object getModelParameters() {
 		return getParameters();
+	}
+	
+	/**
+	 * Set the attributes that apply to all NIFPO agents.
+	 */
+	private NipfAgent updateNipfAttributes(NipfAgent agent) {
+		agent.setPhaseInRate(WupParameters.LandTenurePhaseInRate);
+		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
+		return agent;
 	}
 
 	@Override

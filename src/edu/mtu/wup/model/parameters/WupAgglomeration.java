@@ -16,12 +16,13 @@ public class WupAgglomeration extends WupParameters {
 		// Set the model variables
 		setEconomicAgentPercentage(0.3);
 		setEconomicNpvDiscountRate(0.08, 0.02);		// http://www.sewall.com/files/timberlandreport/v8n3.pdf
-		setEcosystemsAgentHarvestOdds(0.1);
+		setEcosystemsAgentHarvestOdds(0.4);			// MR, 2% mean
+//		setEcosystemsAgentHarvestOdds(0.77);		// RZ, 3.85% mean 
 		setNipfoWth(523.23, 123.12);
 		setLoggingCapacity(2500);					// About 10% of the NIPFOs
 		
 		// Set the ForestSim configuration
-		setPolicyActiviationStep(10);
-		setFinalTimeStep(125);
+		setPolicyActiviationStep(60);				// We expect agents to be fully activated by T+50
+		setFinalTimeStep(200);
 	}
 }

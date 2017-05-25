@@ -23,4 +23,9 @@ public final class Constants {
 	 * Value to divide by to convert form metric tons to gigatons.
 	 */
 	public final static long MetricTonToGigaTon = 1000000000;
+	
+	/**
+	 * Value to divide by to convert from sq.m. to sq.km.
+	 */
+	public final static long SquareMetersToSquareKilometers = 1000000;
 }

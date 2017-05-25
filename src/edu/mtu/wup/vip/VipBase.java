@@ -58,7 +58,7 @@ public abstract class VipBase extends PolicyBase {
 	}
 
 	/**
-	 * Get the subscribed area for the VIP.
+	 * Get the subscribed area for the VIP in sq.m.
 	 */
 	public double getSubscribedArea() {
 		return acres;

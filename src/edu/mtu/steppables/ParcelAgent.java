@@ -18,8 +18,13 @@ public abstract class ParcelAgent implements Steppable {
 	
 	private final ParcelAgentType type = null;
 	
+	private boolean hasRun = false;
 	private LandUseGeomWrapper landUseWrapper;
-	private Point[] parcel;
+	private Point[] parcel = null;
+	
+	// Land Tenure attributes, note the defaults assume immediate tenure
+	private boolean phasedIn = true;
+	private double phaseInRate = 1.0;
 	
 	protected ForestSim state;
 
@@ -44,7 +49,6 @@ public abstract class ParcelAgent implements Steppable {
 	public ParcelAgent(ParcelAgentType type) {
 		this.landUseWrapper = new LandUseGeomWrapper();
 		this.landUseWrapper.setAgentType(type);
-		parcel = null;
 	}
 		
 	/**
@@ -56,6 +60,13 @@ public abstract class ParcelAgent implements Steppable {
 	 * Get the cover points that this agent is responsible for.
 	 */
 	public Point[] getParcel() { return parcel; }
+	
+	/**
+	 * Get the agent land tenure phase-in rate.
+	 */
+	public double getPhaseInRate() {
+		return phaseInRate;
+	}
 	
 	/**
 	 * Get the geometry that this agent is responsible for.
@@ -90,9 +101,33 @@ public abstract class ParcelAgent implements Steppable {
 	}
 	
 	/**
+	 * Set the agent land tenure phase-in rate and flag the agent has not being phased in.
+	 * 
+	 * NOTE: This operation must be done prior to the first step.
+	 */
+	public void setPhaseInRate(double value) {
+		if (hasRun) {
+			throw new IllegalAccessError("Land Tenure phase-in cannot be set once the agent steps!");
+		}
+		phaseInRate = value;
+		phasedIn = false;
+	}
+	
+	/**
 	 * Allow the agent to perform the rules for the given state.
 	 */
 	public void step(SimState state) {
+		// Accounting flag to disable operations once the model starts
+		hasRun = true;
+		
+		// To account for land tenure, phase agents into the model at the given rate
+		if (!phasedIn) {
+			if (phaseInRate < state.random.nextDouble()) {
+				return;
+			}
+			phasedIn = true;
+		}
+		
 		this.state = (ForestSim)state;
 		doPolicyOperation();
 		doHarvestOperation();

@@ -9,10 +9,18 @@ public interface Species {
 	 * Calculate the total above ground biomass for a tree.
 	 * 
 	 * @param dbh The DBH of the tree, in cm.
-	 * @return Total above ground biomass of the tree in kg dry weight
+	 * @return Total above ground biomass of the tree in kg (dry weight)
 	 */
-	double getBiomass(double dbh);
-		
+	double getAboveGroundBiomass(double dbh);
+	
+	/**
+	 * Calculate the total stem wood biomass for the tree.
+	 * 
+	 * @param dbh The DBH of the tree, in cm.
+	 * @return Stem wood biomass the tree in kg (dry weight)
+	 */
+	double getStemWoodBiomassRatio(double dbh);
+			
 	/**
 	 * Get the height of a representative tree given the DBH.
 	 * 

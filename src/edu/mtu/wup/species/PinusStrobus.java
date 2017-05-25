@@ -6,10 +6,16 @@ import edu.mtu.utilities.Constants;
 // http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
 public class PinusStrobus implements WesternUPSpecies {
 	
-	public double getBiomass(double dbh) {
+	public double getAboveGroundBiomass(double dbh) {
 		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -2.5356, beta1 = 2.4349;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
+	}
+	
+	public double getStemWoodBiomassRatio(double dbh) {
+		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
+		double beta0 = -0.3737, beta1 = -1.8055;
+		return Math.exp(beta0 + (beta1 / dbh));
 	}
 
 	public double getHeight(double dbh) {
