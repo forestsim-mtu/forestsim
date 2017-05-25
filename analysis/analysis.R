@@ -5,7 +5,7 @@ require(reshape2)
 
 experiments = c('none', 'discount', 'agglomeration')
 policyIntroduction = 60
-timeSteps = 200
+timeSteps = 199
 
 colSd <- function (x, na.rm = F) apply(X = x, MARGIN = 2, FUN = sd, na.rm = na.rm)
 
@@ -28,23 +28,22 @@ analysis <- function (plot, title, ylabel, fancy) {
 		# We assume that the number of rows stays the same
 		rows = nrow(working)		
 	
-		data[[experiment]] <- working[, 1:timeSteps]
+		data[[experiment]] <- working[, 0:timeSteps]
 	}
+
+	# Prepare the data farme with the mean of the data
+	df <- data.frame(Year = 1:timeSteps,
+					 'none' = colMeans(data[['none']]),
+					 'discount' = colMeans(data[['discount']]),
+					 'agglomeration' = colMeans(data[['agglomeration']]))
 		
-	# Prepare the data farme wit the mean of the data
-	df <- data.frame(Year=1:timeSteps,
-					 'none'=colMeans(data[['none']]),
-					 'discount'=colMeans(data[['discount']]),
-					 'agglomeration'=colMeans(data[['agglomeration']]))
-	
 	df <- melt(df, id.vars = 'Year', variable.name = 'Series')
 	df$Series <- as.character(df$Series)
 	df$Series[df$Series == "none"] <- "No VIP"
 	df$Series[df$Series == "discount"] <- "VIP, millage bonus"
 	df$Series[df$Series == "agglomeration"] <- "VIP, agglomeration bonus"
-	
+		
 	title = sprintf("%s (mean of %i runs)", title, rows)
-	
 	plotted <- ggplot(df, aes(Year, value)) +
 				geom_vline(xintercept = policyIntroduction) +
 				geom_line(aes(colour = Series)) +
@@ -60,7 +59,7 @@ analysis <- function (plot, title, ylabel, fancy) {
 }
 
 analysis('biomass', 'Harvested Biomass', 'Metric Tons (MT) Dry Weight', T)
-analysis('stems', 'Harvested Stems', 'Metric Tons (MT) Dry Weight', T);
+analysis('stems', 'Harvested Stems', 'Metric Tons (MT) Dry Weight', T)
 analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('demand', 'Harvest Demand', 'Owners', F)
