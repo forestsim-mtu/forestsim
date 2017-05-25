@@ -1,6 +1,5 @@
 /bin/
 /analysis/*.png
-/analysis/*/**
 /shapefiles/
 /target/
 /.settings/
