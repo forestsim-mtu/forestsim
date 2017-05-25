@@ -39,13 +39,8 @@ public class AggregateHarvester implements Steppable {
 	 * 
 	 */
 	public void step(SimState state) {
-		// Process the requests
 		int capacity = ((ForestSim)state).getHarvestCapacity();
 		processHarvestRequests(capacity);
-				
-		// Restore the harvester to the schedule
-		requests = new ArrayList<HarvestRequest>();
-		state.schedule.scheduleOnce(this);
 	}
 	
 	/**
@@ -85,6 +80,14 @@ public class AggregateHarvester implements Steppable {
 	}
 	
 	/**
+	 * For ForestSim only, force a new harvester into existence.
+	 */
+	public static AggregateHarvester getNewInstance() {
+		instance = new AggregateHarvester();
+		return instance;
+	}
+	
+	/**
 	 * Process the list of harvest requests and harvest the stands that result
 	 * in the most economic returns for the company. Note that this method is
 	 * provided as an example and can be overridden to provide more flexibility.
@@ -115,6 +118,7 @@ public class AggregateHarvester implements Steppable {
 			
 			// Return if we are done
 			if (pracelsHarvested >= capacity) {
+				requests.clear();
 				return;
 			}
 		}

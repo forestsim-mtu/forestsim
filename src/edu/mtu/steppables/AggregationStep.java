@@ -23,7 +23,7 @@ public class AggregationStep implements Steppable {
 		ParameterBase parameters = ((ForestSim)state).getParameters();
 		
 		// Should we end the model?
-		if (step == parameters.getFinalTimeStep()) {
+		if (step >= parameters.getFinalTimeStep()) {
 			if (scorecard != null) {
 				scorecard.processFinalization((ForestSim)state);
 			}
@@ -44,9 +44,6 @@ public class AggregationStep implements Steppable {
 		if (scorecard != null) {
 			scorecard.processTimeStep(((ForestSim)state));
 		}
-		
-		// Put us back in the queue
-		state.schedule.scheduleOnce(this);		
 	}
 	
 	/**

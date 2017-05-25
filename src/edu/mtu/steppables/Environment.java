@@ -16,7 +16,6 @@ public class Environment implements Steppable {
 		try {
 			Forest.getInstance().grow();
 			Forest.getInstance().updateStocking();
-			state.schedule.scheduleOnce(this);
 		} catch (InterruptedException ex) {
 			System.err.println("Unhandled error occred: " + ex);
 		}

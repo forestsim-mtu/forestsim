@@ -52,6 +52,11 @@ public class EconomicAgent extends NipfAgent {
 		// Determine when the next harvest should be
 		if (nextHarvest == -1) {
 			projectHarvests();
+			
+			// Shouldn't happen, edge case
+			if (nextHarvest == -1){
+				return;
+			}
 		}
 			
 		// If it is time for the next harvest, do so

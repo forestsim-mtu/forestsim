@@ -52,12 +52,9 @@ public class EcosystemsAgent extends NipfAgent {
 		if (!inVip() && harvestOdds < state.random.nextDouble()) {
 			return;
 		}
-		
-		// Get the bid from the harvester, return if there is none
-		double dbh = getHarvestDbh();
-		
+				
 		// See how much can be harvested at the DBH, this overrides the policy 
-		List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), dbh);
+		List<Stand> stands = Harvesting.getHarvestableStands(getParcel(), getHarvestDbh());
 		double area = stands.size() * Forest.getInstance().getAcresPerPixel();
 		if (area < AggregateHarvester.MinimumHarvestArea) {
 			return;

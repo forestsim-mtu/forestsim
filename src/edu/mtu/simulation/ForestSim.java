@@ -268,7 +268,7 @@ public abstract class ForestSim extends SimState {
 		
 		// Inform the model that it should prepare itself
 		initialize();
-						
+				
 		try {
 			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
@@ -283,8 +283,8 @@ public abstract class ForestSim extends SimState {
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
-			AggregateHarvester harvester = AggregateHarvester.getInstance();
-			schedule.scheduleOnce(harvester);
+			AggregateHarvester harvester = AggregateHarvester.getNewInstance();
+			schedule.scheduleRepeating(harvester);
 		} else {
 			try {
 				// This is a marketplace model, defer agent initialization to the modeler
@@ -301,22 +301,25 @@ public abstract class ForestSim extends SimState {
 				
 		// Create the environment agent
 		Environment enviorment = new Environment();
-		schedule.scheduleOnce(enviorment);
+		schedule.scheduleRepeating(enviorment);
 		
-		// Get the score card and create the aggregation step if one is provided 
+		// Schedule the aggregation step with a score card if one is provided
+		AggregationStep aggregation = new AggregationStep();
 		Scorecard scoreCard = getScoreCard();
 		if (scoreCard != null) {
 			scoreCard.processInitialization(this);
-			AggregationStep aggregation = new AggregationStep();
 			aggregation.setScorecard(getScoreCard());
-			schedule.scheduleOnce(aggregation);
-		}		
+		}
+		schedule.scheduleRepeating(aggregation);
 
 		// Align the MBRs so layers line up in the display
 		Envelope globalMBR = parcelLayer.getMBR();
 		globalMBR.expandToInclude(coverLayer.getMBR());
 		parcelLayer.setMBR(globalMBR);
 		coverLayer.setMBR(globalMBR);
+		
+		// Advise garbage collection before the model starts
+		System.gc();		
 	}
 	
 	/**
