@@ -44,6 +44,13 @@ public class BufferedCsvWriter {
 		FileWriter file = new FileWriter(fileName, append);
 		writer = new BufferedWriter(file);
 	}
+
+	/**
+	 * Write the indicated value to the file as a cell.
+	 */
+	public void write(int value) throws IOException {
+		writer.write(value + ",");
+	}
 	
 	/**
 	 * Write the indicated value to the file as a cell.

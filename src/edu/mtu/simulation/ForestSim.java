@@ -420,7 +420,7 @@ public abstract class ForestSim extends SimState {
 				int value = ((IntGrid2D) coverLayer.getGrid()).get(x, y);
 
 				// Move to the next if this pixel is not woody biomass
-				if (!NlcdClassification.WoodyBiomass.contains(value)) {
+				if (!NlcdClassification.isWoodyBiomass(value)) {
 					continue;
 				}
 

@@ -47,7 +47,7 @@ public class AggregateHarvester implements Steppable {
 	}
 	
 	/**
-	 * Get the harvested biomass, in green tons (GT).
+	 * Get the harvested biomass, in kilograms dry weight (kg).
 	 */
 	public double getBiomass() {
 		return Precision.round(biomass, 2);
@@ -74,7 +74,7 @@ public class AggregateHarvester implements Steppable {
 	 * provided as an example and can be overridden to provide more flexibility.
 	 * 
 	 * @param capacity The total capacity for harvests.
-	 * @return The total biomass harvested in green tons (GT)
+	 * @return The total biomass harvested in kilograms dry weight (kg)
 	 */
 	protected void processHarvestRequests(int capacity) {
 		demand = requests.size();

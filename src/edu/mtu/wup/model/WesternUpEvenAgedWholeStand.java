@@ -44,27 +44,24 @@ import sim.util.distribution.Normal;
 
  */
 public class WesternUpEvenAgedWholeStand implements GrowthModel {
-	// The set of reference plants to use for the growth patterns
-	private final static HashMap<Integer, WesternUPSpecies> growthPatterns;
+	// The set of reference plants to use for the growth patterns, use a sparce array for this
+	private final static WesternUPSpecies[] growthPatterns;
 	static {
-		HashMap<Integer, WesternUPSpecies> map = new HashMap<Integer, WesternUPSpecies>();
-		map.put(NlcdClassification.DeciduousForest.getValue(), new AcerRebrum());
-		map.put(NlcdClassification.EvergreenForest.getValue(), new PinusStrobus());
-		map.put(NlcdClassification.WoodyWetlands.getValue(), new AcerRebrum());		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
-		growthPatterns = map;
+		growthPatterns = new WesternUPSpecies[NlcdClassification.HighestValue];
+		growthPatterns[NlcdClassification.DeciduousForest.getValue()] = new AcerRebrum();
+		growthPatterns[NlcdClassification.EvergreenForest.getValue()] = new PinusStrobus();
+		growthPatterns[NlcdClassification.WoodyWetlands.getValue()] = new AcerRebrum();		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
+		growthPatterns[NlcdClassification.MixedForest.getValue()] = new AcerRebrum();		// Based upon DNR readings
 	}
 	
 	// The set of reference stocking guides for the growth patterns
-	private final static HashMap<WesternUPSpecies, List<double[]>> stockingGuides;
+	private final static HashMap<String, double[][]> stockingGuides;
 	static {
-		HashMap<WesternUPSpecies, List<double[]>> map = new HashMap<WesternUPSpecies, List<double[]>>();
-		for (int nlcd : growthPatterns.keySet()) {
-			WesternUPSpecies key = growthPatterns.get(nlcd);
-			if (map.containsKey(key)) {
-				continue;
-			}
-			map.put(key, readStockingGuide(key.getDataFile()));
-		}
+		HashMap<String, double[][]> map = new HashMap<String, double[][]>();
+		WesternUPSpecies key = new AcerRebrum();
+		map.put(key.getName(), readStockingGuide(key.getDataFile()));
+		key = new PinusStrobus();
+		map.put(key.getName(), readStockingGuide(key.getDataFile()));
 		stockingGuides = map;
 	}
 	
@@ -97,7 +94,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
 				// If this is not woody biomass, clear the pixel and move on
-				if (!NlcdClassification.WoodyBiomass.contains(nlcd)) {
+				if (!NlcdClassification.isWoodyBiomass(nlcd)) {
 					grid.set(ndx, ndy, 0.0);
 					continue;
 				}
@@ -138,33 +135,24 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	 */
 	public int calculateTargetStocking(WesternUPSpecies species, double dbh) {
 		// Start by finding the guideline to use
-		List<double[]> stocking = stockingGuides.get(species);
+		double[][] stocking = stockingGuides.get(species.getName());
 		int ndx = 0;
-		for (; ndx < stocking.size(); ndx++) {
+		for (; ndx < stocking.length; ndx++) {
 			// Scan until we find the break to use
-			if (dbh < stocking.get(ndx)[0]) {
+			if (dbh < stocking[ndx][0]) {
 				break;
 			}
 		}
 
 		// Find the value for fully stocked from the guide and then adjust that by +/-20%
-		int ideal = (int)(ndx > 0 ? stocking.get(ndx - 1)[2] : stocking.get(0)[2]); 
+		int ideal = (int)(ndx > 0 ? stocking[ndx - 1][2] : stocking[0][2]); 
 		double skew = (random.nextInt(41) - 20) / 100.0;
 		int result = (int)(ideal - ideal * skew);
 		return result;
 	}
 	
 	public Species getSpecies(int nlcd) {
-		Species reference;
-		if (nlcd == NlcdClassification.MixedForest.getValue()) {
-			// For mixed forest, randomize the growth pattern
-			reference = (random.nextBoolean()) ? 
-					growthPatterns.get(NlcdClassification.DeciduousForest.getValue()) : 
-					growthPatterns.get(NlcdClassification.EvergreenForest.getValue());			
-		} else {
-			reference = growthPatterns.get(nlcd);
-		}
-		return reference;
+		return growthPatterns[nlcd];
 	}
 	
 	/**
@@ -174,23 +162,13 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		return Forest.getInstance().getLandCover();
 	}
 	
-	public List<double[]> getStockingGuide(Species species) {
-		return stockingGuides.get(species);
+	public double[][] getStockingGuide(Species species) {
+		return stockingGuides.get(species.getName());
 	}
 
-	public List<double[]> getStockingGuide(int nlcd) {
-		WesternUPSpecies species;
-				
-		if (nlcd == NlcdClassification.MixedForest.getValue()) {
-			// For mixed forest, randomize the growth pattern
-			species = (random.nextBoolean()) ? 
-						growthPatterns.get(NlcdClassification.DeciduousForest.getValue()) : 
-						growthPatterns.get(NlcdClassification.EvergreenForest.getValue());			
-		} else {
-			species = growthPatterns.get(nlcd);
-		}
-		
-		return stockingGuides.get(species);
+	public double[][] getStockingGuide(int nlcd) {
+		WesternUPSpecies species = growthPatterns[nlcd];
+		return stockingGuides.get(species.getName());
 	}
 
 	public Stand growStand(Stand stand) {
@@ -230,23 +208,34 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	 * @param fileName The path to the stocking guide for the species. 
 	 * @return A matrix containing the stocking guide.
 	 */
-	public static List<double[]> readStockingGuide(String fileName) {
+	public static double[][] readStockingGuide(String fileName) {
 		try {
+			// Read the CSV file in
 			Reader file = new FileReader(fileName);
 			Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(file);
-			List<double[]> stocking = new ArrayList<double[]>();
+			List<double[]> working = new ArrayList<double[]>();
 			for (CSVRecord record : records) {
-				stocking.add(new double[] { 
+				working.add(new double[] { 
 						Double.parseDouble(record.get(0)), 
 						Double.parseDouble(record.get(1)), 
 						Double.parseDouble(record.get(2)) });
 			}
-			return stocking;
+			
+			// Convert it to a matrix and return
+			double[][] results = new double[working.size()][3];
+			for (int ndx = 0; ndx < working.size(); ndx++) {
+				results[ndx][0] = working.get(ndx)[0];
+				results[ndx][1] = working.get(ndx)[1];
+				results[ndx][2] = working.get(ndx)[2];
+			}
+			return results;
 		} catch (FileNotFoundException ex) {
 			System.err.println("The file indicated, '" + fileName + "', was not found");
+			System.exit(-1);
 			return null;
 		} catch (IOException ex) {
 			System.err.println("An error occured while reading the file, '" + fileName + "'");
+			System.exit(-1);
 			return null;
 		}
 	}

@@ -1,6 +1,5 @@
 package edu.mtu.measures;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -143,8 +142,7 @@ public class ForestMeasuresParallel {
 		sums[index] = 0;
 		for (int ndx = 0; ndx < Forest.getInstance().getMapWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
-				Point point = new Point(ndx, ndy);
-				sums[index] += ForestMeasures.calculateBiomass(point);
+				sums[index] += ForestMeasures.calculateBiomass(ndx, ndy);
 			}
 		}
 	}

@@ -17,24 +17,7 @@ public class Harvesting {
 	public static double ChipNSaw = 25.4;			// cm
 	public static double SawtimberDbh = 35.56;		// cm
 	public static double VeneerDbh = 40.64;			// cm
-		
-	/**
-	 * Project the possible state of the stands at the given year.
-	 * 
-	 * @param stands The list of stands to be grown.
-	 * @param years The number of years to run for.
-	 * @return The stands at the given year.
-	 */
-	public static List<Stand> projectStands(List<Stand> stands, int years) {
-		List<Stand> results = new ArrayList<Stand>(stands);
-		for (int ndx = 0; ndx < years; ndx++) {
-			for (int ndy = 0; ndy < results.size(); ndy++) {
-				results.set(ndy, Forest.getInstance().getGrowthModel().growStand(results.get(ndy)));
-			}
-		}
-		return results;
-	}
-				
+						
 	/**
 	 * Get the harvestable stands, these are defined as those whose DBH matches the value provided and are fully stocked.
 	 */
@@ -52,7 +35,7 @@ public class Harvesting {
 	/**
 	 * Get the harvestable stands, these are defined as those whose DBH matches the value provided and are fully stocked.
 	 */
-	public static List<Stand> getHarvestableStands(List<Stand> stands, double dbh) {
+	public static List<Stand> getHarvestableStands(Stand[] stands, double dbh) {
 		List<Stand> harvestable = new ArrayList<Stand>();
 		for (Stand stand : stands) {
 			if (stand.arithmeticMeanDiameter >= dbh && stand.stocking >= StockingCondition.Full.getValue()) {

@@ -31,7 +31,7 @@ public class ForestMeasures {
 		int count = 0;
 		for (ParcelAgent agent : agents) {
 			for (java.awt.Point point : agent.getParcel()) {
-				sum += Forest.getInstance().calculateStandStocking(point);
+				sum += Forest.getInstance().calculateStandStocking(point.x, point.y);
 				count++;
 			}
 		}
@@ -55,9 +55,17 @@ public class ForestMeasures {
 	 * @return The current biomass of the stand in kg dry weight.
 	 */
 	public static double calculateBiomass(Point point) {
+		return calculateBiomass(point.x, point.y);
+	}
+	
+	/**
+	 * Get the biomass at the given stand.
+	 * 
+	 * @return The current biomass of the stand in kg dry weight.
+	 */
+	public static double calculateBiomass(int ndx, int ndy) {
 		Forest forest = Forest.getInstance();
-		
-		Stand stand = forest.getStand(point.x, point.y);
+		Stand stand = forest.getStand(ndx, ndy);
 		Species species = forest.getGrowthModel().getSpecies(stand.nlcd);
 		if (species == null) { 
 			return 0;

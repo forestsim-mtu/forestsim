@@ -1,7 +1,6 @@
 package edu.mtu.wup.nipf;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.mtu.environment.Forest;
@@ -19,8 +18,9 @@ public class EconomicAgent extends NipfAgent {
 	private final static int projectionWindow = 100;
 	
 	private double rate = 0.0;	
+	private double targetHarvest = -1;
 	private long nextHarvest = -1;
-	
+		
 	/**
 	 * Constructor.
 	 */
@@ -44,7 +44,11 @@ public class EconomicAgent extends NipfAgent {
 	
 	@Override
 	protected void doHarvestOperation() {
-				
+		// Calculate what our target harvest is
+		if (targetHarvest == -1) {
+			targetHarvest = getParcelArea() < 40.0 ? getParcelArea() : 40.0;
+		}
+		
 		// Determine when the next harvest should be
 		if (nextHarvest == -1) {
 			projectHarvests();
@@ -72,28 +76,32 @@ public class EconomicAgent extends NipfAgent {
 	 * Project the value of future harvests and select the one with the 
 	 */
 	private void projectHarvests() {
-		int year = 0;
-		int down = 0;
+		int down = 0, year = 0;
 		double value = 0;
 		
 		// Note the stands for the projection
-		List<Stand> projection = new ArrayList<Stand>();
-		for (Point point : getParcel()) {
-			projection.add(Forest.getInstance().getStand(point));
+		Forest forest = Forest.getInstance();
+		Point[] points = getParcel();
+		Stand[] projection = new Stand[points.length];
+		for (int ndx = 0; ndx < points.length; ndx++) {
+			projection[ndx] = forest.getStand(points[ndx]);
 		}
 		
 		// Prime things with the current year
 		double dbh = getHarvestDbh();
-		List<Stand> harvestable = Harvesting.getHarvestableStands(projection, dbh);
-		value = Harvesting.getHarvestValue(harvestable);
+		value = getBid(projection,  dbh, 0);
 		
 		// Project from T+1 until the window, note that we are updating our projection
 		// list of stands every year by only one increment
 		for (int ndx = 1; ndx < projectionWindow; ndx++) {
-			projection = Harvesting.projectStands(projection, 1);
-			harvestable = Harvesting.getHarvestableStands(projection, dbh);
-			double bid = Harvesting.getHarvestValue(harvestable);
-			double npv = Economics.npv(bid, rate, ndx);
+
+			// Advance the stands by one year
+			for (int ndy = 0; ndy < projection.length; ndy++) {
+				projection[ndy] = forest.getGrowthModel().growStand(projection[ndy]);
+			}
+			
+			// Get the bid for the projection
+			double npv = getBid(projection, dbh, ndx);
 			
 			// If the NPV is greater than what we currently have update
 			if (npv > value) {
@@ -111,6 +119,25 @@ public class EconomicAgent extends NipfAgent {
 		
 		// Note the harvest year and return
 		nextHarvest = state.schedule.getSteps() + year;
+	}
+	
+	/**
+	 * Get the bid for the projected growth.
+	 */
+	private double getBid(Stand[] projection, double dbh, long year) {
+		// See what can be harvested
+		List<Stand> harvestable = Harvesting.getHarvestableStands(projection, dbh);
+		
+		// Make sure the area meets the target
+		double area = harvestable.size() * Forest.getInstance().getAcresPerPixel();
+		if (area < targetHarvest) {
+			return 0.0;
+		}
+		
+		// Get the bid and return
+		double bid = Harvesting.getHarvestValue(harvestable);
+		double npv = Economics.npv(bid, rate, year);
+		return npv;
 	}
 	
 	/**

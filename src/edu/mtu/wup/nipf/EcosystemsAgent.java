@@ -49,7 +49,7 @@ public class EcosystemsAgent extends NipfAgent {
 	@Override
 	protected void doHarvestOperation() {
 		// Return if we are not in a VIP or wanting to harvest
-		if (!inVip() && (harvestOdds < state.random.nextDouble())) {
+		if (!inVip() && harvestOdds < state.random.nextDouble()) {
 			return;
 		}
 		

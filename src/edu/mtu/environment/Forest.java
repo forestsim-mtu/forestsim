@@ -24,6 +24,7 @@ public class Forest {
 	private final int threadCount = Runtime.getRuntime().availableProcessors();
 	private final ExecutorService service = Executors.newFixedThreadPool(threadCount);
 	
+	private double acresPerPixel;
 	private GrowthModel growthModel;
 	private GeomGridField landCover;
 	private GeomGridField standDiameter;
@@ -77,22 +78,19 @@ public class Forest {
 	 * Get the stand that is in the forest at the given point.
 	 */
 	public Stand getStand(Point point) {
-		return getStand(point.x, point.y);
-	}
-
-	/**
-	 * Get the stand that is in the forest at the geometric x, y coordinate.
-	 */
-	public Stand getStand(int x, int y) {
 		Stand stand = new Stand();
-		stand.point = new Point(x, y);
-		stand.nlcd = ((IntGrid2D)landCover.getGrid()).get(x, y);
-		stand.arithmeticMeanDiameter = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
-		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(x, y);
-		stand.numberOfTrees = treeCount.get(x, y);
-		stand.age = standAge.get(x, y);
+		stand.point = point;
+		stand.nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
+		stand.arithmeticMeanDiameter = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
+		stand.stocking = ((IntGrid2D)stocking.getGrid()).get(point.x, point.y);
+		stand.numberOfTrees = treeCount.get(point.x, point.y);
+		stand.age = standAge.get(point.x, point.y);
 		stand.dominateSpecies = growthModel.getSpecies(stand.nlcd);
 		return stand;
+	}
+	
+	public Stand getStand(int ndx, int ndy) {
+		return getStand(new Point(ndx, ndy));
 	}
 	
 	/**
@@ -184,6 +182,10 @@ public class Forest {
 		this.landCover = landCover;
 		this.growthModel = growthModel;
 		
+		// Calculate the acres per pixel based upon the land cover 
+		double area = landCover.getPixelHeight() * landCover.getPixelWidth();
+		acresPerPixel = area / Constants.acreInSquareMeters;
+		
 		// Allow the growth model to prepare the initial forest state
 		growthModel.calculateInitialStands();
 				
@@ -205,37 +207,33 @@ public class Forest {
 	 * @param point The x, y coordinates of the stand in the geometry.
 	 * @return The stocking value for the stand.
 	 */
-	public double calculateStandStocking(Point point) {
+	public double calculateStandStocking(int x, int y) {
 		// Bail out if this is not forest
-		int nlcd = ((IntGrid2D)landCover.getGrid()).get(point.x, point.y);
-		if (!NlcdClassification.WoodyBiomass.contains(nlcd)) {
+		int nlcd = ((IntGrid2D)landCover.getGrid()).get(x, y);
+		if (!NlcdClassification.isWoodyBiomass(nlcd)) {
 			return 0.0;
 		}
-					
-		// Get the average basal area per tree
-		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(point.x, point.y);
-		double basalArea = ForestMeasures.calculateBasalArea(dbh);
-		
+
 		// Get the number of trees per acre, by pixel 
-		int count = treeCount.get(point.x, point.y);
-		count /= getAcresPerPixel();
+		int count = (int) (treeCount.get(x, y) / acresPerPixel);
 		
-		// Determine the total basal area
-		basalArea *= count;
+		// Get the total basal area
+		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
+		double basalArea = ForestMeasures.calculateBasalArea(dbh) * count;
 		
 		// Lookup what the ideal basal area per acre (in metric)
-		List<double[]> stocking = growthModel.getStockingGuide(nlcd);
-		for (int ndx = 0; ndx < stocking.size(); ndx++) {
+		double[][] stocking = growthModel.getStockingGuide(nlcd);
+		for (int ndx = 0; ndx < stocking.length; ndx++) {
 			// Scan until we find the break to use
-			if (dbh < stocking.get(ndx)[0]) {
+			if (dbh < stocking[ndx][0]) {
 				// Return the ideal number of trees
-				double ideal = ((ndx > 0) ? stocking.get(ndx - 1)[1] : stocking.get(0)[1]);
+				double ideal = ((ndx > 0) ? stocking[ndx - 1][1] : stocking[0][1]);
 				return 100 * (basalArea / ideal);
 			}
 		}
 		
 		// Use the largest value for the return
-		return 100 * (basalArea / (stocking.get(stocking.size() - 1)[1]));
+		return 100 * (basalArea / (stocking[stocking.length - 1][1]));
 	}
 					
 	/**
@@ -251,8 +249,7 @@ public class Forest {
 	 * @return The number of acres per pixel.
 	 */
 	public double getAcresPerPixel() {
-		double area = landCover.getPixelHeight() * landCover.getPixelWidth();
-		return area / Constants.acreInSquareMeters;
+		return acresPerPixel;
 	}
 					
 	/**
@@ -302,7 +299,7 @@ public class Forest {
 			for (int ndy = start; ndy < end; ndy++) {
 				// If this is not a woody biomass stand, press on
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
-				if (!NlcdClassification.WoodyBiomass.contains(nlcd)) {
+				if (!NlcdClassification.isWoodyBiomass(nlcd)) {
 					continue;
 				}
 				
@@ -317,7 +314,7 @@ public class Forest {
 	/**
 	 * Harvest the forest stand and return the biomass.
 	 * 
-	 * @return The biomass harvested from the stand in green tons (GT).
+	 * @return The biomass harvested from the stand in kilograms dry weight (kg)
 	 */
 	public double harvest(Point[] stands) {
 		double biomass = 0;
@@ -330,7 +327,7 @@ public class Forest {
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
 			
 			// Set the stand to 300 seedlings per acre, as per common replanting guidelines in the US
-			treeCount.set(point.x, point.y, (int)(300 * getAcresPerPixel()));
+			treeCount.set(point.x, point.y, (int)(300 * acresPerPixel));
 			
 			// Reset the stand age
 			standAge.set(point.x, point.y, 0);
@@ -412,7 +409,7 @@ public class Forest {
 		for (int ndx = 0; ndx < stocking.getGridWidth(); ndx++) {
 			for (int ndy = start; ndy < end; ndy++) {
 				// Get the stocking value for the point
-				double result = calculateStandStocking(new Point(ndx, ndy));
+				double result = calculateStandStocking(ndx, ndy);
 				
 				// Assume no stocking
 				int value = StockingCondition.Nonstocked.getValue();

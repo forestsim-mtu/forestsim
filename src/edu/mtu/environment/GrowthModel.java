@@ -1,7 +1,5 @@
 package edu.mtu.environment;
 
-import java.util.List;
-
 /**
  * This interface abstracts the functions that are used to actually grow a 
  * given forest stand. These methods are called by the Forest class while 
@@ -24,12 +22,12 @@ public interface GrowthModel {
 	/**
 	 * Get the stocking guide list for the given NLCD grid code.
 	 */
-	List<double[]> getStockingGuide(int nlcd);
+	double[][] getStockingGuide(int nlcd);
 	
 	/**
 	 * Get the stocking guide list for the given species.
 	 */
-	List<double[]> getStockingGuide(Species species);
+	double[][] getStockingGuide(Species species);
 	
 	/**
 	 * Perform the growth operation for the given stand.

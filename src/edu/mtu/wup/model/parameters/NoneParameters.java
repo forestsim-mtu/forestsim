@@ -18,10 +18,10 @@ public class NoneParameters extends WupParameters {
 		setEconomicNpvDiscountRate(0.08, 0.02);		// http://www.sewall.com/files/timberlandreport/v8n3.pdf
 		setEcosystemsAgentHarvestOdds(0.1);
 		setNipfoWth(523.23, 123.12);
-		setLoggingCapacity(1000);
+		setLoggingCapacity(2500);
 		
 		// Set the ForestSim configuration
-		setPolicyActiviationStep(5);
+		setPolicyActiviationStep(10);
 		setFinalTimeStep(125);
 	}
 }

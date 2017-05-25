@@ -10,6 +10,7 @@ import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.utilities.RandomDistribution;
 import edu.mtu.wup.model.parameters.*;
+import edu.mtu.wup.model.scorecard.WupScorecard;
 import edu.mtu.wup.nipf.EconomicAgent;
 import edu.mtu.wup.nipf.EcosystemsAgent;
 import edu.mtu.wup.vip.VipBase;

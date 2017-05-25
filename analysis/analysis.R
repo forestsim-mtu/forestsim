@@ -67,9 +67,9 @@ analysis <- function (plot, title, ylabel, fancy) {
 	ggsave(filename = file, plot = plotted)
 }
 
-analysis('biomass', 'Harvested Biomass', 'Kilograms Dry Weight', T)
-analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Gigatons (GtCO'[2]*')'), F)
-analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Gigatons (GtCO'[2]*')'), F)
+analysis('biomass', 'Harvested Biomass', 'Metric Tons Dry Weight (MT)', T)
+analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Metric Tons (MTCO'[2]*')'), F)
+analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('demand', 'Harvest Demand', 'Owners', F)
 analysis('harvested', 'Harvested Parcels', 'Owners', F)
 analysis('recreation', 'Open Access Forest', 'Forest Area (sq. km.)', T)

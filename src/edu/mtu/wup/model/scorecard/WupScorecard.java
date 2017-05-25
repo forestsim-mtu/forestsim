@@ -1,13 +1,11 @@
-package edu.mtu.wup.model;
+package edu.mtu.wup.model.scorecard;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.measures.ForestMeasuresParallel;
@@ -31,15 +29,7 @@ public class WupScorecard implements Scorecard {
 	private final static String nipfoFile = "/nipfo%1$d";			// ArcGIS disapproves of .shp.shp
 	private final static String stockingFile = "/stocking%1$d.asc";
 	
-	private final static String biomassFile = "/biomass.csv";
-	private final static String carbonAgentsFile = "/carbonAgents.csv";
-	private final static String carbonGlobalFile = "/carbonGlobal.csv";
-	private final static String demandFile = "/demand.csv";
-	private final static String harvestedFile = "/harvested.csv";
-	private final static String recreationFile = "/recreation.csv";
-	private final static String vipFile = "/vip.csv";
-	
-	private Map<String, BufferedCsvWriter> writers;
+	private BufferedCsvWriter[] writers;
 		
 	private final static int captureInterval = 10;
 		
@@ -58,12 +48,11 @@ public class WupScorecard implements Scorecard {
 			writeHarvesting();
 			writeRecreationalAccess();
 			
-			// Check the step and export as needed
+			// Check the step and flush and export GIS as needed
 			if (state.schedule.getSteps() % captureInterval == 0) {
-				for (String key : writers.keySet()) {
-					writers.get(key).flush();
+				for (int ndx = 0; ndx < writers.length; ndx++) {
+					writers[ndx].flush();
 				}
-								
 				writeGisFiles(state);
 			}
 		} catch (IOException ex) {
@@ -83,15 +72,10 @@ public class WupScorecard implements Scorecard {
 			directory.mkdirs();
 
 			// Create the buffered file writers
-			writers = new HashMap<String, BufferedCsvWriter>();
-			writers.put(biomassFile, new BufferedCsvWriter(outputDirectory + biomassFile, true));
-			writers.put(carbonAgentsFile, new BufferedCsvWriter(outputDirectory + carbonAgentsFile, true));
-			writers.put(carbonGlobalFile, new BufferedCsvWriter(outputDirectory + carbonGlobalFile, true));
-			writers.put(demandFile, new BufferedCsvWriter(outputDirectory + demandFile, true));
-			writers.put(harvestedFile, new BufferedCsvWriter(outputDirectory + harvestedFile, true));
-			writers.put(recreationFile, new BufferedCsvWriter(outputDirectory + recreationFile, true));
-			writers.put(vipFile, new BufferedCsvWriter(outputDirectory + vipFile, true));
-			
+			writers = new BufferedCsvWriter[Indicators.IndicatorCount];
+			for (Indicators indicator : Indicators.values()) {
+				writers[indicator.getValue()] = new BufferedCsvWriter(outputDirectory + indicator.getFileName(), true);
+			}			
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -100,10 +84,9 @@ public class WupScorecard implements Scorecard {
 		
 	public void processFinalization(ForestSim state) {
 		try {
-			for (String key : writers.keySet()) {
-				writers.get(key).close();
+			for (int ndx = 0; ndx < writers.length; ndx++) {
+				writers[ndx].close();
 			}
-			
 			writeGisFiles(state);
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
@@ -119,7 +102,7 @@ public class WupScorecard implements Scorecard {
 	 */
 	private double carbonInBiomassEstiamte(double biomass) {
 		// Use the approximation given by (Magnussen & Reed, 2015) 
-		return (0.475 * biomass) / Constants.MetricTonToGigaTon; 
+		return (0.475 * biomass) / Constants.KilogramToMetricTon; 
 	}
 		
 	/**
@@ -149,26 +132,27 @@ public class WupScorecard implements Scorecard {
 	// Society: Recreational Access
 	private void writeRecreationalAccess() throws IOException {
 		VipBase vip = VipFactory.getInstance().getVip();
-		writers.get(recreationFile).write(vip != null ? vip.getSubscribedArea() : 0);
-		writers.get(vipFile).write(vip != null ? vip.getSubscriptionRate() : 0);
+		writers[Indicators.VipRecreation.getValue()].write(vip != null ? vip.getSubscribedArea() : 0);
+		writers[Indicators.VipEnrollment.getValue()].write(vip != null ? vip.getSubscriptionRate() : 0);
 	}
 
 	// Environment: Carbon Sequestration
 	private void writeCarbonSequestration(List<ParcelAgent> agents) throws IOException, InterruptedException {		
 		double biomass = ForestMeasuresParallel.calculateBiomass();
 		double carbon = carbonInBiomassEstiamte(biomass);
-		writers.get(carbonGlobalFile).write(carbon);
+		writers[Indicators.CarbonGlobal.getValue()].write(carbon);
 		
 		biomass = ForestMeasuresParallel.calculateBiomass(agents);
 		carbon = carbonInBiomassEstiamte(biomass);
-		writers.get(carbonAgentsFile).write(carbon);
+		writers[Indicators.CarbonAgents.getValue()].write(carbon);
 	}
 	
 	// Economic: Woody Biomass Availability, Reliability / consistent supply of woody biomass
 	private void writeHarvesting() throws IOException {
 		AggregateHarvester harvester = AggregateHarvester.getInstance();
-		writers.get(biomassFile).write(harvester.getBiomass());
-		writers.get(demandFile).write(harvester.getDemand());
-		writers.get(harvestedFile).write(harvester.getHarvested());
+		double biomass = harvester.getBiomass() / Constants.KilogramToMetricTon;		
+		writers[Indicators.HarvestedBiomass.getValue()].write(biomass);
+		writers[Indicators.HarvestDemand.getValue()].write(harvester.getDemand());
+		writers[Indicators.HarvestedParcels.getValue()].write(harvester.getHarvested());
 	}
 }
