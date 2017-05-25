@@ -14,5 +14,4 @@ public class VipDiscount extends VipBase {
 	public String toString() {
 		return "Simple Tax Discount";
 	}
-
 }

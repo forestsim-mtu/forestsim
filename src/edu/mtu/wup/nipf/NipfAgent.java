@@ -16,7 +16,7 @@ public abstract class NipfAgent extends ParcelAgent {
 	protected boolean vipHarvested = false;
 	private int vipCoolDown = 0;
 	private int vipCoolDownDuration = 0;
-	private double vipInformedRate = 0.1;
+	private double vipInformedRate = 0.05;
 				
 	// WTH attributes
 	protected double wthPerAcre = 0.0;

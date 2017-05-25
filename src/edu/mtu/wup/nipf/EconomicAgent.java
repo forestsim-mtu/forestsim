@@ -76,9 +76,6 @@ public class EconomicAgent extends NipfAgent {
 	 * Project the value of future harvests and select the one with the 
 	 */
 	private void projectHarvests() {
-		int down = 0, year = 0;
-		double value = 0;
-		
 		// Note the stands for the projection
 		Forest forest = Forest.getInstance();
 		Point[] points = getParcel();
@@ -86,10 +83,11 @@ public class EconomicAgent extends NipfAgent {
 		for (int ndx = 0; ndx < points.length; ndx++) {
 			projection[ndx] = forest.getStand(points[ndx]);
 		}
-		
+			
 		// Prime things with the current year
 		double dbh = getHarvestDbh();
-		value = getBid(projection,  dbh, 0);
+		double[] values = new double[projectionWindow];
+		values[0] = getBid(projection,  dbh, 0);
 		
 		// Project from T+1 until the window, note that we are updating our projection
 		// list of stands every year by only one increment
@@ -101,24 +99,18 @@ public class EconomicAgent extends NipfAgent {
 			}
 			
 			// Get the bid for the projection
-			double npv = getBid(projection, dbh, ndx);
-			
-			// If the NPV is greater than what we currently have update
-			if (npv > value) {
-				value = npv;
-				year = ndx;
-				down = 0;
-			}
-			
-			// If the NPV has gone down for five years, assume we are done
-			down += (npv < value) ? 1 : 0;
-			if (down >= 5) {
-				break;
-			}
+			values[ndx] = getBid(projection, dbh, ndx);
 		}
 		
-		// Note the harvest year and return
-		nextHarvest = state.schedule.getSteps() + year;
+		// Find the best year to harvest
+		long steps = state.schedule.getSteps();
+		double value = -1;
+		for (int ndx = 0; ndx < projectionWindow; ndx++) {
+			if (value < values[ndx]) {
+				nextHarvest = steps + ndx;
+				value = values[ndx];
+			}
+		}			
 	}
 	
 	/**

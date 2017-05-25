@@ -16,7 +16,7 @@ public abstract class VipBase extends PolicyBase {
 	public final static int baseAcerage = 10;
 	
 	protected final static double baseDbh = Harvesting.PulpwoodDbh;
-	protected final static int baseBonus = 15;
+	protected final static int baseBonus = 10;
 	
 	private double acres = 0;
 	private int subscriptions = 0;
