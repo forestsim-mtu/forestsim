@@ -75,12 +75,12 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	 */
 	public void updateShpaefile() {
 		int type = (agentType != null) ? agentType.getValue() : -1;
-		addIntegerAttribute("AGENT_TYPE", type);
+		addIntegerAttribute("TYPE", type);
 		
-		addDoubleAttribute("FOREST_AGE", averageForestAge);
-		addDoubleAttribute("FOREST_DBH", averageForestDbh);
-		addDoubleAttribute("FOREST_STOCKING", averageStocking);
-		addIntegerAttribute("AWARE_VIP", awareOfVip);
-		addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
+		addDoubleAttribute( "AGE", averageForestAge);
+		addDoubleAttribute( "DBH", averageForestDbh);
+		addDoubleAttribute( "STOCKING", averageStocking);
+		addIntegerAttribute("AWARE", awareOfVip);
+		addIntegerAttribute("ENROLLED", enrolledInVip);
 	}
 }
