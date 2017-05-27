@@ -87,17 +87,41 @@ public class ForestMeasures {
 		double biomass = stand.dominateSpecies.getAboveGroundBiomass(stand.arithmeticMeanDiameter);
 		return new Pair<Double, Double>(biomass * ratio, biomass);
 	}
-	
+
+	/**
+	 * Calculate the average age of the stands in the parcel.
+	 */
 	public static double calculateParcelAge(Point[] stands) {
-		return 0.0;
+		int age = 0;
+		Forest forest = Forest.getInstance();
+		for (Point point : stands) {
+			age += forest.getStand(point).age;
+		}
+		return (double)age / stands.length;
 	}
 	
+	/**
+	 * Calculate the average DBH of the stands in the parcel.
+	 */
 	public static double calculateParcelDbh(Point[] stands) {
-		return 0.0;
+		double dbh = 0.0;
+		Forest forest = Forest.getInstance();
+		for (Point point : stands) {
+			dbh += forest.getStandDbh(point);
+		}
+		return dbh / stands.length;
 	}
 	
+	/**
+	 * Calculate the average stocking of the stands in the parcel.
+	 */
 	public static double calculateParcelStocking(Point[] stands) {
-		return 0.0;
+		double stocking = 0.0;
+		Forest forest = Forest.getInstance();
+		for (Point point : stands) {
+			stocking += forest.getStandStocking(point);
+		}
+		return stocking / stands.length;
 	}
 	
 	/**

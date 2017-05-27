@@ -48,8 +48,8 @@ public abstract class ParcelAgent implements Steppable {
 	 * Constructor.
 	 */
 	public ParcelAgent(ParcelAgentType type) {
-		this.landUseWrapper = new LandUseGeomWrapper();
-		this.landUseWrapper.setAgentType(type);
+		landUseWrapper = new LandUseGeomWrapper();
+		landUseWrapper.setAgentType(type);
 	}
 		
 	/**
