@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
+import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Economics;
@@ -24,8 +25,8 @@ public class EconomicAgent extends NipfAgent {
 	/**
 	 * Constructor.
 	 */
-	public EconomicAgent() {
-		super(ParcelAgentType.ECONOMIC);
+	public EconomicAgent(LandUseGeomWrapper lu) {
+		super(ParcelAgentType.ECONOMIC, lu);
 	}
 		
 	@Override

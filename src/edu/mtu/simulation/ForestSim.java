@@ -60,17 +60,19 @@ public abstract class ForestSim extends SimState {
 	 * Create an economic agent for use by the simulation.
 	 * 
 	 * @param random The random number generator being used by the simulation.
+	 * @param lu The LandUseGeomWrapper assigned the agent.
 	 * @return A concrete agent of the AgentType ECONOMIC.
 	 */
-	public abstract ParcelAgent createEconomicAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEconomicAgent(MersenneTwisterFast random, LandUseGeomWrapper lu);
 	
 	/**
 	 * Create an ecosystem services agent for use by the simulation.
 	 * 
 	 * @param random The random number generator being used by the simulation.
+	 * @param lu The LandUseGeomWrapper assigned the agent.
 	 * @return A concrete agent of the AgentType ECOSYSTEM.
 	 */
-	public abstract ParcelAgent createEcosystemsAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEcosystemsAgent(MersenneTwisterFast random, LandUseGeomWrapper lu);
 	
 	/**
 	 * Get the default path and name of the cover file.
@@ -381,11 +383,10 @@ public abstract class ForestSim extends SimState {
 	protected ParcelAgent createAgent(LandUseGeomWrapper lu, double probablity) {
 		ParcelAgent agent;
 		if (random.nextDouble() < probablity) {
-			agent = createEconomicAgent(random);
+			agent = createEconomicAgent(random, lu);
 		} else {
-			 agent = createEcosystemsAgent(random);
+			 agent = createEcosystemsAgent(random, lu);
 		}
-		agent.setLandUseWrapper(lu);
 		agent = createAgentParcel(agent);
 		agent.getGeometry().updateShpaefile();
 		return agent;

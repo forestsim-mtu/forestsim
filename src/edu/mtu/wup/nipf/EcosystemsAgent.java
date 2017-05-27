@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
+import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.wup.model.Harvesting;
@@ -19,8 +20,8 @@ public class EcosystemsAgent extends NipfAgent {
 	/**
 	 * Constructor.
 	 */
-	public EcosystemsAgent() {
-		super(ParcelAgentType.ECOSYSTEM);
+	public EcosystemsAgent(LandUseGeomWrapper lu) {
+		super(ParcelAgentType.ECOSYSTEM, lu);
 	}
 
 	@Override

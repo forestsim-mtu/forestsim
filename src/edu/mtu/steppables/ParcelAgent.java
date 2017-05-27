@@ -17,7 +17,7 @@ import sim.util.IntBag;
 @SuppressWarnings("serial")
 public abstract class ParcelAgent implements Steppable {
 	
-	private final ParcelAgentType type = null;
+	private ParcelAgentType parcelAgentType = null;
 	
 	private boolean hasRun = false;
 	private LandUseGeomWrapper landUseWrapper;
@@ -47,15 +47,16 @@ public abstract class ParcelAgent implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	public ParcelAgent(ParcelAgentType type) {
-		landUseWrapper = new LandUseGeomWrapper();
+	public ParcelAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
+		parcelAgentType = type;
+		landUseWrapper = lu;
 		landUseWrapper.setAgentType(type);
 	}
 		
 	/**
 	 * Report what type of agent is being represented.
 	 */
-	public ParcelAgentType getAgentType() { return type; }
+	public ParcelAgentType getAgentType() { return parcelAgentType; }
 
 	/**
 	 * Get the cover points that this agent is responsible for.
@@ -86,13 +87,6 @@ public abstract class ParcelAgent implements Steppable {
 	 */
 	public boolean phasedIn() {
 		return phasedIn;
-	}
-		
-	/**
-	 * Set the land use wrapper to be used by this agent.
-	 */
-	public void setLandUseWrapper(LandUseGeomWrapper landUseWrapper) {
-		this.landUseWrapper = landUseWrapper;
 	}
 		
 	/**

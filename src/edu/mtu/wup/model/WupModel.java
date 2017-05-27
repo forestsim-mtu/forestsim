@@ -7,6 +7,7 @@ import edu.mtu.environment.GrowthModel;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
+import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.utilities.RandomDistribution;
 import edu.mtu.wup.model.parameters.*;
@@ -73,9 +74,9 @@ public abstract class WupModel extends ForestSim {
 	}
 	
 	@Override
-	public ParcelAgent createEconomicAgent(MersenneTwisterFast random) {
+	public ParcelAgent createEconomicAgent(MersenneTwisterFast random, LandUseGeomWrapper lu) {
 
-		EconomicAgent agent = new EconomicAgent();
+		EconomicAgent agent = new EconomicAgent(lu);
 		
 		// Set the discount rate, X~N(mean, sd);
 		Pair<Double, Double> rate = getParameters().getEconomicNvpDiscountRate();
@@ -86,9 +87,9 @@ public abstract class WupModel extends ForestSim {
 	}
 
 	@Override
-	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random) {
+	public ParcelAgent createEcosystemsAgent(MersenneTwisterFast random, LandUseGeomWrapper lu) {
 
-		EcosystemsAgent agent = new EcosystemsAgent();
+		EcosystemsAgent agent = new EcosystemsAgent(lu);
 
 		// Set if they intend to harvest or not
 		boolean flag = (random.nextDouble() < getParameters().getMooIntendsToHavestOdds());

@@ -1,5 +1,6 @@
 package edu.mtu.wup.nipf;
 
+import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.wup.model.parameters.WupParameters;
@@ -27,8 +28,8 @@ public abstract class NipfAgent extends ParcelAgent {
 	protected abstract void doAgentPolicyOperation();
 	protected abstract double getMinimumDbh();
 		
-	public NipfAgent(ParcelAgentType type) {
-		super(type);
+	public NipfAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
+		super(type, lu);
 	}
 	
 	@Override
