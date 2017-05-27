@@ -104,7 +104,6 @@ public class WupScorecard implements Scorecard {
 		}
 		
 		// Have the agents update their parcels
-		GeomVectorField parcels = state.getParcelLayer();
 		for (ParcelAgent agent : state.getParcelAgents()) {
 			agent.updateShapefile();
 			state.updateAgentGeography(agent);
@@ -112,6 +111,7 @@ public class WupScorecard implements Scorecard {
 		
 		// Store the parcels to disk
 		String fileName = String.format(filesDirectory + nipfoFile, state.schedule.getSteps());
+		GeomVectorField parcels = state.getParcelLayer();
 		ShapeFileExporter.write(fileName, parcels);
 	}
 
