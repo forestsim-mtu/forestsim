@@ -1,13 +1,10 @@
 package edu.mtu.wup.model.scorecard;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import edu.mtu.environment.Forest;
 import edu.mtu.measures.ForestMeasuresParallel;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
@@ -17,22 +14,18 @@ import edu.mtu.utilities.BufferedCsvWriter;
 import edu.mtu.utilities.Constants;
 import edu.mtu.wup.vip.VipBase;
 import edu.mtu.wup.vip.VipFactory;
-import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;
-import sim.io.geo.ArcInfoASCGridExporter;
 import sim.io.geo.ShapeFileExporter;
 
 public class WupScorecard implements Scorecard {
 
-	private final static String ageFile = "/age%1$d.asc";
-	private final static String dbhFile = "/dbh%1$d.asc";
+	// TODO Migrate to command line configuration
+	private final static boolean writeGis = false;
+	
+	private final static int captureInterval = 20;
 	private final static String nipfoFile = "/nipfo%1$d";			// ArcGIS disapproves of .shp.shp
-	private final static String stockingFile = "/stocking%1$d.asc";
 	
 	private BufferedCsvWriter[] writers;
-		
-	private final static int captureInterval = 20;
-		
 	private String outputDirectory;
 	private String filesDirectory;
 	
@@ -65,7 +58,6 @@ public class WupScorecard implements Scorecard {
 	}
 
 	public void processInitialization(ForestSim state) {
-			
 		try {
 			// Bootstrap any relevant paths
 			File directory = new File(filesDirectory);
@@ -104,29 +96,23 @@ public class WupScorecard implements Scorecard {
 		// Use the approximation given by (Magnussen & Reed, 2015) 
 		return 0.475 * biomass; 
 	}
-		
-	/**
-	 * Store the raster data to disk.
-	 */
-	private void storeRaster(String fileName, GeomGridField grid) throws IOException {
-		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		ArcInfoASCGridExporter.write(grid, output);
-		output.close();	
-	}
 	
 	// Society: Aesthetics, Environment: Habitat Connectivity
 	private void writeGisFiles(ForestSim state) throws IOException {
-//		// Store the forest raster files
-//		Forest forest = Forest.getInstance();
-//		long step = state.schedule.getSteps();
-//		storeRaster(String.format(filesDirectory + ageFile, step), forest.getStandAgeMap());
-//		storeRaster(String.format(filesDirectory + dbhFile, step), forest.getStandDbhMap());
-//		storeRaster(String.format(filesDirectory + stockingFile, step), forest.getStockingMap());
-//		
-//		// Store the agent parcels
-//		String fileName = String.format(filesDirectory + nipfoFile, step);
-//		GeomVectorField parcels = state.getParcelLayer();
-//		ShapeFileExporter.write(fileName, parcels);
+		if (!writeGis) {
+			return;
+		}
+		
+		// Have the agents update their parcels
+		GeomVectorField parcels = state.getParcelLayer();
+		for (ParcelAgent agent : state.getParcelAgents()) {
+			agent.updateShapefile();
+			state.updateAgentGeography(agent);
+		}
+		
+		// Store the parcels to disk
+		String fileName = String.format(filesDirectory + nipfoFile, state.schedule.getSteps());
+		ShapeFileExporter.write(fileName, parcels);
 	}
 
 	// Society: Recreational Access
@@ -134,9 +120,10 @@ public class WupScorecard implements Scorecard {
 		VipBase vip = VipFactory.getInstance().getVip();
 		
 		double area = vip != null ? vip.getSubscribedArea() / Constants.SquareMetersToSquareKilometers : 0;
-		writers[Indicators.VipRecreation.getValue()].write(area);
+		writers[Indicators.RecreationAccess .getValue()].write(area);
 		
-		writers[Indicators.VipEnrollment.getValue()].write(vip != null ? vip.getSubscriptionRate() : 0);
+		writers[Indicators.VipAwareness.getValue()].write(vip != null ? vip.getAwareness() : 0);;
+		writers[Indicators.VipEnrollment.getValue()].write(vip != null ? vip.getSubscriptions() : 0);
 	}
 
 	// Environment: Carbon Sequestration

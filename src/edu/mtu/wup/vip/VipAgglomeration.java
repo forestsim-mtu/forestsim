@@ -8,7 +8,7 @@ import edu.mtu.wup.nipf.NipfAgent;
 
 public class VipAgglomeration extends VipBase {
 	
-	private final static int agglomerationBonus = 25;
+	private final static int agglomerationBonus = 75;
 	
 	@Override
 	public double getMillageRateReduction(ParcelAgent enrollee, ForestSim state) {

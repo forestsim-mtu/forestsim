@@ -16,7 +16,10 @@ public abstract class NipfAgent extends ParcelAgent {
 	protected boolean vipHarvested = false;
 	private int vipCoolDown = 0;
 	private int vipCoolDownDuration = 0;
-	private double vipInformedRate = 0.05;
+	
+	// TODO Move these up to being set elsewhere
+	private final static double vipAwarenessRate = 0.14;		// The odds that the NIPFO will accept VIP information from neighbors
+	private final static double vipInformedRate = 0.05;			// The odds that the NIPFO will be informed of the VIP after activation
 				
 	// WTH attributes
 	protected double wthPerAcre = 0.0;
@@ -63,7 +66,7 @@ public abstract class NipfAgent extends ParcelAgent {
 			if (vipInformedRate < state.random.nextDouble()) {
 				return;
 			}
-			vipAware = true;
+			awareOfVip();
 		}
 		
 		// Update the cool down for the VIP and return if the agent is still cooling down
@@ -74,6 +77,7 @@ public abstract class NipfAgent extends ParcelAgent {
 		
 		doAgentPolicyOperation();
 	}
+
 	
 	/**
 	 * Get the millage rate for the agent's parcel.
@@ -87,10 +91,23 @@ public abstract class NipfAgent extends ParcelAgent {
 	
 	public boolean inVip() { return vipEnrollee; }
 		
+	private void awareOfVip() {
+		// Guard against multiple updates 
+		if (vipAware) {
+			return;
+		}
+		
+		// Set our flag and inform the model
+		vipAware = true;
+		VipFactory.getInstance().getVip().nipfoInformed();
+		getGeometry().setAwareOfVip(true);
+		state.updateAgentGeography(this);
+	}
+	
 	protected void enrollInVip() {
 		vipEnrollee = true;
 		vipHarvested = false;
-		VipFactory.getInstance().getVip().enroll(getParcel());
+		VipFactory.getInstance().getVip().enroll(this, state);
 		getGeometry().setEnrolledInVip(true);
 		state.updateAgentGeography(this);
 	}
@@ -118,6 +135,26 @@ public abstract class NipfAgent extends ParcelAgent {
 	}
 	
 	/**
+	 * Inform this NIFPO of the VIP.
+	 */
+	public void informOfVip() {
+		// If we already know, return
+		if (vipAware) {
+			return;
+		}
+		
+		// If we haven't been fully activated yet, return
+		if (!phasedIn()) {
+			return;		
+		}
+		
+		// Do we care about this information?
+		if (state.random.nextDouble() <= vipAwarenessRate) {
+			awareOfVip();
+		}
+	}
+	
+	/**
 	 * Set the VIP cool down duration.
 	 */
 	public void setVipCoolDownDuration(int value) {
@@ -129,5 +166,5 @@ public abstract class NipfAgent extends ParcelAgent {
 	 */
 	public void setWthPerAcre(double value) {
 		wthPerAcre = value;
-	}		
+	}
 }

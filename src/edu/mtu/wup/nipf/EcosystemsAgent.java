@@ -13,8 +13,9 @@ import edu.mtu.wup.vip.VipFactory;
 @SuppressWarnings("serial")
 public class EcosystemsAgent extends NipfAgent {
 	
+	private boolean intendsToHarvest = false;		// Set on initialization
 	private double harvestOdds = 0.0;				// Set on initialization
-	
+		
 	/**
 	 * Constructor.
 	 */
@@ -33,15 +34,23 @@ public class EcosystemsAgent extends NipfAgent {
 				return;
 			}
 		}
-
-		// Is the agent open to harvesting?
+		
+		// Does the agent ever intend to harvest?
+		if (!intendsToHarvest) {
+			return;
+		}
+			
+		// Is the agent currently open to harvesting?
 		if (harvestOdds < state.random.nextDouble()) {
 			return;
 		}
 						
-		// We want lower taxes, does the VIP give us that?
+		// While we want lower taxes, we may not enroll regardless
+		// NOTE We are using a short-cut here: the rate reductions are 50 and 75
+		// NOTE so we just use those for the odds the VIP will enroll
 		VipBase vip = VipFactory.getInstance().getVip();
-		if (vip.getMillageRateReduction(this, state) > 0) {
+		double odds = vip.getMillageRateReduction(this, state) / 100.0;
+		if (state.random.nextDouble() <= odds) {
 			enrollInVip();
 		}
 	}
@@ -77,8 +86,12 @@ public class EcosystemsAgent extends NipfAgent {
 	protected double getMinimumDbh() {
 		return Harvesting.SawtimberDbh;
 	}
-	
+		
 	public void setHarvestOdds(double value) {
 		harvestOdds = value;
+	}
+	
+	public void setIntendsToHarvest(boolean value) {
+		intendsToHarvest = value;
 	}
 }

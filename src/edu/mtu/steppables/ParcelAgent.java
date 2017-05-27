@@ -3,6 +3,7 @@ package edu.mtu.steppables;
 import java.awt.Point;
 
 import edu.mtu.environment.Forest;
+import edu.mtu.measures.ForestMeasures;
 import edu.mtu.simulation.ForestSim;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -79,6 +80,13 @@ public abstract class ParcelAgent implements Steppable {
 	public double getParcelArea() {
 		return parcel.length * Forest.getInstance().getAcresPerPixel();
 	}
+	
+	/**
+	 * Returns true if the agent has been phased into the model, false otherwise.
+	 */
+	public boolean phasedIn() {
+		return phasedIn;
+	}
 		
 	/**
 	 * Set the land use wrapper to be used by this agent.
@@ -136,7 +144,16 @@ public abstract class ParcelAgent implements Steppable {
 	/**
 	 * Update the shape file to reflect the agent's attributes.
 	 */
-	protected void updateShapefile() {
+	public void updateShapefile() {
+		double value = ForestMeasures.calculateParcelAge(parcel);
+		landUseWrapper.setAverageForestAge(value);
+		
+		value = ForestMeasures.calculateParcelDbh(parcel);
+		landUseWrapper.setAverageForestDbh(value);
+		
+		value = ForestMeasures.calculateParcelStocking(parcel);
+		landUseWrapper.setAverageForestStocking(value);
+		
 		landUseWrapper.updateShpaefile();
 	}
 }

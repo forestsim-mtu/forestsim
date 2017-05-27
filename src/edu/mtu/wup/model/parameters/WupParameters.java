@@ -19,7 +19,7 @@ public abstract class WupParameters extends ParameterBase {
 	/**
 	 * Base millage rate for the model.
 	 */
-	public final static int MillageRate = 35;
+	public final static int MillageRate = 100;
 	
 	/**
 	 * Assessed property value per acre.
@@ -29,6 +29,7 @@ public abstract class WupParameters extends ParameterBase {
 	private int loggingCapacity = 0;
 	private int vipCoolDown = 0;
 	private double ecosystemsNipfoHarvestOdds = 0.0;
+	private double mooIntendsToHavestOdds = 0.0;
 	private long seed = 0;
 
 	private Pair<Double, Double> economicNvpDiscountRate = Pair.with(0.0, 0.0);
@@ -55,6 +56,13 @@ public abstract class WupParameters extends ParameterBase {
 	 */
 	public int getLoggingCapacity() {
 		return loggingCapacity;
+	}
+	
+	/**
+	 * Get the odds a MOO intends to harvest.
+	 */
+	public double getMooIntendsToHavestOdds() {
+		return mooIntendsToHavestOdds;
 	}
 	
 	/**
@@ -116,6 +124,13 @@ public abstract class WupParameters extends ParameterBase {
 	}
 	
 	/**
+	 * Set the odds a MOO intends to harvest.
+	 */
+	public void setMooIntendsToHavestOdds(double value) {
+		mooIntendsToHavestOdds = value;
+	}
+	
+	/**
 	 * Set the mean and SD for the WTH per acre for NIPFOs.
 	 */
 	public void setNipfoWth(double mean, double sd) {
@@ -133,7 +148,7 @@ public abstract class WupParameters extends ParameterBase {
 	 * Set the random seed for this model.
 	 */
 	public void setSeed(long value) {
-		this.seed = value;
+		seed = value;
 	}
 	
 	/**

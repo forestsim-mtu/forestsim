@@ -5,6 +5,10 @@ import sim.util.geo.MasonGeometry;
 @SuppressWarnings("serial")
 public class LandUseGeomWrapper extends MasonGeometry {
 
+	private double averageForestAge = 0.0;
+	private double averageForestDbh = 0.0;
+	private double averageStocking = 0.0;
+	private int awareOfVip = 0;
 	private int enrolledInVip = 0;
 	private int index = -1;
 	private ParcelAgentType agentType;
@@ -37,6 +41,26 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	public void setAgentType(ParcelAgentType value) { agentType = value; }
 	
 	/**
+	 * Set the flag to indicate if the agent is aware of the VIP or not.
+	 */
+	public void setAwareOfVip(boolean value) { awareOfVip = (value) ? 1 : 0; }
+	
+	/**
+	 * Set the average age of the forest.
+	 */
+	public void setAverageForestAge(double value) { averageForestAge = value; }
+	
+	/**
+	 * Set the average DBH of the forest.
+	 */
+	public void setAverageForestDbh(double value) { averageForestDbh = value; }
+	
+	/**
+	 * Set the average forest stocking.
+	 */
+	public void setAverageForestStocking(double value) { averageStocking = value; }
+	
+	/**
 	 * Set the flag to indicate if the agent is in a VIP or not. 
 	 */
 	public void setEnrolledInVip(boolean value) { enrolledInVip = (value) ? 1 : 0; }
@@ -51,7 +75,12 @@ public class LandUseGeomWrapper extends MasonGeometry {
 	 */
 	public void updateShpaefile() {
 		int type = (agentType != null) ? agentType.getValue() : -1;
-		this.addIntegerAttribute("AGENT_TYPE", type);
-		this.addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
+		addIntegerAttribute("AGENT_TYPE", type);
+		
+		addDoubleAttribute("FOREST_AGE", averageForestAge);
+		addDoubleAttribute("FOREST_DBH", averageForestDbh);
+		addDoubleAttribute("FOREST_STOCKING", averageStocking);
+		addIntegerAttribute("AWARE_VIP", awareOfVip);
+		addIntegerAttribute("ENROLLED_VIP", enrolledInVip);
 	}
 }

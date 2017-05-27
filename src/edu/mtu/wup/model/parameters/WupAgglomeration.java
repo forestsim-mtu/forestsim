@@ -14,11 +14,10 @@ public class WupAgglomeration extends WupParameters {
 		setOutputDirectory("out/agglomeration");
 		
 		// Set the model variables
-		setEconomicAgentPercentage(0);
+		setEconomicAgentPercentage(0.3);
 		setEconomicNpvDiscountRate(0.08, 0.02);		// http://www.sewall.com/files/timberlandreport/v8n3.pdf
-//		setEcosystemsAgentHarvestOdds(0.04);		// MR, 2% mean
-//		setEcosystemsAgentHarvestOdds(0.075);		// RZ, 3.75% mean
-		setEcosystemsAgentHarvestOdds(0.1);
+		setEcosystemsAgentHarvestOdds(0.02);		// MR, 2% mean
+		setMooIntendsToHavestOdds(0.26);			// 18% of all NIPFOs
 		setNipfoWth(523.23, 123.12);
 		setLoggingCapacity(2500);					// About 10% of the NIPFOs
 		

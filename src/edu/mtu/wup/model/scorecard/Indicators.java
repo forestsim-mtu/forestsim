@@ -4,15 +4,17 @@ public enum Indicators {
 	CarbonAgents(0, "/carbonAgents.csv"),
 	CarbonGlobal(1, "/carbonGlobal.csv"),
 	
-	HarvestedBiomass(2, "/biomass.csv"),
-	HarvestDemand(3, "/demand.csv"),
-	HarvestedParcels(4, "/harvested.csv"),
-	HarvestedStems(5, "/stems.csv"),
+	HarvestedBiomass(2, "/harvestedBiomass.csv"),
+	HarvestDemand(3, "/harvestDemand.csv"),
+	HarvestedParcels(4, "/harvestedParcels.csv"),
+	HarvestedStems(5, "/harvestedStems.csv"),
 	
-	VipEnrollment(6, "/vip.csv"),
-	VipRecreation(7, "/recreation.csv");
+	VipAwareness(6, "/vipAwareness.csv"),
+	VipEnrollment(7, "/vipEnrollment.csv"),
 	
-	public static int IndicatorCount = 8;
+	RecreationAccess(8, "/recreationAccess.csv");
+	
+	public final static int IndicatorCount = Indicators.values().length;
 
 	private int value;
 	private String fileName;

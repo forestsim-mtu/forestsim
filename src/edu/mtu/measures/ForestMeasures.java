@@ -88,6 +88,18 @@ public class ForestMeasures {
 		return new Pair<Double, Double>(biomass * ratio, biomass);
 	}
 	
+	public static double calculateParcelAge(Point[] stands) {
+		return 0.0;
+	}
+	
+	public static double calculateParcelDbh(Point[] stands) {
+		return 0.0;
+	}
+	
+	public static double calculateParcelStocking(Point[] stands) {
+		return 0.0;
+	}
+	
 	/**
 	 * Calculate the biomass in the given stand.
 	 * 

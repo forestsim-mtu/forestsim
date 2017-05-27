@@ -90,6 +90,10 @@ public abstract class WupModel extends ForestSim {
 
 		EcosystemsAgent agent = new EcosystemsAgent();
 
+		// Set if they intend to harvest or not
+		boolean flag = (random.nextDouble() < getParameters().getMooIntendsToHavestOdds());
+		agent.setIntendsToHarvest(flag);
+		
 		// Set the WTH, X~N(mean, sd)
 		Pair<Double, Double> wth = getParameters().getNipfoWth();		
 		double value = RandomDistribution.NormalDistribution(wth.getValue0(), wth.getValue1(), random);
