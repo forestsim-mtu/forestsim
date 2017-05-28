@@ -17,20 +17,12 @@ fancy_scientific <- function(value) {
      parse(text = value)
 }
 
-analysis <- function (plot, title, ylabel, fancy) {
+analysis <- function (file, title, ylabel, fancy) {
 	
 	# Read the relevent data from disk
-	data <- list()
-	for (experiment in experiments) {
-		path = paste('../out/', experiment, '/', plot, '.csv', sep="")
-		working <- read.csv(path, header=F)
+	data <- loadData(file)
+	rows = nrow(data[['none']])
 	
-		# We assume that the number of rows stays the same
-		rows = nrow(working)		
-	
-		data[[experiment]] <- working[, 0:timeSteps]
-	}
-
 	# Prepare the data farme with the mean of the data
 	df <- data.frame(Year = 1:timeSteps,
 					 'none' = colMeans(data[['none']]),
@@ -42,29 +34,74 @@ analysis <- function (plot, title, ylabel, fancy) {
 	df$Series[df$Series == "none"] <- "No VIP"
 	df$Series[df$Series == "discount"] <- "VIP, millage bonus"
 	df$Series[df$Series == "agglomeration"] <- "VIP, agglomeration bonus"
+	
+	# Plot and save
+	plot(df, rows, title, ylabel, fancy, file)
+}
+
+harvestAnalysis <- function(title, ylabel, fancy) {
+	# Read the relevent data from disk
+	stems <- loadData('harvestedStems')
+	biomass <- loadData('harvestedBiomass')
+	rows = nrow(stems[['none']])
 		
+	# Prepare the data frame wtih the mean of the data
+	df <- data.frame(Year = 1:timeSteps,
+			'none.biomass' = colMeans(biomass[['none']]),
+			'none.stems' = colMeans(stems[['none']]),
+			'discount.biomass' = colMeans(biomass[['discount']]),
+			'discount.stems' = colMeans(stems[['discount']]),
+			'agglomeration.biomass' = colMeans(biomass[['agglomeration']]),
+			'agglomeration.stems' = colMeans(stems[['agglomeration']]))
+	
+	# Melt and set the labels
+	df <- melt(df, id.vars = 'Year', variable.name = 'Series')
+	df$Series <- as.character(df$Series)
+	df$Series[df$Series == "none.biomass"] <- "Biomass - No VIP"
+	df$Series[df$Series == "none.stems"] <- "Stems - No VIP"
+	df$Series[df$Series == "discount.biomass"] <- "Biomass - VIP, millage bonus"
+	df$Series[df$Series == "discount.stems"] <- "Stems - VIP, millage bonus"
+	df$Series[df$Series == "agglomeration.biomass"] <- "Biomass - VIP, agglomeration bonus"
+	df$Series[df$Series == "agglomeration.stems"] <- "Stems - VIP, agglomeration bonus"
+
+	# Plot and save
+	plot(df, nrow(stems), title, ylabel, fancy, 'harvestedBiomass')
+}
+
+loadData <- function(file) {
+	data <- list()
+	for (experiment in experiments) {
+		path = paste('../out/', experiment, '/', file, '.csv', sep="")
+		working <- read.csv(path, header=F)
+		data[[experiment]] <- working[, 0:timeSteps]
+	}
+	return(data)
+}
+
+plot <- function(df, rows, title, ylabel, fancy, file) {
 	title = sprintf("%s (mean of %i runs)", title, rows)
 	plotted <- ggplot(df, aes(Year, value)) +
-				geom_vline(xintercept = policyIntroduction) +
-				geom_line(aes(colour = Series)) +
-				labs(y = ylabel, title = title) +
-				theme(legend.position = "bottom", legend.title = element_blank())
-				
+			geom_vline(xintercept = policyIntroduction) +
+			geom_line(aes(colour = Series)) +
+			labs(y = ylabel, title = title) +
+			theme(legend.position = "bottom", legend.title = element_blank())
+	
 	if (fancy) {
 		plotted <- plotted + scale_y_continuous(labels = fancy_scientific)
 	}
-
-	file = paste(plot, '.png', sep="")
-	ggsave(filename = file, plot = plotted)
+	
+	file = paste(file, '.png', sep="")
+	ggsave(filename = file, plot = plotted)	
 }
 
 analysis('carbonAgents', 'Carbon Sequestration by NIPFOs', expression('Metric Tons (MTCO'[2]*')'), F)
 analysis('carbonGlobal', 'Global Carbon Sequestration', expression('Metric Tons (MTCO'[2]*')'), F)
 
-analysis('harvestedBiomass', 'Harvested Biomass', 'Metric Tons (MT) Dry Weight', T)
+harvestAnalysis('Harvested Biomass & Stems', 'Metric Tons (MT) Dry Weight', T)
 analysis('harvestDemand', 'Harvest Demand', 'Owners', F)
 analysis('harvestedParcels', 'Harvested Parcels', 'Owners', F)
-analysis('harvestedStems', 'Harvested Stems', 'Metric Tons (MT) Dry Weight', T)
+#analysis('harvestedBiomass', 'Harvested Biomass', 'Metric Tons (MT) Dry Weight', T)
+#analysis('harvestedStems', 'Harvested Stems', 'Metric Tons (MT) Dry Weight', T)
 
 analysis('vipAwareness', 'VIP Awareness', 'NIPFOs', F)
 analysis('vipEnrollment', 'VIP Enrollment', 'NIPFOs', F)
