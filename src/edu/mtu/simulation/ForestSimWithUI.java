@@ -27,7 +27,6 @@ public class ForestSimWithUI extends GUIState {
 	
 	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
-//	private FastValueGridPortrayal2D dbhPortrayal = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D stockingPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
@@ -45,7 +44,6 @@ public class ForestSimWithUI extends GUIState {
 		
 		// Attach the land cover layers and then overlay the parcel layer
 		display.attach(coverPortrayal, "Land Cover", false);
-//		display.attach(dbhPortrayal, "Stand DBH", false);
 		display.attach(stockingPortrayal, "Stocking", true);
 		display.attach(parcelPortrayal, "Parcels Layer", false);
 				
@@ -75,7 +73,7 @@ public class ForestSimWithUI extends GUIState {
 	 * Get a state object for the UI.
 	 */
 	public Object getSimulationInspectedObject() { 
-		return ((ForestSim)state).getModelProperties(); 
+		return ((ForestSim)state).getModelParameters(); 
 	}
 	
 	public void start() {
@@ -83,7 +81,9 @@ public class ForestSimWithUI extends GUIState {
 		setupPortrayals();
 	}
 	
-	// TODO Update the portrayals so they aren't quite so species dependent
+	/**
+	 * Add the basic portrayals.
+	 */
 	private void setupPortrayals() {
 		ForestSim world = (ForestSim)state;
 		
@@ -96,13 +96,9 @@ public class ForestSimWithUI extends GUIState {
 		Color[] coverColors = NlcdClassification.getColorMap();
 		coverColors[0] = Color.WHITE;
 		coverPortrayal.setMap(new SimpleColorMap(coverColors));
-		
-		// Portray the current stand DBH
-//		dbhPortrayal.setField(Forest.getInstance().getStandDbh().getGrid());
-//		dbhPortrayal.setMap(new SimpleColorMap(0.0, SpeciesParameters.AcerRubrum.getMaximumDbh(), Color.WHITE, Color.DARK_GRAY));
-		
+				
 		// Portray the current stand stocking
-		stockingPortrayal.setField(Forest.getInstance().getStocking().getGrid());
+		stockingPortrayal.setField(Forest.getInstance().getStockingMap().getGrid());
 		stockingPortrayal.setMap(new SimpleColorMap(StockingCondition.getColorMap()));
 		
 		display.reset();

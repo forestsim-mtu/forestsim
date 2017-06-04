@@ -46,7 +46,7 @@ public enum NlcdClassification {
 	WoodyWetlands(90, "Woody Wetlands", new Color(0xC8E6F8)),
 	EmergentHerbaceousWetlands(95, "Emergent Herbaceous Wetlands", new Color(0x64B3D5));
 	
-	// The set of woody biomass types assoicated with the NLCD
+	// The set of woody biomass types associated with the NLCD
 	public final static Set<Integer> WoodyBiomass = new HashSet<Integer>(Arrays.asList(new Integer[] { 
 			NlcdClassification.DeciduousForest.getValue(), 
 			NlcdClassification.EvergreenForest.getValue(),
@@ -55,7 +55,7 @@ public enum NlcdClassification {
 	}));		
 	
 	// Used to set the capacity of the color map
-	private final static int HighestValue = 95;
+	public final static int HighestValue = 95;
 	
 	private int value;
 	private String name;
@@ -99,6 +99,19 @@ public enum NlcdClassification {
 	
 	public int getValue() { return value; }
 		
+	/**
+	 * Return true if the value is for a woody biomass NCLD code, fasle otherwise.
+	 */
+	public static boolean isWoodyBiomass(int value) {
+		if (DeciduousForest.value <= value && value <= MixedForest.value) {
+			return true;
+		}
+		if (WoodyWetlands.value == value) {
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() { return name; }
 }

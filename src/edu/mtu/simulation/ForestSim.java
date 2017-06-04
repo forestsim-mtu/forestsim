@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -14,12 +17,14 @@ import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
-import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.steppables.marketplace.Marketplace;
+import edu.mtu.policy.PolicyBase;
+import edu.mtu.simulation.parameters.ParameterBase;
+import edu.mtu.steppables.AggregateHarvester;
 import edu.mtu.steppables.AggregationStep;
-import edu.mtu.steppables.BiomassRecordKeeper;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -39,10 +44,7 @@ public abstract class ForestSim extends SimState {
 
 	// Array of all agents active in the simulation
 	private ParcelAgent[] agents;
-		
-	// Percentage of economic agents to be created;
-	private double economicAgentPercentage = getDefaultEconomicAgentPercentage();
-	
+			
 	// Geometry representing current land cover at high resolution
 	private GeomGridField coverLayer;
 	
@@ -53,33 +55,30 @@ public abstract class ForestSim extends SimState {
 	private String coverFile;
 	private String outputDirectory;
 	private String parcelFile;	
-		
+
 	/**
 	 * Create an economic agent for use by the simulation.
 	 * 
 	 * @param random The random number generator being used by the simulation.
+	 * @param lu The LandUseGeomWrapper assigned the agent.
 	 * @return A concrete agent of the AgentType ECONOMIC.
 	 */
-	public abstract ParcelAgent createEconomicAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEconomicAgent(MersenneTwisterFast random, LandUseGeomWrapper lu);
 	
 	/**
 	 * Create an ecosystem services agent for use by the simulation.
 	 * 
 	 * @param random The random number generator being used by the simulation.
+	 * @param lu The LandUseGeomWrapper assigned the agent.
 	 * @return A concrete agent of the AgentType ECOSYSTEM.
 	 */
-	public abstract ParcelAgent createEcosystemsAgent(MersenneTwisterFast random);
+	public abstract ParcelAgent createEcosystemsAgent(MersenneTwisterFast random, LandUseGeomWrapper lu);
 	
 	/**
 	 * Get the default path and name of the cover file.
 	 */
 	public abstract String getDefaultCoverFile();
-	
-	/**
-	 * Get the default percentage of economic agents to create. 
-	 */
-	public abstract double getDefaultEconomicAgentPercentage();
-	
+		
 	/**
 	 * Get the default path and name of the output directory.
 	 */
@@ -105,7 +104,12 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Get the object that exposes the properties that are displayed in the UI.
 	 */
-	public abstract Object getModelProperties();
+	public abstract Object getModelParameters();
+	
+	/**
+	 * Get the policy that is in place for the simulation.
+	 */
+	public abstract PolicyBase getPolicy();
 	
 	/**
 	 * Get the score card to use for aggregation at the end of each step.
@@ -142,51 +146,77 @@ public abstract class ForestSim extends SimState {
 		doLoop(model, args);
 		System.exit(0);
 	}
-					
+	
 	/**
-	 * Return the interval for the economicAgentPercentage
+	 * Get the agents that are neighbors of the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @return Agents that are neighbors of the agent.
 	 */
-	public Object domEconomicAgentPercentage() {
-		return new sim.util.Interval(0.0, 1.0);
-	}
-
-	/**
-	 * Return the interval for the ecosystemsAgentHarvestOdds
-	 */
-	public Object domEcosystemsAgentHarvestOdds() {
-		return new sim.util.Interval(0.0, 1.0);
+	public List<ParcelAgent> getConnectedNeighbors(ParcelAgent agent) {
+		Bag parcels = getConnectedParcels(agent);
+		return prepareNeighbors(parcels);
 	}
 	
 	/**
-	 * Return the average NIPF stocking for the model.
+	 * Get the agents that are neighbors to the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @param distance The search distance from the agent.
+	 * @return Parcels connected to the agent.
 	 */
-	public double getAverageNipfStocking() { 
-		if (agents == null) {
-			return 0;
-		}
-		
-		double sum = 0;
-		int count = 0;
-		for (ParcelAgent agent : agents) {
-			for (java.awt.Point point : agent.getParcel()) {
-				sum += Forest.getInstance().calculateStandStocking(point);
-				count++;
-			}
-		}
-		return sum / count; 
+	public List<ParcelAgent> getConnectedNeighbors(ParcelAgent agent, double distance) {
+		Bag parcels = getConnectedParcels(agent, distance);
+		return prepareNeighbors(parcels);
 	}
 	
 	/**
-	 * Get amount of biomass harvested.
+	 * Convert the bag of parcels to a list of agents
 	 */
-	public double getAggregateBiomass() {
-		return BiomassRecordKeeper.getInstance().getBiomass();
+	private List<ParcelAgent> prepareNeighbors(Bag parcels) {
+		List<ParcelAgent> neighbors = new ArrayList<ParcelAgent>();
+		for (Object parcel : parcels) {
+			int index = ((LandUseGeomWrapper)parcel).getIndex();
+			neighbors.add(agents[index]);
+		}
+		return neighbors;
 	}
-		
+			
+	/**
+	 * Get the neighbors that are connected to the given agent.
+	 * 
+	 * @param agent The agent to get the connected neighbors of.
+	 * @return Parcels connected to the agent.
+	 */
+	public Bag getConnectedParcels(ParcelAgent agent) {
+		return parcelLayer.getTouchingObjects(agent.getGeometry());
+	}
+	
+	/**
+	 * Get the neighbors that are within the given radius of the agent.
+	 * 
+	 * @param agent The agent to get the neighbors of.
+	 * @param distance The search distance from the agent.
+	 * @return Parcels within the given distance.
+	 */
+	public Bag getConnectedParcels(ParcelAgent agent, double distance) {
+		return parcelLayer.getObjectsWithinDistance(agent.getGeometry(), distance);
+	}
+	
 	/**
 	 * Get the directory that output files should be written to.
 	 */
 	public String getOutputDirectory() { return outputDirectory; }
+	
+	/**
+	 * Get the parcel agents that are in the model.
+	 */
+	public List<ParcelAgent> getParcelAgents() { return Arrays.asList(agents); }
+	
+	/**
+	 * Get the base parameters for the simulation.
+	 */
+	public ParameterBase getParameters() { return (ParameterBase)getModelParameters(); }
 	
 	/**
 	 * Get the parcel layer that is used by the simulation.
@@ -197,13 +227,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the cover file path that is used by the simulation.
 	 */
 	public String getCoverFilePath() { return coverFile; }
-	
-	/**
-	 * Get the target percentage of agents, as a double, that are economic
-	 * optimizers.
-	 */
-	public double getEconomicAgentPercentage() { return economicAgentPercentage; }
-	
+		
 	/**
 	 * Get the parcel file path that is used by the simulation.
 	 */
@@ -213,21 +237,11 @@ public abstract class ForestSim extends SimState {
 	 * Get the random number generator that is used by the simulation.
 	 */
 	public MersenneTwisterFast getRandom() { return random; }
-	
+		
 	/**
 	 * Set the cover file path to use for the simulation.
 	 */
 	public void setCoverFilePath(String value) { coverFile = value; }
-	
-	/**
-	 * Set the target percentage of agents, as a double, that are economic
-	 * optimizers.
-	 */
-	public void setEconomicAgentPercentage(double value) {
-		if (value >= 0.0 && value <= 1.0) {
-			economicAgentPercentage = value;
-		}
-	}
 		
 	/**
 	 * Set the path where output files should be stored.
@@ -271,8 +285,8 @@ public abstract class ForestSim extends SimState {
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
-			BiomassRecordKeeper harvester = BiomassRecordKeeper.getInstance();
-			schedule.scheduleOnce(harvester);
+			AggregateHarvester harvester = AggregateHarvester.getInstance();
+			schedule.scheduleRepeating(harvester);
 		} else {
 			try {
 				// This is a marketplace model, defer agent initialization to the modeler
@@ -280,7 +294,7 @@ public abstract class ForestSim extends SimState {
 				
 				// The step operation adds members of the marketplace and the marketplace
 				// to the schedule correctly. 
-				Marketplace.getInstance().step(this);				
+				Marketplace.getInstance().scheduleMarketplace(this);		
 			} catch (ForestSimException ex) {
 				System.err.println("An error occured while preparing the marketplace: " + ex);
 				System.exit(-1);
@@ -289,34 +303,36 @@ public abstract class ForestSim extends SimState {
 				
 		// Create the environment agent
 		Environment enviorment = new Environment();
-		schedule.scheduleOnce(enviorment);
+		schedule.scheduleRepeating(enviorment);
 		
-		// Get the score card and create the aggregation step if one is provided 
+		// Schedule the aggregation step with a score card if one is provided
+		AggregationStep aggregation = new AggregationStep();
 		Scorecard scoreCard = getScoreCard();
 		if (scoreCard != null) {
-			scoreCard.processInitialization();
-			AggregationStep aggregation = new AggregationStep();
+			scoreCard.processInitialization(this);
 			aggregation.setScorecard(getScoreCard());
-			schedule.scheduleOnce(aggregation);
-		}		
+		}
+		schedule.scheduleRepeating(aggregation);
 
 		// Align the MBRs so layers line up in the display
 		Envelope globalMBR = parcelLayer.getMBR();
 		globalMBR.expandToInclude(coverLayer.getMBR());
 		parcelLayer.setMBR(globalMBR);
 		coverLayer.setMBR(globalMBR);
-	}
-
-	/**
-	 * Wrap-up the model operation.
-	 */
-	public void finish() {
-		super.finish();
 		
-		Scorecard scorecard = getScoreCard();
-		if (scorecard != null) {
-			scorecard.processFinalization();
-		}
+		// Advise garbage collection before the model starts
+		System.gc();		
+	}
+	
+	/**
+	 * Update the global geography with that of the given agent.
+	 * 
+	 * @param agent The agent whose geography has been updated.
+	 */
+	public void updateAgentGeography(ParcelAgent agent) {
+		agent.getGeometry().updateShpaefile();
+		int index = agent.getGeometry().getIndex();
+		parcelLayer.getGeometries().objs[index] = agent.getGeometry();
 	}
 	
 	/**
@@ -326,6 +342,7 @@ public abstract class ForestSim extends SimState {
 		try {
 			coverLayer = new GeomGridField();
 			InputStream inputStream = new FileInputStream(coverFile);
+			coverLayer = new GeomGridField();
 			ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, coverLayer);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -366,13 +383,13 @@ public abstract class ForestSim extends SimState {
 	protected ParcelAgent createAgent(LandUseGeomWrapper lu, double probablity) {
 		ParcelAgent agent;
 		if (random.nextDouble() < probablity) {
-			agent = createEconomicAgent(random);
+			agent = createEconomicAgent(random, lu);
 		} else {
-			 agent = createEcosystemsAgent(random);
+			 agent = createEcosystemsAgent(random, lu);
 		}
-		agent.setLandUseWrapper(lu);
-		agent.setRandom(random);
-		return createAgentParcel(agent);
+		agent = createAgentParcel(agent);
+		agent.getGeometry().updateShpaefile();
+		return agent;
 	}
 
 	/**
@@ -407,7 +424,7 @@ public abstract class ForestSim extends SimState {
 				int value = ((IntGrid2D) coverLayer.getGrid()).get(x, y);
 
 				// Move to the next if this pixel is not woody biomass
-				if (!NlcdClassification.WoodyBiomass.contains(value)) {
+				if (!NlcdClassification.isWoodyBiomass(value)) {
 					continue;
 				}
 
@@ -421,9 +438,8 @@ public abstract class ForestSim extends SimState {
 			}
 		}
 
-		// Pass the agent the indexes of the pixels the agent's parcel
-		// covers
-		agent.createCoverPoints(xPos, yPos);
+		// Pass the agent the indexes of the pixels the agent's parcel covers
+		agent.createCoverPoints(xPos, yPos);		
 		return agent;
 	}
 
@@ -431,15 +447,22 @@ public abstract class ForestSim extends SimState {
 	 * Create all of the agents that are used in the model.
 	 */
 	protected void createParcelAgents() {		
-		// Assign one agent to each parcel and then schedule the agent
-		Bag parcelGeoms = parcelLayer.getGeometries();
-		agents = new ParcelAgent[parcelGeoms.numObjs];
-		int index = 0;
-		for (Object parcelPolygon : parcelGeoms) {
-			ParcelAgent agent = createAgent((LandUseGeomWrapper) parcelPolygon, economicAgentPercentage);
-			agents[index] = agent;
+		Bag geometries = parcelLayer.getGeometries();
+		agents = new ParcelAgent[geometries.numObjs];
+		for (int ndx = 0; ndx < geometries.numObjs; ndx++) {
+			// Create the geometry for the agent and index it
+			LandUseGeomWrapper geometry = (LandUseGeomWrapper)geometries.objs[ndx];
+			geometry.setIndex(ndx);
+			
+			// Create the agent
+			ParcelAgent agent = createAgent(geometry, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
+			
+			// Update the global geometry with the agents updates
+			geometries.objs[ndx] = agent.getGeometry();
+			
+			// Schedule the agent
+			agents[ndx] = agent;
 			schedule.scheduleRepeating(agent);
-			index++;
 		}
 	}
 	

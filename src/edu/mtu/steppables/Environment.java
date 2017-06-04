@@ -12,12 +12,10 @@ public class Environment implements Steppable {
 	/**
 	 * Update the forest with new growth and aggregate statistics.
 	 */
-	@Override
 	public void step(SimState state) {
 		try {
 			Forest.getInstance().grow();
 			Forest.getInstance().updateStocking();
-			state.schedule.scheduleOnce(this);
 		} catch (InterruptedException ex) {
 			System.err.println("Unhandled error occred: " + ex);
 		}

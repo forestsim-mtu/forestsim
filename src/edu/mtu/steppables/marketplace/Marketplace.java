@@ -3,7 +3,6 @@ package edu.mtu.steppables.marketplace;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.Randomizers;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -13,8 +12,7 @@ import sim.engine.Steppable;
  * by other agents. For example, NIPF owners need to know how to get in touch
  * with the loggers.
  */
-@SuppressWarnings("serial")
-public class Marketplace implements Steppable {
+public class Marketplace {
 
 	private static Marketplace instance = new Marketplace();
 	
@@ -68,20 +66,11 @@ public class Marketplace implements Steppable {
 	public void registerTransporter(Transporter agent) {
 		transporters.add(agent);
 	}
-
-	/**
-	 * Schedule the marketplace, then re-enqueue the marketplace steppable.
-	 */
-	@Override
-	public void step(SimState state) {
-		scheduleMarketplace((ForestSim)state);
-		state.schedule.scheduleOnce(this);
-	}
 	
 	/**
 	 * Iterate through the marketplace and make sure all agents are scheduled.
 	 */
-	private void scheduleMarketplace(ForestSim state) {
+	public void scheduleMarketplace(SimState state) {
 		scheduleSteppables(harvesters.toArray(), state);
 		scheduleSteppables(transporters.toArray(), state);
 		scheduleSteppables(processors.toArray(), state);
@@ -90,18 +79,18 @@ public class Marketplace implements Steppable {
 	/**
 	 * Iterate through the items provided and add them to the schedule in a randomized fashion. 
 	 */
-	private void scheduleSteppables(Object[] items, ForestSim state) {
+	private void scheduleSteppables(Object[] items, SimState state) {
 		// Exit if there is nothing to do
 		if (items.length == 0) {
 			return;
 		}
 		
 		// Shuffle the array of objects
-		Randomizers.shuffle(items, state.getRandom());
+		Randomizers.shuffle(items, state.random);
 		
 		// Add them to the schedule
 		for (Object item : items) {
-			state.schedule.scheduleOnce((Steppable)item);
+			state.schedule.scheduleRepeating((Steppable)item);
 		}
 	}
 }

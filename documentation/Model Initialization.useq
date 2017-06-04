@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence-diagram version="1.1.14" icons="true">  
-  <object id="1" language="java" name="sim.engine.SimState" project="ForstSim" file="/ForstSim/lib/Mason.jar" 
-    binary="true" label="simState" type="class" autoSize="true">    
+  <object id="1" language="java" name="sim.engine.SimState" project="ForstSim" 
+    file="/Users/rzupko/.m2/repository/Mason/Mason/0.0.1-SNAPSHOT/Mason-0.0.1-SNAPSHOT.jar" binary="true" 
+    label="simState" type="class" autoSize="true">    
     <position height="-1" width="-1" x="474" y="0"/>    
     <execution id="2">      
-      <position height="611" width="83" x="5" y="84"/>    
+      <position height="583" width="83" x="5" y="84"/>    
     </execution>  
   </object>  
   <object id="5" language="java" name="edu.mtu.simulation.ForestSim" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/simulation/ForestSim.java" binary="false" label="forestSim" type="class" autoSize="true">    
     <position height="-1" width="-1" x="174" y="0"/>    
     <execution id="4">      
-      <position height="569" width="94" x="92" y="105"/>    
+      <position height="541" width="94" x="92" y="105"/>    
     </execution>    
     <execution id="7">      
       <position height="21" width="94" x="92" y="140"/>    
@@ -23,10 +24,10 @@
       <position height="21" width="7" x="136" y="276"/>    
     </execution>    
     <execution id="21">      
-      <position height="21" width="94" x="92" y="550"/>    
+      <position height="21" width="94" x="92" y="517"/>    
     </execution>    
     <execution id="15">      
-      <position height="21" width="7" x="136" y="389"/>    
+      <position height="21" width="7" x="136" y="381"/>    
     </execution>  
   </object>  
   <object id="26" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
@@ -37,12 +38,12 @@
       <position height="21" width="115" x="304" y="315"/>    
     </execution>  
   </object>  
-  <object id="27" language="java" name="edu.mtu.steppables.BiomassRecordKeeper" project="ForstSim" 
-    file="/ForstSim/src/edu/mtu/steppables/BiomassRecordKeeper.java" binary="false" label="aggregateHarvester" 
-    type="class" autoSize="true">    
-    <position height="-1" width="-1" x="552" y="0"/>    
+  <object id="27" language="java" name="edu.mtu.steppables.marketplace.Marketplace" project="ForstSim" 
+    file="/ForstSim/src/edu/mtu/steppables/marketplace/Marketplace.java" binary="false" label="marketplace" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="187" y="0"/>    
     <execution id="17">      
-      <position height="21" width="159" x="309" y="436"/>    
+      <position height="21" width="158" x="423" y="424"/>    
     </execution>  
   </object>  
   <object id="28" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
@@ -50,7 +51,7 @@
     autoSize="true">    
     <position height="-1" width="-1" x="495" y="0"/>    
     <execution id="19">      
-      <position height="21" width="110" x="472" y="480"/>    
+      <position height="21" width="110" x="472" y="460"/>    
     </execution>  
   </object>  
   <object id="29" language="java" name="edu.mtu.steppables.AggregationStep" project="ForstSim" 
@@ -58,10 +59,10 @@
     autoSize="true">    
     <position height="-1" width="-1" x="826" y="0"/>    
     <execution id="23">      
-      <position height="21" width="139" x="586" y="584"/>    
+      <position height="21" width="139" x="586" y="565"/>    
     </execution>    
     <execution id="25">      
-      <position height="21" width="139" x="586" y="632"/>    
+      <position height="21" width="139" x="586" y="604"/>    
     </execution>  
   </object>  
   <message id="3" operation="start():void" asynchronous="false">    
@@ -88,7 +89,7 @@
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="15"/>  
   </message>  
-  <message id="16" operation="getInstance():edu.mtu.steppables.marketplace.AggregateHarvester" asynchronous="false">    
+  <message id="16" operation="scheduleMarketplace(sim.engine.SimState):void" asynchronous="false">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="17"/>  
   </message>  

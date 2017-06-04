@@ -12,18 +12,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/colt.jar"/>
-	<classpathentry kind="lib" path="lib/csv4j-0.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/gdal.jar"/>
-	<classpathentry kind="lib" path="lib/GeoMason.jar"/>
-	<classpathentry kind="lib" path="lib/itext-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmf.jar"/>
-	<classpathentry kind="lib" path="lib/jts-1.13.jar"/>
-	<classpathentry kind="lib" path="lib/Mason.jar"/>
-	<classpathentry kind="lib" path="lib/quaqua-colorchooser-only.jar"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>

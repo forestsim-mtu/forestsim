@@ -2,8 +2,9 @@ package edu.mtu.steppables;
 
 import java.awt.Point;
 
-import ec.util.MersenneTwisterFast;
 import edu.mtu.environment.Forest;
+import edu.mtu.measures.ForestMeasures;
+import edu.mtu.simulation.ForestSim;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.IntBag;
@@ -15,10 +16,23 @@ import sim.util.IntBag;
  */
 @SuppressWarnings("serial")
 public abstract class ParcelAgent implements Steppable {
-	private ParcelAgentType type;
+	
+	private ParcelAgentType parcelAgentType = null;
+	
+	private boolean hasRun = false;
 	private LandUseGeomWrapper landUseWrapper;
-	private MersenneTwisterFast random;
-	private Point[] parcel;
+	private Point[] parcel = null;
+	
+	// Land Tenure attributes, note the defaults assume immediate tenure
+	private boolean phasedIn = true;
+	private double phaseInRate = 1.0;
+	
+	protected ForestSim state;
+
+	/**
+	 * Inform the agent that their parcel was harvested.
+	 */
+	public abstract void doHarvestedOperation();
 	
 	/**
 	 * Have the agent perform operations that are related to the policy being investigated.
@@ -33,15 +47,16 @@ public abstract class ParcelAgent implements Steppable {
 	/**
 	 * Constructor.
 	 */
-	public ParcelAgent(ParcelAgentType type) {
-		this.landUseWrapper.setAgentType(type);
-		parcel = null;
+	public ParcelAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
+		parcelAgentType = type;
+		landUseWrapper = lu;
+		landUseWrapper.setAgentType(type);
 	}
-	
+		
 	/**
 	 * Report what type of agent is being represented.
 	 */
-	public ParcelAgentType getAgentType() { return type; }
+	public ParcelAgentType getAgentType() { return parcelAgentType; }
 
 	/**
 	 * Get the cover points that this agent is responsible for.
@@ -49,37 +64,31 @@ public abstract class ParcelAgent implements Steppable {
 	public Point[] getParcel() { return parcel; }
 	
 	/**
+	 * Get the agent land tenure phase-in rate.
+	 */
+	public double getPhaseInRate() {
+		return phaseInRate;
+	}
+	
+	/**
 	 * Get the geometry that this agent is responsible for.
 	 */
 	public LandUseGeomWrapper getGeometry() { return landUseWrapper; }
 	
 	/**
-	 * Get the current land use for the agent's parcel.
-	 */
-	public double getLandUse() { return landUseWrapper.getLandUse(); }
-	
-	
-	/**
-	 * Get the area, in square meters, of the parcel that the agent owns.
+	 * Get the area, in acres, of the parcel that the agent owns.
 	 */
 	public double getParcelArea() {
 		return parcel.length * Forest.getInstance().getAcresPerPixel();
 	}
+	
+	/**
+	 * Returns true if the agent has been phased into the model, false otherwise.
+	 */
+	public boolean phasedIn() {
+		return phasedIn;
+	}
 		
-	/**
-	 * Set the land use wrapper to be used by this agent.
-	 */
-	public void setLandUseWrapper(LandUseGeomWrapper landUseWrapper) {
-		this.landUseWrapper = landUseWrapper;
-	}
-	
-	/**
-	 * Set the random number generator to be used by this agent.
-	 */
-	public void setRandom(MersenneTwisterFast random) {
-		this.random = random;
-	}
-	
 	/**
 	 * Add the given points to the agents for the parcel that it controls.
 	 * 
@@ -94,27 +103,51 @@ public abstract class ParcelAgent implements Steppable {
 	}
 	
 	/**
+	 * Set the agent land tenure phase-in rate and flag the agent has not being phased in.
+	 * 
+	 * NOTE: This operation must be done prior to the first step.
+	 */
+	public void setPhaseInRate(double value) {
+		if (hasRun) {
+			throw new IllegalAccessError("Land Tenure phase-in cannot be set once the agent steps!");
+		}
+		phaseInRate = value;
+		phasedIn = false;
+	}
+	
+	/**
 	 * Allow the agent to perform the rules for the given state.
 	 */
 	public void step(SimState state) {
+		// Accounting flag to disable operations once the model starts
+		hasRun = true;
+		
+		// To account for land tenure, phase agents into the model at the given rate
+		if (!phasedIn) {
+			if (phaseInRate < state.random.nextDouble()) {
+				return;
+			}
+			phasedIn = true;
+		}
+		
+		this.state = (ForestSim)state;
 		doPolicyOperation();
 		doHarvestOperation();
 	}
 		
 	/**
-	 * Get the random number generator associated with this agent.
-	 */
-	protected MersenneTwisterFast getRandom() { return random; }
-	
-	/**
-	 * Set the land use for the agent's parcel.
-	 */
-	protected void setLandUse(double value) { landUseWrapper.setLandUse(value); }
-		
-	/**
 	 * Update the shape file to reflect the agent's attributes.
 	 */
-	protected void updateShapefile() {
+	public void updateShapefile() {
+		double value = ForestMeasures.calculateParcelAge(parcel);
+		landUseWrapper.setAverageForestAge(value);
+		
+		value = ForestMeasures.calculateParcelDbh(parcel);
+		landUseWrapper.setAverageForestDbh(value);
+		
+		value = ForestMeasures.calculateParcelStocking(parcel);
+		landUseWrapper.setAverageForestStocking(value);
+		
 		landUseWrapper.updateShpaefile();
 	}
 }
