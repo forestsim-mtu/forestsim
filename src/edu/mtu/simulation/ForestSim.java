@@ -19,11 +19,11 @@ import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.parameters.ParameterBase;
-import edu.mtu.steppables.AggregateHarvester;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
+import edu.mtu.steppables.marketplace.Harvester;
 import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
@@ -285,7 +285,7 @@ public abstract class ForestSim extends SimState {
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
-			AggregateHarvester harvester = AggregateHarvester.getInstance();
+			Harvester harvester = Harvester.getInstance();
 			schedule.scheduleRepeating(harvester);
 		} else {
 			try {

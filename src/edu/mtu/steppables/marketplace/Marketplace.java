@@ -16,9 +16,9 @@ public class Marketplace {
 
 	private static Marketplace instance = new Marketplace();
 	
-	private List<Harvester> harvesters = new ArrayList<Harvester>();
-	private List<Transporter> transporters = new ArrayList<Transporter>();
-	private List<Processor> processors = new ArrayList<Processor>();
+	private List<HarvesterBase> harvesters = new ArrayList<HarvesterBase>();
+	private List<TransporterBase> transporters = new ArrayList<TransporterBase>();
+	private List<ProcessorBase> processors = new ArrayList<ProcessorBase>();
 		
 	/**
 	 * Constructor
@@ -34,36 +34,36 @@ public class Marketplace {
 	/**
 	 * Get the list of registered harvesters.
 	 */
-	public List<Harvester> getHarvesters() { return harvesters; }
+	public List<HarvesterBase> getHarvesters() { return harvesters; }
 	
 	/**
 	 * Get the list of registered biomass processors.
 	 */
-	public List<Processor> getProcessors() { return processors; }
+	public List<ProcessorBase> getProcessors() { return processors; }
 	
 	/**
 	 * Get the list of registered biomass transporters.
 	 */
-	public List<Transporter> getTransporters() { return transporters; } 
+	public List<TransporterBase> getTransporters() { return transporters; } 
 	
 	/**
 	 * Register a logger with the marketplace.
 	 */
-	public void registerHarvester(Harvester agent) {
+	public void registerHarvester(HarvesterBase agent) {
 		harvesters.add(agent);
 	}
 	
 	/**
 	 * Register a biomass processor with the marketplace.
 	 */
-	public void registerProcessor(Processor agent) {
+	public void registerProcessor(ProcessorBase agent) {
 		processors.add(agent);
 	}
 	
 	/**
 	 * Register a biomass transporter with the marketplace.
 	 */
-	public void registerTransporter(Transporter agent) {
+	public void registerTransporter(TransporterBase agent) {
 		transporters.add(agent);
 	}
 	
