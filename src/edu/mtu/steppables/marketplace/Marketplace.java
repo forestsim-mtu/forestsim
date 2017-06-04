@@ -3,7 +3,6 @@ package edu.mtu.steppables.marketplace;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mtu.simulation.ForestSim;
 import edu.mtu.utilities.Randomizers;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -13,18 +12,14 @@ import sim.engine.Steppable;
  * by other agents. For example, NIPF owners need to know how to get in touch
  * with the loggers.
  */
-@SuppressWarnings("serial")
-public class Marketplace implements Steppable {
+public class Marketplace {
 
 	private static Marketplace instance = new Marketplace();
 	
-	private List<BiomassConsumer> bioenergyPlants = new ArrayList<BiomassConsumer>();
-	private List<BiomassConsumer> biorefinaries = new ArrayList<BiomassConsumer>();
-	private List<BiomassConsumer> mills = new ArrayList<BiomassConsumer>();
-	private List<BiomassConsumer> transporters = new ArrayList<BiomassConsumer>();
-	
-	private List<BiomassProducer> loggers = new ArrayList<BiomassProducer>();
-	
+	private List<Harvester> harvesters = new ArrayList<Harvester>();
+	private List<Transporter> transporters = new ArrayList<Transporter>();
+	private List<Processor> processors = new ArrayList<Processor>();
+		
 	/**
 	 * Constructor
 	 */
@@ -35,104 +30,67 @@ public class Marketplace implements Steppable {
 	 * @return
 	 */
 	public static Marketplace getInstance() { return instance; }
-	
-	/**
-	 * Get the list of registered bioenergy plants.
-	 */
-	public List<BiomassConsumer> getBioenergyPlants() { return bioenergyPlants; }
-	
-	/**
-	 * Get the list of registered biorefinaries.
-	 */
-	public List<BiomassConsumer> getBiorefinaries() { return biorefinaries; }
-	
+
 	/**
 	 * Get the list of registered harvesters.
 	 */
-	public List<BiomassProducer> getLoggers() { return loggers; }
+	public List<Harvester> getHarvesters() { return harvesters; }
 	
 	/**
-	 * Get the list of registered mills.
+	 * Get the list of registered biomass processors.
 	 */
-	public List<BiomassConsumer> getMills() { return mills; }
+	public List<Processor> getProcessors() { return processors; }
 	
 	/**
 	 * Get the list of registered biomass transporters.
 	 */
-	public List<BiomassConsumer> getTransporters() { return transporters; } 
-	
-	/**
-	 * Register a bioenergy plant with the marketplace.
-	 */
-	public void registerBioenergyPlant(BiomassConsumer agent) {
-		bioenergyPlants.add(agent);
-	}
-	
-	/**
-	 * Register a biorefinary with the marketplace.
-	 */
-	public void registerBiorefinary(BiomassConsumer agent) {
-		biorefinaries.add(agent);
-	}
+	public List<Transporter> getTransporters() { return transporters; } 
 	
 	/**
 	 * Register a logger with the marketplace.
 	 */
-	public void registerLogger(BiomassProducer agent) {
-		loggers.add(agent);
+	public void registerHarvester(Harvester agent) {
+		harvesters.add(agent);
 	}
 	
 	/**
-	 * Register a mill with the marketplace.
+	 * Register a biomass processor with the marketplace.
 	 */
-	public void registerMill(BiomassConsumer agent) {
-		mills.add(agent);
+	public void registerProcessor(Processor agent) {
+		processors.add(agent);
 	}
 	
 	/**
 	 * Register a biomass transporter with the marketplace.
-	 * @param agent
 	 */
-	public void registerTransporter(BiomassConsumer agent) {
+	public void registerTransporter(Transporter agent) {
 		transporters.add(agent);
-	}
-
-	public void step(SimState state) {
-		scheduleMarketplace((ForestSim)state);
-		state.schedule.scheduleOnce(this);
 	}
 	
 	/**
 	 * Iterate through the marketplace and make sure all agents are scheduled.
 	 */
-	private void scheduleMarketplace(ForestSim state) {
-		// Loggers come first
-		scheduleSteppables(loggers.toArray(), state);
-		
-		// Then transporters
+	public void scheduleMarketplace(SimState state) {
+		scheduleSteppables(harvesters.toArray(), state);
 		scheduleSteppables(transporters.toArray(), state);
-		
-		// Finally consumers
-		scheduleSteppables(bioenergyPlants.toArray(), state);
-		scheduleSteppables(biorefinaries.toArray(), state);
-		scheduleSteppables(mills.toArray(), state);
+		scheduleSteppables(processors.toArray(), state);
 	}
 	
 	/**
 	 * Iterate through the items provided and add them to the schedule in a randomized fashion. 
 	 */
-	private void scheduleSteppables(Object[] items, ForestSim state) {
+	private void scheduleSteppables(Object[] items, SimState state) {
 		// Exit if there is nothing to do
 		if (items.length == 0) {
 			return;
 		}
 		
 		// Shuffle the array of objects
-		Randomizers.shuffle(items, state.getRandom());
+		Randomizers.shuffle(items, state.random);
 		
 		// Add them to the schedule
 		for (Object item : items) {
-			state.schedule.scheduleOnce((Steppable)item);
+			state.schedule.scheduleRepeating((Steppable)item);
 		}
 	}
 }

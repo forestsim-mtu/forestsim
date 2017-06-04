@@ -19,11 +19,11 @@ import edu.mtu.environment.GrowthModel;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.parameters.ParameterBase;
+import edu.mtu.steppables.AggregateHarvester;
 import edu.mtu.steppables.AggregationStep;
 import edu.mtu.steppables.Environment;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
-import edu.mtu.steppables.marketplace.AggregateHarvester;
 import edu.mtu.steppables.marketplace.Marketplace;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
@@ -55,7 +55,7 @@ public abstract class ForestSim extends SimState {
 	private String coverFile;
 	private String outputDirectory;
 	private String parcelFile;	
-			
+
 	/**
 	 * Create an economic agent for use by the simulation.
 	 * 
@@ -181,7 +181,7 @@ public abstract class ForestSim extends SimState {
 		}
 		return neighbors;
 	}
-	
+			
 	/**
 	 * Get the neighbors that are connected to the given agent.
 	 * 
@@ -285,7 +285,7 @@ public abstract class ForestSim extends SimState {
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
-			AggregateHarvester harvester = AggregateHarvester.getNewInstance();
+			AggregateHarvester harvester = AggregateHarvester.getInstance();
 			schedule.scheduleRepeating(harvester);
 		} else {
 			try {
@@ -294,7 +294,7 @@ public abstract class ForestSim extends SimState {
 				
 				// The step operation adds members of the marketplace and the marketplace
 				// to the schedule correctly. 
-				Marketplace.getInstance().step(this);				
+				Marketplace.getInstance().scheduleMarketplace(this);		
 			} catch (ForestSimException ex) {
 				System.err.println("An error occured while preparing the marketplace: " + ex);
 				System.exit(-1);

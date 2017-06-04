@@ -9,11 +9,7 @@ import sim.engine.Steppable;
  * will deliver the biomass to a consumer, but don't care about the underlying object. 
  */
 @SuppressWarnings("serial")
-public abstract class BiomassConsumer implements Steppable {
-	/**
-	 * Get the capacity that is supported by this consumer.
-	 */
-	public abstract void getCapacity();
+public abstract class Processor implements MarketplaceAgent, Steppable {
 	
 	/**
 	 * Receive the quantity of biomass indicated in green tons. 
@@ -24,19 +20,15 @@ public abstract class BiomassConsumer implements Steppable {
 	 * Produce the quantity of output for one time step. 
 	 * 
 	 * @param state The current state of the ForestSim simulation.
+	 * @return The quantity of the product produced.
 	 */
 	public abstract double produce(ForestSim state);
 	
 	/**
-	 * The units of the output for simulation aggregation purposes. 
+	 * Have the concrete implementation perform production operations.
 	 */
-	public abstract String productionUnits();
-
-	/**
-	 * Have the concrete implementation perform production operations, then restore the agent to the schedule.
-	 */
+	@Override
 	public void step(SimState state) {
 		produce((ForestSim)state);
-		state.schedule.scheduleOnce(this);		
 	}
 }
