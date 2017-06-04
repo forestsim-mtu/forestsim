@@ -9,7 +9,7 @@ import sim.engine.Steppable;
  * will deliver the biomass to a consumer, but don't care about the underlying object. 
  */
 @SuppressWarnings("serial")
-public abstract class Processor implements MarketplaceAgent, Steppable {
+public abstract class ProcessorBase implements MarketplaceAgent, Steppable {
 	
 	/**
 	 * Receive the quantity of biomass indicated in green tons. 

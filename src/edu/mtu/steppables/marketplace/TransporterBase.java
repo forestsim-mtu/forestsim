@@ -8,7 +8,7 @@ import sim.engine.Steppable;
  * This class represents an agent in the marketplace that primarily transports woody biomass. 
  */
 @SuppressWarnings("serial")
-public abstract class Transporter implements MarketplaceAgent, Steppable {
+public abstract class TransporterBase implements MarketplaceAgent, Steppable {
 	
 	/**
 	 * Receive the quantity of biomass indicated in green tons. 
