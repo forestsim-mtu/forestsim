@@ -20,9 +20,12 @@
     </execution>    
     <execution id="19">      
       <position height="69" width="106" x="92" y="203"/>    
+    </execution>    
+    <execution id="22">      
+      <position height="21" width="106" x="92" y="388"/>    
     </execution>  
   </object>  
-  <object id="22" language="java" name="edu.mtu.steppables.marketplace.HarvesterBase" project="ForstSim" 
+  <object id="23" language="java" name="edu.mtu.steppables.marketplace.HarvesterBase" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/marketplace/HarvesterBase.java" binary="false" label="harvesterBase" 
     type="class" autoSize="true">    
     <position height="-1" width="-1" x="207" y="0"/>    
@@ -32,39 +35,39 @@
     <execution id="21">      
       <position height="21" width="158" x="202" y="230"/>    
     </execution>    
-    <execution id="24">      
+    <execution id="25">      
       <position height="73" width="158" x="202" y="367"/>    
     </execution>  
   </object>  
-  <object id="27" language="java" name="edu.mtu.steppables.marketplace.TransporterBase" project="ForstSim" 
+  <object id="29" language="java" name="edu.mtu.steppables.marketplace.TransporterBase" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/marketplace/TransporterBase.java" binary="false" label="transporterBase" 
     type="class" autoSize="true">    
     <position height="-1" width="-1" x="362" y="0"/>    
-    <execution id="26">      
+    <execution id="28">      
       <position height="21" width="158" x="364" y="398"/>    
     </execution>    
     <execution id="8">      
       <position height="141" width="158" x="364" y="469"/>    
     </execution>    
-    <execution id="29">      
+    <execution id="31">      
       <position height="75" width="158" x="364" y="514"/>    
     </execution>  
   </object>  
-  <object id="32" language="java" name="edu.mtu.steppables.marketplace.ProcessorBase" project="ForstSim" 
+  <object id="34" language="java" name="edu.mtu.steppables.marketplace.ProcessorBase" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/marketplace/ProcessorBase.java" binary="false" label="processorBase" 
     type="class" autoSize="true">    
     <position height="-1" width="-1" x="518" y="0"/>    
-    <execution id="31">      
+    <execution id="33">      
       <position height="21" width="158" x="526" y="547"/>    
     </execution>    
     <execution id="10">      
       <position height="84" width="158" x="526" y="615"/>    
     </execution>    
-    <execution id="34">      
+    <execution id="36">      
       <position height="21" width="158" x="526" y="657"/>    
     </execution>  
   </object>  
-  <object id="35" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
+  <object id="37" language="java" name="edu.mtu.steppables.Environment" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/Environment.java" binary="false" label="environment" type="class" 
     autoSize="true">    
     <position height="-1" width="-1" x="914" y="0"/>    
@@ -72,15 +75,15 @@
       <position height="63" width="110" x="688" y="724"/>    
     </execution>  
   </object>  
-  <object id="38" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
+  <object id="40" language="java" name="edu.mtu.environment.GrowthModel" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/environment/GrowthModel.java" binary="false" label="growthModel" type="interface" 
     autoSize="true">    
     <position height="-1" width="-1" x="897" y="0"/>    
-    <execution id="37">      
+    <execution id="39">      
       <position height="21" width="115" x="802" y="745"/>    
     </execution>  
   </object>  
-  <object id="39" language="java" name="edu.mtu.steppables.AggregationStep" project="ForstSim" 
+  <object id="41" language="java" name="edu.mtu.steppables.AggregationStep" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/steppables/AggregationStep.java" binary="false" label="aggregationStep" type="class" 
     autoSize="true">    
     <position height="-1" width="-1" x="1187" y="0"/>    
@@ -88,11 +91,11 @@
       <position height="63" width="139" x="921" y="804"/>    
     </execution>  
   </object>  
-  <object id="42" language="java" name="edu.mtu.simulation.Scorecard" project="ForstSim" 
+  <object id="44" language="java" name="edu.mtu.simulation.Scorecard" project="ForstSim" 
     file="/ForstSim/src/edu/mtu/simulation/Scorecard.java" binary="false" label="scorecard" type="interface" 
     autoSize="true">    
     <position height="-1" width="-1" x="1251" y="0"/>    
-    <execution id="41">      
+    <execution id="43">      
       <position height="21" width="94" x="1064" y="825"/>    
     </execution>  
   </object>  
@@ -132,32 +135,36 @@
     <end type="SOURCE" refId="19"/>    
     <end type="TARGET" refId="21"/>  
   </message>  
-  <message id="23" operation="harvest(edu.mtu.simulation.ForestSim):void" asynchronous="false">    
+  <message id="24" operation="harvest(edu.mtu.simulation.ForestSim):void" asynchronous="false">    
     <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="24"/>  
+    <end type="TARGET" refId="25"/>  
   </message>  
-  <message id="25" operation="receive(double):void" asynchronous="false">    
-    <end type="SOURCE" refId="24"/>    
-    <end type="TARGET" refId="26"/>  
+  <message id="26" operation="doHarvestedOperation():void" asynchronous="false">    
+    <end type="SOURCE" refId="25"/>    
+    <end type="TARGET" refId="22"/>  
   </message>  
-  <message id="28" operation="transport(edu.mtu.simulation.ForestSim):double" asynchronous="false">    
+  <message id="27" operation="receive(double):void" asynchronous="false">    
+    <end type="SOURCE" refId="25"/>    
+    <end type="TARGET" refId="28"/>  
+  </message>  
+  <message id="30" operation="transport(edu.mtu.simulation.ForestSim):double" asynchronous="false">    
     <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="29"/>  
-  </message>  
-  <message id="30" operation="receive(double):void" asynchronous="false">    
-    <end type="SOURCE" refId="29"/>    
     <end type="TARGET" refId="31"/>  
   </message>  
-  <message id="33" operation="produce(edu.mtu.simulation.ForestSim):double" asynchronous="false">    
+  <message id="32" operation="receive(double):void" asynchronous="false">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="33"/>  
+  </message>  
+  <message id="35" operation="produce(edu.mtu.simulation.ForestSim):double" asynchronous="false">    
     <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="34"/>  
+    <end type="TARGET" refId="36"/>  
   </message>  
-  <message id="36" operation="growStand(edu.mtu.environment.Stand):edu.mtu.environment.Stand" asynchronous="false">    
+  <message id="38" operation="growStand(edu.mtu.environment.Stand):edu.mtu.environment.Stand" asynchronous="false">    
     <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="37"/>  
+    <end type="TARGET" refId="39"/>  
   </message>  
-  <message id="40" operation="processTimeStep(edu.mtu.simulation.ForestSim):void" asynchronous="false">    
+  <message id="42" operation="processTimeStep(edu.mtu.simulation.ForestSim):void" asynchronous="false">    
     <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="41"/>  
+    <end type="TARGET" refId="43"/>  
   </message>
 </sequence-diagram>
