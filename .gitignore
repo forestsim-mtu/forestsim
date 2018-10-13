@@ -1,13 +1,5 @@
-/bin/
-/analysis/*.png
-/shapefiles/
-/target/
-/.settings/
+/data
 /out
+/target
 
 .DS_Store
-
-.pydevproject
-.Rapp.history
-.RData
-.Rhistory
