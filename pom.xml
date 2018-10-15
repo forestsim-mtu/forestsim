@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ForestSim</groupId>
 	<artifactId>ForestSim</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 
@@ -25,7 +25,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>edu.mtu.wup.launch.ModelNoUi</mainClass>
+							<mainClass>edu.mtu.examples.houghton.ModelWithUI</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

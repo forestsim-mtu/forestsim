@@ -9,7 +9,7 @@ import edu.mtu.examples.houghton.vip.VipFactory.VipRegime;
 public class HoughtonParameters extends ParameterBase {
 	// Path to default GIS files used in the simulation
 	public static final String defaultCoverFile = "data/nlcd/houghtonlandcover.asc";
-	public static final String defaultParcelFile = "file:data/parcels/WUPParcels.shp";
+	public static final String defaultParcelFile = "file:data/parcels/houghton_parcels.shp";
 	
 	/**
 	 * Land Tenure phase in rate for the model.
@@ -34,7 +34,7 @@ public class HoughtonParameters extends ParameterBase {
 
 	private Pair<Double, Double> economicNvpDiscountRate = Pair.with(0.0, 0.0);
 	private Pair<Double, Double> nipfoWth = Pair.with(0.0, 0.0);
-	private String outputDirectory = null;
+	private String outputDirectory = "out";
 	private VipRegime vip;
 			
 	/**
