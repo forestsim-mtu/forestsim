@@ -8,6 +8,7 @@ import org.javatuples.Pair;
 
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
+import edu.mtu.environment.StandThinning;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.steppables.ParcelAgent;
 
@@ -102,18 +103,25 @@ public class HarvesterAgent extends HarvesterBase {
 		totalBiomass = 0;
 		pracelsHarvested = 0;
 		
+		Pair<Double, Double> result;
 		Forest forest = Forest.getInstance();		
 		while (!requests.isEmpty()) {
 			
-			// Harvest the biomass from the parcel, update the totals
+			// Are we thinning or harvesting?
 			HarvestRequest request = requests.remove(0);
-			Pair<Double, Double> result = forest.harvest(request.stands);
+			if (request.isThinning()) {
+				result = forest.thin(request.getPlans());
+			} else {
+				result = forest.harvest(request.getStands());
+			}
+			
+			// Harvest the biomass from the parcel, update the totals
 			stemBiomass += result.getValue0();
-			totalBiomass += result.getValue1();
+			totalBiomass += result.getValue1();	
 			pracelsHarvested++;
 			
 			// Inform the agent
-			request.agent.doHarvestedOperation();
+			request.getAgent().doHarvestedOperation();
 			
 			// Return if we are done
 			if (pracelsHarvested >= capacity) {
@@ -129,14 +137,9 @@ public class HarvesterAgent extends HarvesterBase {
 	public String productionUnits() {
 		return "kilograms dry weight (kg)";
 	}
-	
-	/**
-	 * Log the indicated harvest request with this producer.
-	 * 
-	 * @param request The request to be logged.
-	 */
+		
+	@Override
 	public void requestHarvest(HarvestRequest request) {
-		request.queueOrder = requests.size();
 		requests.add(request);
 	}
 	
@@ -146,30 +149,50 @@ public class HarvesterAgent extends HarvesterBase {
 	 * @param agent The agent that is requesting the harvest.
 	 * @param stands The stands that are to be harvested.
 	 */
-	public void requestHarvest(ParcelAgent agent, List<Stand> stands) {
+	public final void requestHarvest(ParcelAgent agent, List<Stand> stands) {
 		Point[] points = new Point[stands.size()];
 		for (int ndx = 0; ndx < stands.size(); ndx++) {
 			points[ndx] = stands.get(ndx).point; 
 		}
 		requestHarvest(agent, points, null);
 	}	
-	
+		
 	/**
 	 * Allow an agent to request that the forest stand indicated be harvested.
 	 * 
 	 * @param agent The agent that is requesting the harvest.
-	 * @param stand The points that are associated with the stand to be harvested.
+	 * @param stands The points that are associated with the stand to be harvested.
 	 * @param deliverTo The BiomassConsumer that the harvested biomass should be delivered to.
 	 */
-	public void requestHarvest(ParcelAgent agent, Point[] stand, ProcessorBase deliverTo) {
-		// Wrap the data in a request
-		HarvestRequest request = new HarvestRequest();
-		request.agent = agent;
-		request.stands = stand;
-		request.deliverTo = deliverTo;
-		
-		// Queue it to be processed later
-		request.queueOrder = requests.size();
+	public final void requestHarvest(ParcelAgent agent, Point[] stands, ProcessorBase deliverTo) {
+		HarvestRequest request = HarvestRequest.createHarvestRequest(agent, stands, deliverTo);
+		requests.add(request);
+	}
+	
+	@Override
+	public void requestThinning(HarvestRequest request) {
+		requests.add(request);
+	}
+	
+	/**
+	 * Allow an agent to request that the forest stands indicated be harvested / thinned.
+	 * 
+	 * @param agent The agent that is requesting the harvest.
+	 * @param stands The stands that are to be harvested / thinned.
+	 */
+	public final void requestThinning(ParcelAgent agent, List<StandThinning> plans) {
+		requestThinning(agent, plans, null);
+	}
+
+	/**
+	 * Allow an agent to request that the forest stand indicated be harvested / thinned.
+	 * 
+	 * @param agent The agent that is requesting the harvest.
+	 * @param stand The points that are associated with the stand to be harvested / thinned.
+	 * @param deliverTo The BiomassConsumer that the harvested biomass should be delivered to.
+	 */
+	public final void requestThinning(ParcelAgent agent, List<StandThinning> plans, ProcessorBase deliverTo) {
+		HarvestRequest request = HarvestRequest.createHarvestRequest(agent, plans, deliverTo);
 		requests.add(request);
 	}
 }

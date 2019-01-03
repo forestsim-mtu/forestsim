@@ -26,6 +26,13 @@ public abstract class HarvesterBase implements MarketplaceAgent, Steppable {
 	 */
 	public abstract void requestHarvest(HarvestRequest request);
 	
+	/** 
+	 * Log the indicate harvest / thinning request with this producer.
+	 * 
+	 * @param request The request to be logged.
+	 */
+	public abstract void requestThinning(HarvestRequest request);
+	
 	/**
 	 * Have the concrete implementation perform the harvest.
 	 */

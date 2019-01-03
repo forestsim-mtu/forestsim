@@ -323,10 +323,13 @@ public class Forest {
 		double biomass = 0, stem = 0;
 		
 		for (Point point : stands) {
+			// Get the current count of trees
+			int count = treeCount.get(point.x, point.y);
+			
 			// Calculate out the stand biomass
-			Pair<Double, Double> result = ForestMeasures.calculateHarvestBiomass(point.x, point.y);
-			stem += result.getValue0();
-			biomass += result.getValue1();
+			Pair<Double, Double> result = ForestMeasures.calculateTreeHarvestBiomass(point.x, point.y);
+			stem += (result.getValue0() * count);
+			biomass += (result.getValue1() * count);
 									
 			// Update the current stand
 			((DoubleGrid2D)standDiameter.getGrid()).set(point.x, point.y, 0.0);
@@ -370,28 +373,27 @@ public class Forest {
 	/**
 	 * Thin the stand by the percentage provided and return the harvested biomass.
 	 * 
-	 * @param stand The stand to be thinned.
-	 * @param percentage The percentage of the stand to be thinned.
-	 * @return The harvested biomass.
+	 * @param plans The thinnin plans to be applied to the parcels.
+	 * @return A pair of weights in kg (dry weight), [stem wood, total aboveground]
 	 */
-	public double thin(List<StandThinning> plans) {
-		double biomass = 0.0;
+	public Pair<Double, Double> thin(List<StandThinning> plans) {
+		double biomass = 0, stem = 0;
 		
 		for (StandThinning plan : plans) {					
 			// Thin the stand
-			int count = treeCount.get(plan.point.x, plan.point.y);
-			int harvest = (int)(count * plan.percentage);
-			int difference = count - harvest;
-			treeCount.set(plan.point.x, plan.point.y, difference);
+			int orginal = treeCount.get(plan.point.x, plan.point.y);
+			int harvest = (int)(orginal * plan.percentage);
+			int remaining = orginal - harvest;
+			treeCount.set(plan.point.x, plan.point.y, remaining);
 
-			// Calculate the biomass
-			Stand stand = getStand(plan.point.x, plan.point.y);
-			Species species = growthModel.getSpecies(stand.nlcd);
-			biomass += species.getAboveGroundBiomass(stand.arithmeticMeanDiameter) * difference * getPixelArea();
+			// Calculate harvested biomass
+			Pair<Double, Double> result = ForestMeasures.calculateTreeHarvestBiomass(plan.point.x, plan.point.y);
+			stem += (result.getValue0() * harvest);
+			biomass += (result.getValue1() * harvest);
 		}
 				
 		// Return the biomass
-		return biomass;
+		return new Pair<Double, Double>(stem, biomass);
 	}
 	
 	/**

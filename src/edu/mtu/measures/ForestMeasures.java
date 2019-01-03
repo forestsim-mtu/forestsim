@@ -73,11 +73,11 @@ public class ForestMeasures {
 	}
 	
 	/**
-	 * Calculate the harvest biomass of the stand.
+	 * Calculate the harvest biomass the dominate tree type in the stand.
 	 * 
 	 * @return A pair of weights in kg (dry weight), [stem wood, total aboveground]
 	 */
-	public static Pair<Double, Double> calculateHarvestBiomass(int ndx, int ndy) {
+	public static Pair<Double, Double> calculateTreeHarvestBiomass(int ndx, int ndy) {
 		Forest forest = Forest.getInstance();
 		Stand stand = forest.getStand(ndx, ndy);
 		if (stand.dominateSpecies == null) {
