@@ -7,7 +7,7 @@ ForestSim is an agent-based model (ABM) that is intended for research into the p
 - Logging companies
 - Biorefinery and bioenergy plants
 
-ForestSim is primarly a Java aplication that makes use of the [MASON Multiagent Simulaiton Toolkt](http://cs.gmu.edu/~eclab/projects/mason/) to manage to simulation and GeoMASON to support GIS data.
+ForestSim is primarily a Java application that makes use of the [MASON Multiagent Simulation Toolkit](http://cs.gmu.edu/~eclab/projects/mason/) to manage to simulation and GeoMASON to support GIS data.
 
 ## Development Environment
 
@@ -24,4 +24,12 @@ Additionally, the following Eclipse plug-ins are recommended for developers:
 
 # Branches
 
-master is the primary branch for active develompent for the foreseeable future. Use the stable branch for snapshots of the code that have tagged for release. 
+master is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches. Contributors are encouraged to fork the repository and submit pull requests with stable code. 
+
+# Versioning
+
+Version numbers for ForestSim will have the following structure:
+
+[Master].[Minor].[Revision]
+
+Where [Master] should be understood to be major changes that may break models dependent upon ForestSim. [Minor] contains significant changes to the API, but retains backwards compatibility with method signatures. [Revision]s are smaller updates that are primary focused on bug fixes or quality-of-life issues (ex., adding to an enumerated list).
