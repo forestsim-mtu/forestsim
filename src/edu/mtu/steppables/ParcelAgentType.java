@@ -7,7 +7,8 @@ public enum ParcelAgentType {
 	NONE("None", -1),
 	ECONOMIC("Economic Optimizer", 0),
 	ECOSYSTEM("Ecosystem Services Optimizer", 1),
-	OTHER("Other", 2);
+	INDUSTRIAL("Industrial Landowner", 2),
+	OTHER("Other", 99);
 	
 	private final String name;
 	private final int value;
