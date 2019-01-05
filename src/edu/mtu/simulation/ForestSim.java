@@ -37,13 +37,7 @@ import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class ForestSim extends SimState {
-
-	private boolean warningsAsErrors = false;
 	
-	// Display width and height
-	private static final int gridWidth = 1000;
-	private static final int gridHeight = 900;
-
 	// Array of all agents active in the simulation
 	private ParcelAgent[] agents;
 			
@@ -239,12 +233,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the random number generator that is used by the simulation.
 	 */
 	public MersenneTwisterFast getRandom() { return random; }
-	
-	/**
-	 * Get the flag that indicates warnings should be treated as errors.
-	 */
-	public boolean getWarningsAsErrors() { return warningsAsErrors; }
-		
+			
 	/**
 	 * Set the cover file path to use for the simulation.
 	 */
@@ -259,12 +248,7 @@ public abstract class ForestSim extends SimState {
 	 * Set the parcel file path to use for the simulation.
 	 */
 	public void setParcelFilePath(String value) { parcelFile = value; } 
-	
-	/**
-	 * Set the flag to treat warnings as errors.
-	 */
-	public void setWarningsAsErrors(boolean value) { warningsAsErrors = value; }
-	
+		
 	/**
 	 * Prepare the model to be run.
 	 */
@@ -370,7 +354,7 @@ public abstract class ForestSim extends SimState {
 	 */
 	private void importVectorLayers() {
 		// Create new GeomVectorFields to begin a new simulation
-		parcelLayer = new GeomVectorField(gridWidth, gridHeight);
+		parcelLayer = new GeomVectorField(getParameters().getGridWidth(), getParameters().getGridHeight());
 
 		// Specify GIS attributes to import with shapefile
 		Bag desiredAttributes = new Bag();
@@ -501,7 +485,7 @@ public abstract class ForestSim extends SimState {
 		// If we discarded anything, let the user know
 		if (discarded != 0) {
 			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
-			if (warningsAsErrors) {
+			if (getParameters().getWarningsAsErrors()) {
 				throw new ForestSimException(message);
 			}
 			System.err.println(message);
