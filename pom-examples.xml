@@ -5,15 +5,19 @@
 	<artifactId>ForestSim</artifactId>
 	<version>1.0.1</version>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>.</sourceDirectory>
 
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source>7</source> 
+					<source>7</source>
 					<target>7</target>
+					<includes>
+						<include>src/**/*.java</include>
+						<include>examples/**/*.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -23,6 +27,13 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>edu.mtu.examples.houghton.ModelWithUI</mainClass>
+						</manifest>
+					</archive>
+					<finalName>ForestSim-${Version}-UI</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>
 					<execution>
