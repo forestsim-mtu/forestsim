@@ -92,9 +92,14 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		for (int ndx = 0; ndx < width; ndx++) {
 			for (int ndy = 0; ndy < height; ndy++) {
 				int nlcd = ((IntGrid2D)landCover.getGrid()).get(ndx, ndy);
+				
 				// If this is not woody biomass, clear the pixel and move on
 				if (!NlcdClassification.isWoodyBiomass(nlcd)) {
 					grid.set(ndx, ndy, 0.0);
+					
+					// Since we don't care about the grid value, clip it
+					((IntGrid2D)landCover.getGrid()).set(ndx, ndy, 0);
+					
 					continue;
 				}
 				
