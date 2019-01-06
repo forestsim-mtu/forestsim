@@ -32,7 +32,7 @@ public class AggregationStep implements Steppable {
 		} 
 		
 		// Introduce the policy if it is time
-		if (!policyIntroduced && parameters.policyActiviationStep() == step) {
+		if (!policyIntroduced && parameters.getPolicyActiviationStep() == step) {
 			PolicyBase policy =	((ForestSim)state).getPolicy();
 			if (policy != null) {
 				policy.introduce();

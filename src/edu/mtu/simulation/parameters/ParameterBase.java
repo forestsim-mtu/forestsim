@@ -5,10 +5,17 @@ package edu.mtu.simulation.parameters;
  */
 public class ParameterBase {
 
+	// Display width and height
+	private int gridWidth = 1000;
+	private int gridHeight = 900;
+	
+	// Flag to indicate if warnings should be treated as errors
+	private boolean warningsAsErrors = false;
+	
 	private int finalTimeStep;					// Time step that the simulation is allowed to run to
 	private int policyActivationTimeStep;		// Time step at which the policy is introduced
 	private double economicAgentPercentage;		// Percentage of economic agents to be created
-		
+			
 	/**
 	 * Return the interval for the economicAgentPercentage
 	 */
@@ -38,9 +45,24 @@ public class ParameterBase {
 	}
 	
 	/**
+	 * Get the height of the UI grid.
+	 */
+	public int getGridHeight() { return gridHeight; }
+	
+	/**
+	 * Get the width of the UI grid.
+	 */
+	public int getGridWidth() { return gridWidth; }
+	
+	/**
+	 * Get the flag that indicates warnings should be treated as errors.
+	 */
+	public boolean getWarningsAsErrors() { return warningsAsErrors; }
+	
+	/**
 	 * Get the time step at which the policy should be introduced.
 	 */
-	public int policyActiviationStep() {
+	public int getPolicyActiviationStep() {
 		return policyActivationTimeStep;
 	}
 	
@@ -66,4 +88,19 @@ public class ParameterBase {
 	public void setPolicyActiviationStep(int value) {
 		policyActivationTimeStep = value;
 	}
+	
+	/**
+	 * Set the height of the UI grid.
+	 */
+	public void setGridHeight(int value) { gridHeight = value; }
+	
+	/**
+	 * Set the width of the UI grid.
+	 */
+	public void setGridWidth(int value) { gridWidth = value; }
+	
+	/**
+	 * Set the flag to treat warnings as errors.
+	 */
+	public void setWarningsAsErrors(boolean value) { warningsAsErrors = value; }
 }

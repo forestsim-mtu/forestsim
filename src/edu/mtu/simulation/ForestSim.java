@@ -37,11 +37,7 @@ import sim.util.IntBag;
 
 @SuppressWarnings("serial")
 public abstract class ForestSim extends SimState {
-
-	// Display width and height
-	private static final int gridWidth = 1000;
-	private static final int gridHeight = 900;
-
+	
 	// Array of all agents active in the simulation
 	private ParcelAgent[] agents;
 			
@@ -237,7 +233,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the random number generator that is used by the simulation.
 	 */
 	public MersenneTwisterFast getRandom() { return random; }
-		
+			
 	/**
 	 * Set the cover file path to use for the simulation.
 	 */
@@ -252,7 +248,7 @@ public abstract class ForestSim extends SimState {
 	 * Set the parcel file path to use for the simulation.
 	 */
 	public void setParcelFilePath(String value) { parcelFile = value; } 
-	
+		
 	/**
 	 * Prepare the model to be run.
 	 */
@@ -274,14 +270,18 @@ public abstract class ForestSim extends SimState {
 		try {
 			// Create the forest model
 			Forest.getInstance().calculateInitialStands(coverLayer, getGrowthModel());	
+			
+			// Create the agents and assign one agent to each parcel
+			createParcelAgents();
+			
 		} catch (InterruptedException ex) {
 			System.err.println("An error occured generating the forest: " + ex);
 			System.exit(-1);
+		} catch (ForestSimException ex) {
+			System.err.println(ex.getMessage());
+			System.exit(-1);
 		}
-		
-		// Create the agents and assign one agent to each parcel
-		createParcelAgents();
-		
+				
 		// Check to see how the marketplace is configured
 		if (useAggregateHarvester()) {
 			// This is an aggregation model, only the one harvester is needed
@@ -354,7 +354,7 @@ public abstract class ForestSim extends SimState {
 	 */
 	private void importVectorLayers() {
 		// Create new GeomVectorFields to begin a new simulation
-		parcelLayer = new GeomVectorField(gridWidth, gridHeight);
+		parcelLayer = new GeomVectorField(getParameters().getGridWidth(), getParameters().getGridHeight());
 
 		// Specify GIS attributes to import with shapefile
 		Bag desiredAttributes = new Bag();
@@ -381,36 +381,43 @@ public abstract class ForestSim extends SimState {
 	 * @return The constructed agent.
 	 */
 	protected ParcelAgent createAgent(LandUseGeomWrapper lu, double probablity) {
+		
+		// Create the agent parcel
+		IntBag xPos = new IntBag();
+		IntBag yPos = new IntBag();
+		createAgentParcel(lu.geometry, xPos, yPos);
+		
+		// Discard bad parcels with less than one pixel
+		if (xPos.size() == 0) {
+			return null;
+		}
+		
+		// Create the agent based upon the given probability
 		ParcelAgent agent;
 		if (random.nextDouble() < probablity) {
 			agent = createEconomicAgent(random, lu);
 		} else {
 			 agent = createEcosystemsAgent(random, lu);
 		}
-		agent = createAgentParcel(agent);
+		agent.createCoverPoints(xPos, yPos);
 		agent.getGeometry().updateShpaefile();
 		return agent;
 	}
 
 	/**
-	 * Get the NLCD pixels that the agent has control over.
+	 * Get the pixels in the bounded geometry.
 	 * 
-	 * @param agent The agent to get the pixels for.
-	 * @return An updated agent.
+	 * @param geometry To use to determine the bounding parameters.
+	 * @param xPos IntBag that will contain the x coordinates upon return.
+	 * @param yPos IntBag that will contain the y coordinates upon return.
 	 */
-	protected ParcelAgent createAgentParcel(ParcelAgent agent) {
-		// Get the agent's parcel 
-		Geometry parcelPolygon = agent.getGeometry().getGeometry();
+	private void createAgentParcel(Geometry geometry, IntBag xPos, IntBag yPos) {
 
 		// The bounding rectangle of the agent's parcel converted to an IntGrid2D index (min and max)
-		int xMin = coverLayer.toXCoord(parcelPolygon.getEnvelopeInternal().getMinX());
-		int yMin = coverLayer.toYCoord(parcelPolygon.getEnvelopeInternal().getMinY());
-		int xMax = coverLayer.toXCoord(parcelPolygon.getEnvelopeInternal().getMaxX());
-		int yMax = coverLayer.toYCoord(parcelPolygon.getEnvelopeInternal().getMaxY());
-
-		// The pixels the agent's parcel covers will be stored here
-		IntBag xPos = new IntBag();
-		IntBag yPos = new IntBag();
+		int xMin = coverLayer.toXCoord(geometry.getEnvelopeInternal().getMinX());
+		int yMin = coverLayer.toYCoord(geometry.getEnvelopeInternal().getMinY());
+		int xMax = coverLayer.toXCoord(geometry.getEnvelopeInternal().getMaxX());
+		int yMax = coverLayer.toYCoord(geometry.getEnvelopeInternal().getMaxY());
 
 		// Search all the pixels in the agent's parcel's bounding rectangle
 		for (int x = xMin; x <= xMax; x++) {
@@ -430,25 +437,22 @@ public abstract class ForestSim extends SimState {
 
 				// Determine if the agent's parcel covers the current pixel
 				Point point = coverLayer.toPoint(x, y);
-				if (parcelPolygon.covers(point)) {
+				if (geometry.covers(point)) {
 					// Store the index if the parcel covers the pixel
 					xPos.add(x);
 					yPos.add(y);
 				}
 			}
 		}
-
-		// Pass the agent the indexes of the pixels the agent's parcel covers
-		agent.createCoverPoints(xPos, yPos);		
-		return agent;
 	}
 
 	/**
 	 * Create all of the agents that are used in the model.
 	 */
-	protected void createParcelAgents() {		
+	protected void createParcelAgents() throws ForestSimException {		
+		int discarded = 0;
 		Bag geometries = parcelLayer.getGeometries();
-		agents = new ParcelAgent[geometries.numObjs];
+		List<ParcelAgent> working = new ArrayList<ParcelAgent>();
 		for (int ndx = 0; ndx < geometries.numObjs; ndx++) {
 			// Create the geometry for the agent and index it
 			LandUseGeomWrapper geometry = (LandUseGeomWrapper)geometries.objs[ndx];
@@ -456,13 +460,35 @@ public abstract class ForestSim extends SimState {
 			
 			// Create the agent
 			ParcelAgent agent = createAgent(geometry, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
+			if (agent == null) {
+				discarded++;
+				geometries.remove(ndx);
+				ndx--;
+				continue;
+			}
 			
 			// Update the global geometry with the agents updates
 			geometries.objs[ndx] = agent.getGeometry();
 			
 			// Schedule the agent
-			agents[ndx] = agent;
+			working.add(agent);
 			schedule.scheduleRepeating(agent);
+		}
+		
+		// Reconcile the working list of agents with the actual list
+		agents = new ParcelAgent[geometries.numObjs];
+		for (int ndx = 0; ndx < working.size(); ndx++) {
+			agents[ndx] = working.get(ndx);
+		}
+		working.clear();
+		
+		// If we discarded anything, let the user know
+		if (discarded != 0) {
+			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
+			if (getParameters().getWarningsAsErrors()) {
+				throw new ForestSimException(message);
+			}
+			System.err.println(message);
 		}
 	}
 	
