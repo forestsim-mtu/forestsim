@@ -4,6 +4,7 @@
 	<groupId>ForestSim</groupId>
 	<artifactId>ForestSim</artifactId>
 	<version>1.0.1</version>
+
 	<build>
 		<sourceDirectory>.</sourceDirectory>
 
@@ -29,10 +30,10 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>edu.mtu.examples.houghton.ModelWithUI</mainClass>
+							<mainClass>edu.mtu.examples.houghton.Launch</mainClass>
 						</manifest>
 					</archive>
-					<finalName>ForestSim-${Version}-UI</finalName>
+					<finalName>ForestSim-${Version}-Examples</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>

@@ -47,7 +47,7 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 	// The set of reference plants to use for the growth patterns, use a sparce array for this
 	private final static WesternUPSpecies[] growthPatterns;
 	static {
-		growthPatterns = new WesternUPSpecies[NlcdClassification.HighestValue];
+		growthPatterns = new WesternUPSpecies[NlcdClassification.HighestValue + 1];
 		growthPatterns[NlcdClassification.DeciduousForest.getValue()] = new AcerRebrum();
 		growthPatterns[NlcdClassification.EvergreenForest.getValue()] = new PinusStrobus();
 		growthPatterns[NlcdClassification.WoodyWetlands.getValue()] = new AcerRebrum();		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands

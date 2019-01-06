@@ -8,14 +8,14 @@ import edu.mtu.examples.houghton.model.scorecard.HoughtonScorecard;
 import edu.mtu.examples.houghton.steppables.EconomicAgent;
 import edu.mtu.examples.houghton.steppables.EcosystemsAgent;
 import edu.mtu.examples.houghton.steppables.NipfAgent;
+import edu.mtu.examples.houghton.vip.VipBase;
+import edu.mtu.examples.houghton.vip.VipFactory;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.utilities.RandomDistribution;
-import edu.mtu.examples.houghton.vip.VipBase;
-import edu.mtu.examples.houghton.vip.VipFactory;
 
 /**
  * This is an aggregate model of the Western Upper Peninsula of Michigan, USA. 
@@ -28,8 +28,8 @@ public class HoughtonModel extends ForestSim {
 	}
 
 	private HoughtonScorecard scorecard = null;
-	private HoughtonParameters parameters = new HoughtonParameters();
-	
+	private HoughtonParameters parameters = null;
+		
 	@Override
 	public GrowthModel getGrowthModel() {
 		return new WesternUpEvenAgedWholeStand(getRandom());
@@ -58,7 +58,7 @@ public class HoughtonModel extends ForestSim {
 
 	@Override
 	public String getDefaultOutputDirectory() {
-		return parameters.getOutputDirectory();
+		return getParameters().getOutputDirectory();
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class HoughtonModel extends ForestSim {
 
 	@Override
 	public int getHarvestCapacity() {
-		return parameters.getLoggingCapacity();
+		return getParameters().getLoggingCapacity();
 	}
 	
 	@Override
@@ -77,7 +77,7 @@ public class HoughtonModel extends ForestSim {
 		EconomicAgent agent = new EconomicAgent(lu);
 		
 		// Set the discount rate, X~N(mean, sd);
-		Pair<Double, Double> rate = parameters.getEconomicNvpDiscountRate();
+		Pair<Double, Double> rate = getParameters().getEconomicNvpDiscountRate();
 		double value = RandomDistribution.NormalDistribution(rate.getValue0(), rate.getValue1(), random);
 		agent.setDiscountRate(value);
 				
@@ -90,24 +90,36 @@ public class HoughtonModel extends ForestSim {
 		EcosystemsAgent agent = new EcosystemsAgent(lu);
 
 		// Set if they intend to harvest or not
-		boolean flag = (random.nextDouble() < parameters.getMooIntendsToHavestOdds());
+		boolean flag = (random.nextDouble() < getParameters().getMooIntendsToHavestOdds());
 		agent.setIntendsToHarvest(flag);
 		
 		// Set the WTH, X~N(mean, sd)
-		Pair<Double, Double> wth = parameters.getNipfoWth();		
+		Pair<Double, Double> wth = getParameters().getNipfoWth();		
 		double value = RandomDistribution.NormalDistribution(wth.getValue0(), wth.getValue1(), random);
 		agent.setWthPerAcre(value);
 
 		// Set the harvest odds, X~U(0, value)
-		value = parameters.getEcosystemsAgentHarvestOdds() * random.nextDouble();
+		value = getParameters().getEcosystemsAgentHarvestOdds() * random.nextDouble();
 		agent.setHarvestOdds(value);
 		
 		return updateNipfAttributes(agent);
 	}
 	
+	/**
+	 * Get the parameters for the model, note that this method is intended to allow 
+	 * it to be overridden if need be.
+	 */
+	public HoughtonParameters getParameters() {
+		if (parameters == null) {
+			parameters = new HoughtonParameters();
+			parameters.setSeed(seed());
+		}
+		return parameters;
+	}
+	
 	@Override
 	public Object getModelParameters() {
-		return parameters;
+		return getParameters();
 	}
 	
 	/**
@@ -115,7 +127,7 @@ public class HoughtonModel extends ForestSim {
 	 */
 	private NipfAgent updateNipfAttributes(NipfAgent agent) {
 		agent.setPhaseInRate(HoughtonParameters.LandTenurePhaseInRate);
-		agent.setVipCoolDownDuration(parameters.getVipCoolDown());
+		agent.setVipCoolDownDuration(getParameters().getVipCoolDown());
 		return agent;
 	}
 

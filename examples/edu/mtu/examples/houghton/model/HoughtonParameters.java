@@ -110,7 +110,7 @@ public class HoughtonParameters extends ParameterBase {
 	/**
 	 * Set the odds that an ecosystems NIPFO will harvest.
 	 */
-	public void setEcosystemsAgentHarvestOdds(double value) {
+	public void setMooAgentHarvestOdds(double value) {
 		if (value >= 0.0 && value <= 1.0) {
 			ecosystemsNipfoHarvestOdds = value;
 		}
