@@ -132,6 +132,9 @@ public class ForestMeasuresParallel {
 	 */
 	private void sumAgentBiomass(int start, int end, int index) {
 		for (int ndx = start; ndx < end; ndx++) {
+			if (agents[ndx] == null) {
+				continue;
+			}
 			sums[ndx] += ForestMeasures.calculateStandBiomass(agents[ndx].getParcel());
 		}
 	}

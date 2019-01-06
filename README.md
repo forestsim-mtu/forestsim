@@ -22,6 +22,10 @@ Additionally, the following Eclipse plug-ins are recommended for developers:
 
 - ObjectAid UML Explorer for Eclipse (1.1.11)
 
+## Examples
+
+Currently only one example model is included in the repository. The relevant GIS files are not distributed with the code base and interested parties should contact the research group for access if desired. All of the code required to run the example is present in the /examples directory and /run contains example code for running the model from the command line. 
+
 # Branches
 
 master is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches. Contributors are encouraged to fork the repository and submit pull requests with stable code. 

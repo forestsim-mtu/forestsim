@@ -8,7 +8,6 @@ import org.javatuples.Pair;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.ParcelAgent;
-import sim.field.geo.GeomGridField;
 
 /**
  * This class contains various measures related to the forest itself.
@@ -147,6 +146,9 @@ public class ForestMeasures {
 	public static double calculateTotalAgentBiomass(List<ParcelAgent> agents) {
 		double biomass = 0;
 		for (ParcelAgent agent : agents) {
+			if (agent == null) {
+				continue;
+			}
 			biomass += calculateStandBiomass(agent.getParcel());
 		}
 		return biomass;
@@ -158,13 +160,12 @@ public class ForestMeasures {
 	 * @return The total biomass for the forest in green tons (GT)
 	 */
 	public static double calculateTotalBiomass() {
-		Forest forest = Forest.getInstance();
-		GeomGridField landCover = forest.getLandCover();
-		
 		double biomass = 0;
-		for (int ndx = 0; ndx < landCover.getGridWidth(); ndx++) {
-			for (int ndy = 0; ndy < landCover.getGridHeight(); ndy++) {
-				biomass += calculateBiomass(new Point(ndx, ndy)); 
+		
+		Forest forest = Forest.getInstance();
+		for (int ndx = 0; ndx < forest.getMapWidth(); ndx++) {
+			for (int ndy = 0; ndy < forest.getMapHeight(); ndy++) {
+				biomass += calculateBiomass(ndx, ndy);
 			}
 		}
 		return biomass;

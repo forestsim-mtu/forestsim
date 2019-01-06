@@ -212,7 +212,7 @@ public abstract class ForestSim extends SimState {
 	/**
 	 * Get the base parameters for the simulation.
 	 */
-	public ParameterBase getParameters() { return (ParameterBase)getModelParameters(); }
+	public ParameterBase getBaseParameters() { return (ParameterBase)getModelParameters(); }
 	
 	/**
 	 * Get the parcel layer that is used by the simulation.
@@ -354,7 +354,7 @@ public abstract class ForestSim extends SimState {
 	 */
 	private void importVectorLayers() {
 		// Create new GeomVectorFields to begin a new simulation
-		parcelLayer = new GeomVectorField(getParameters().getGridWidth(), getParameters().getGridHeight());
+		parcelLayer = new GeomVectorField(getBaseParameters().getGridWidth(), getBaseParameters().getGridHeight());
 
 		// Specify GIS attributes to import with shapefile
 		Bag desiredAttributes = new Bag();
@@ -485,7 +485,7 @@ public abstract class ForestSim extends SimState {
 		// If we discarded anything, let the user know
 		if (discarded != 0) {
 			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
-			if (getParameters().getWarningsAsErrors()) {
+			if (getBaseParameters().getWarningsAsErrors()) {
 				throw new ForestSimException(message);
 			}
 			System.err.println(message);

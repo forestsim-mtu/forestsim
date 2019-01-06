@@ -20,7 +20,7 @@ public class AggregationStep implements Steppable {
 	public void step(SimState state) {
 		// What's our time-step?
 		long step = state.schedule.getSteps() + 1;						// Steps is zero indexed
-		ParameterBase parameters = ((ForestSim)state).getParameters();
+		ParameterBase parameters = ((ForestSim)state).getBaseParameters();
 		
 		// Should we end the model?
 		if (step >= parameters.getFinalTimeStep()) {
