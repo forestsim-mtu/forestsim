@@ -1,4 +1,4 @@
-package edut.mtu.simulation.parameters;
+package edu.mtu.simulation.parameters;
 
 import org.junit.Assert;
 import org.junit.Test;
