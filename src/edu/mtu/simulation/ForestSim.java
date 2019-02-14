@@ -106,7 +106,7 @@ public abstract class ForestSim extends SimState {
 	 * Get the policy that is in place for the simulation.
 	 */
 	public abstract PolicyBase getPolicy();
-	
+		
 	/**
 	 * Get the score card to use for aggregation at the end of each step.
 	 * 
@@ -275,7 +275,7 @@ public abstract class ForestSim extends SimState {
 			createParcelAgents();
 			
 		} catch (InterruptedException ex) {
-			System.err.println("An error occured generating the forest: " + ex);
+			System.err.println("An error occurred generating the forest: " + ex);
 			System.exit(-1);
 		} catch (ForestSimException ex) {
 			System.err.println(ex.getMessage());
@@ -296,7 +296,7 @@ public abstract class ForestSim extends SimState {
 				// to the schedule correctly. 
 				Marketplace.getInstance().scheduleMarketplace(this);		
 			} catch (ForestSimException ex) {
-				System.err.println("An error occured while preparing the marketplace: " + ex);
+				System.err.println("An error occurred while preparing the marketplace: " + ex);
 				System.exit(-1);
 			}			
 		}
@@ -355,14 +355,10 @@ public abstract class ForestSim extends SimState {
 	private void importVectorLayers() {
 		// Create new GeomVectorFields to begin a new simulation
 		parcelLayer = new GeomVectorField(getBaseParameters().getGridWidth(), getBaseParameters().getGridHeight());
-
-		// Specify GIS attributes to import with shapefile
-		Bag desiredAttributes = new Bag();
-		desiredAttributes.add("OWNER");
 		
 		try {
 			// Import parcel layer shapefile
-			ShapeFileImporter.read(new URL(parcelFile), parcelLayer, desiredAttributes, LandUseGeomWrapper.class);
+			ShapeFileImporter.read(new URL(parcelFile), parcelLayer, null, LandUseGeomWrapper.class);
 		} catch (FileNotFoundException e) {
 			System.out.println("Error opening shapefile:" + e);
 			System.exit(-1);
@@ -411,7 +407,7 @@ public abstract class ForestSim extends SimState {
 	 * @param xPos IntBag that will contain the x coordinates upon return.
 	 * @param yPos IntBag that will contain the y coordinates upon return.
 	 */
-	private void createAgentParcel(Geometry geometry, IntBag xPos, IntBag yPos) {
+	protected void createAgentParcel(Geometry geometry, IntBag xPos, IntBag yPos) {
 
 		// The bounding rectangle of the agent's parcel converted to an IntGrid2D index (min and max)
 		int xMin = coverLayer.toXCoord(geometry.getEnvelopeInternal().getMinX());
