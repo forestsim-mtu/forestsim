@@ -22,7 +22,7 @@ public class BufferedCsvWriter {
 	 * Finalize the line, flush any buffered contents, and close the file.
 	 */
 	public void close() throws IOException {
-		writer.write(System.lineSeparator());
+		writer.newLine();
 		writer.flush();
 		writer.close();
 	}
@@ -32,6 +32,13 @@ public class BufferedCsvWriter {
 	 */
 	public void flush() throws IOException {
 		writer.flush();
+	}
+	
+	/**
+	 * Writes the system defined new line operator to the file.
+	 */
+	public void newLine() throws IOException {
+		writer.newLine();
 	}
 	
 	/**
