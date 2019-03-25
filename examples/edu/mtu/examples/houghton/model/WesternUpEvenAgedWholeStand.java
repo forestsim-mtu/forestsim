@@ -30,7 +30,6 @@ import sim.util.distribution.Normal;
 /**
  * This growth model is the default for ForestSim and models the Western Upper Peninsula of Michigan.
  * 
- * TODO Review these comments
  * This class provides a means of performing calculations based upon the forest data provided. 
  * Note that all of the values supplied are assumed to be averages for a given stand unless 
  * otherwise noted.

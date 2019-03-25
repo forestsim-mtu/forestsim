@@ -18,7 +18,6 @@ public abstract class NipfAgent extends ParcelAgent {
 	private int vipCoolDown = 0;
 	private int vipCoolDownDuration = 0;
 	
-	// TODO Move these up to being set elsewhere
 	private final static double vipAwarenessRate = 0.14;		// The odds that the NIPFO will accept VIP information from neighbors
 	private final static double vipInformedRate = 0.05;			// The odds that the NIPFO will be informed of the VIP after activation
 				

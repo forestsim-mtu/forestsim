@@ -18,8 +18,7 @@ import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileExporter;
 
 public class HoughtonScorecard implements Scorecard {
-
-	// TODO Migrate to command line configuration
+	
 	private final static boolean writeGis = false;
 	
 	private final static int captureInterval = 20;
