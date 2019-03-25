@@ -196,10 +196,8 @@ public class WesternUpEvenAgedWholeStand implements GrowthModel {
 		// Update the stand age
 		stand.age++;
 		
-		// Check the stocking of the stand, if over stocked, thin the number of trees
-		// TODO Determine what the actual ecological constants are to use for this
+		// Check the stocking of the stand, if over stocked, thin the number of trees by up to 10%
 		if (stand.stocking > StockingCondition.Overstocked.getValue()) {
-			// Randomly thin the trees by up to 10%
 			double thinning = random.nextInt(10) / 100.0;
 			stand.numberOfTrees -= stand.numberOfTrees * thinning;
 		}		
