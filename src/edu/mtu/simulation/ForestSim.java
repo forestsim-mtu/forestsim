@@ -248,7 +248,14 @@ public abstract class ForestSim extends SimState {
 	 * Set the parcel file path to use for the simulation.
 	 */
 	public void setParcelFilePath(String value) { parcelFile = value; } 
-		
+	
+	/**
+	 * Set the parcel agents being used by the model, note that this is only intended
+	 * for use with overriding createParcelAgents since doing this wrong will break
+	 * the model.
+	 */
+	protected void setParcelAgents(ParcelAgent[] value) { agents = value; }
+	
 	/**
 	 * Prepare the model to be run.
 	 */
