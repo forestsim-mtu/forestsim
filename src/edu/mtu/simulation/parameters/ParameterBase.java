@@ -12,6 +12,9 @@ public class ParameterBase {
 	// Flag to indicate if warnings should be treated as errors
 	private boolean warningsAsErrors = false;
 	
+	// Helper flag, not used by ForestSim but useful for scorecards
+	private boolean writeGis = false;
+	
 	private int finalTimeStep;					// Time step that the simulation is allowed to run to
 	private int policyActivationTimeStep;		// Time step at which the policy is introduced
 	private double economicAgentPercentage;		// Percentage of economic agents to be created
@@ -55,9 +58,14 @@ public class ParameterBase {
 	public int getGridWidth() { return gridWidth; }
 	
 	/**
-	 * Get the flag that indicates warnings should be treated as errors.
+	 * Get the flag that indicates warnings should be treated as errors, default false.
 	 */
 	public boolean getWarningsAsErrors() { return warningsAsErrors; }
+	
+	/**
+	 * Flag to indicate if GIS files should be written, default false.
+	 */
+	public boolean getWriteGis() { return writeGis; }
 	
 	/**
 	 * Get the time step at which the policy should be introduced.
@@ -103,4 +111,9 @@ public class ParameterBase {
 	 * Set the flag to treat warnings as errors.
 	 */
 	public void setWarningsAsErrors(boolean value) { warningsAsErrors = value; }
+	
+	/**
+	 * Set the flag to indicate if GIS files should be written.
+	 */
+	public void setWriteGis(boolean value) { writeGis = value; }
 }
