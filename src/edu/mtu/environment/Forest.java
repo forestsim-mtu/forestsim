@@ -217,18 +217,18 @@ public class Forest {
 		}
 
 		// Get the number of trees per acre, by pixel 
-		int count = (int) (treeCount.get(x, y) / acresPerPixel);
+		int count = (int) (treeCount.get(x, y) / acresPerPixel);			// ac
 		
 		// Get the total basal area
 		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
-		double basalArea = ForestMeasures.calculateBasalArea(dbh) * count;
+		double basalArea = ForestMeasures.calculateBasalArea(dbh) * count;	// sq.m per ac 
 		
-		// Lookup what the ideal basal area per acre (in metric)
+		// Lookup what the ideal basal area per acre (sq.m per ac expected)
 		double[][] stocking = growthModel.getStockingGuide(nlcd);
 		for (int ndx = 0; ndx < stocking.length; ndx++) {
 			// Scan until we find the break to use
 			if (dbh < stocking[ndx][0]) {
-				// Return the ideal number of trees
+				// Return the ideal basal area for the DBH
 				double ideal = ((ndx > 0) ? stocking[ndx - 1][1] : stocking[0][1]);
 				return 100 * (basalArea / ideal);
 			}
