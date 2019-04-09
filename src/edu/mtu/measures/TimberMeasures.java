@@ -48,7 +48,7 @@ public class TimberMeasures {
 		// Guard against bad input
 		throw new ForestSimException("Invalid DBH (" + dbh + ") encountered.");
 	}
-	
+		
 	/**
 	 * Estimate the number of cords based upon the given inputs, estimates are 
 	 * conservative based upon Two-Inch classes. 
@@ -59,5 +59,23 @@ public class TimberMeasures {
 	 */
 	public static double metricDbhToCord(double dbh) throws ForestSimException {
 		return imperialDbhToCord(dbh / Constants.InchToCentimeter);
+	}
+	
+	/**
+	 * Estimate the number of board feet from the tree based upon the Scribner Log Rule (Wenger, 1984).
+	 * Note that since Scribner is based upon look-up tables, there is some deviation between the formula
+	 *  results and the tables
+	 * 
+	 * @param dib The diameter in bark of the tree, in inches.
+	 * @param length The length of the tree, in feet.
+	 * @return The number of board feet from the tree, rounded to the nearest 10's of board feet
+	 */
+	public static double scribnerLogRule(double dib, double length) {
+		// Is the DIB too small?
+		if (dib < 6) { return 0; }
+		
+		double bf = (0.79 * Math.pow(dib, 2) - 2 * dib - 4) * (length / 16);
+		bf = Math.round(bf / 10) * 10;
+		return bf;
 	}
 }

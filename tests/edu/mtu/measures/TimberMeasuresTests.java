@@ -30,4 +30,14 @@ public class TimberMeasuresTests {
 		Assert.assertTrue(Math.abs(0.03 - TimberMeasures.metricDbhToCord(14.0)) < epsilon);
 		Assert.assertTrue(Math.abs(1.0  - TimberMeasures.metricDbhToCord(55.0)) < epsilon);
 	}
+
+	// Tests that the algorithm loosely approximates the Scribner table
+	@Test
+	public void scribnerLogRuleTest() {
+		Assert.assertTrue(Math.abs(  0 - TimberMeasures.scribnerLogRule( 5, 10)) < epsilon);
+		Assert.assertTrue(Math.abs( 30 - TimberMeasures.scribnerLogRule(10, 10)) < epsilon);
+		Assert.assertTrue(Math.abs( 90 - TimberMeasures.scribnerLogRule(15, 10)) < epsilon);
+		Assert.assertTrue(Math.abs(310 - TimberMeasures.scribnerLogRule(20, 18)) < epsilon);
+		Assert.assertTrue(Math.abs(450 - TimberMeasures.scribnerLogRule(24, 18)) < epsilon);
+	}
 }

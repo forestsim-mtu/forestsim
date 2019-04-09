@@ -39,3 +39,7 @@ Version numbers for ForestSim will have the following structure:
 [Master].[Minor].[Revision]
 
 Where [Master] should be understood to be major changes that may break models dependent upon ForestSim. [Minor] contains significant changes to the API, but retains backwards compatibility with method signatures. [Revision]s are smaller updates that are primary focused on bug fixes or quality-of-life issues (ex., adding to an enumerated list).
+
+# References
+
+Wenger, K. F. (Ed.). (1984). Forestry Handbook (Second Edition). John Wiley & Sons, Inc.
