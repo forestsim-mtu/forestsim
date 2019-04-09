@@ -15,6 +15,11 @@ public final class Constants {
 	public final static double DbhTakenAt = 1.37;
 	
 	/**
+	 * The number of centimeters in an inch.
+	 */
+	public final static double InchToCentimeter = 2.54;
+	
+	/**
 	 * Value to divide by to convert from kilograms to gigatons.
 	 */
 	public final static long KilogramToMetricTon = 1000;
