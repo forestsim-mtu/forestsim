@@ -218,6 +218,9 @@ public class Forest {
 
 		// Get the number of trees per acre, by pixel 
 		int count = (int) (treeCount.get(x, y) / acresPerPixel);			// ac
+		if (count == 0) {
+			return 0.0;
+		}
 		
 		// Get the total basal area
 		double dbh = ((DoubleGrid2D)standDiameter.getGrid()).get(x, y);
