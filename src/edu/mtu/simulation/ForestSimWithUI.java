@@ -27,6 +27,7 @@ public class ForestSimWithUI extends GUIState {
 	
 	// Raster portrayals
 	private FastValueGridPortrayal2D coverPortrayal = new FastValueGridPortrayal2D();
+	private FastValueGridPortrayal2D dbhPortrayl = new FastValueGridPortrayal2D();
 	private FastValueGridPortrayal2D stockingPortrayal = new FastValueGridPortrayal2D();
 	
 	public ForestSimWithUI(SimState state) {
@@ -44,8 +45,9 @@ public class ForestSimWithUI extends GUIState {
 		
 		// Attach the land cover layers and then overlay the parcel layer
 		display.attach(coverPortrayal, "Land Cover", false);
-		display.attach(stockingPortrayal, "Stocking", true);
-		display.attach(parcelPortrayal, "Parcels Layer", false);
+		display.attach(stockingPortrayal, "Stocking", false);
+		display.attach(dbhPortrayl, "DBH", false);
+		display.attach(parcelPortrayal, "Parcels Layer", true);
 				
 		displayFrame = display.createFrame();
 		controller.registerFrame(displayFrame);
@@ -100,6 +102,10 @@ public class ForestSimWithUI extends GUIState {
 		// Portray the current stand stocking
 		stockingPortrayal.setField(Forest.getInstance().getStockingMap().getGrid());
 		stockingPortrayal.setMap(new SimpleColorMap(StockingCondition.getColorMap()));
+		
+		// Portray the current DBH
+		dbhPortrayl.setField(Forest.getInstance().getStandDbhMap().getGrid());
+		dbhPortrayl.setMap(new SimpleColorMap(0, 99, Color.WHITE, Color.BLACK));
 		
 		display.reset();
 		display.setBackdrop(Color.WHITE);
