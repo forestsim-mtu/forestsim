@@ -7,7 +7,9 @@ ForestSim is an agent-based model (ABM) that is intended for research into the p
 - Logging companies
 - Biorefinery and bioenergy plants
 
-ForestSim is primarily a Java application that makes use of the [MASON Multiagent Simulation Toolkit](http://cs.gmu.edu/~eclab/projects/mason/) to manage to simulation and GeoMASON to support GIS data.
+ForestSim is primarily a Java application that makes use of the [MASON Multiagent Simulation Toolkit](http://cs.gmu.edu/~eclab/projects/mason/) to manage to simulation and GeoMASON to support GIS data. The initial 1.0.1 release has been peer-reviewed and published in *SoftwareX*, please cite as,
+
+Zupko, R., & Rouleau, M. (2019). ForestSim: Spatially explicit agent-based modeling of non-industrial forest owner policies. SoftwareX, 9, 117–125. https://doi.org/10.1016/j.softx.2019.01.008
 
 ## Development Environment
 
@@ -28,12 +30,12 @@ Currently only one example model is included in the repository. The relevant GIS
 
 # Branches
 
-master is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches. Contributors are encouraged to fork the repository and submit pull requests with stable code. 
+master is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches and 1.0.2 is the current development branch. Contributors are encouraged to fork the repository and submit pull requests with stable code.
 
 # Versioning
 
 Version numbers for ForestSim will have the following structure:
 
-[Master].[Minor].[Revision]
+[Major].[Minor].[Revision]
 
-Where [Master] should be understood to be major changes that may break models dependent upon ForestSim. [Minor] contains significant changes to the API, but retains backwards compatibility with method signatures. [Revision]s are smaller updates that are primary focused on bug fixes or quality-of-life issues (ex., adding to an enumerated list).
+Where [Major] should be understood to be major changes that may break models dependent upon ForestSim. [Minor] contains significant changes to the API, but retains backwards compatibility with method signatures. [Revision]s are smaller updates that are primary focused on bug fixes or quality-of-life issues (ex., adding to an enumerated list).
