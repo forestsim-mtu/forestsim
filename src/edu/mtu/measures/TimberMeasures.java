@@ -2,6 +2,7 @@ package edu.mtu.measures;
 
 import edu.mtu.simulation.ForestSimException;
 import edu.mtu.utilities.Constants;
+import edu.mtu.utilities.Precision;
 
 public class TimberMeasures {
 
@@ -75,7 +76,6 @@ public class TimberMeasures {
 		if (dib < 6) { return 0; }
 		
 		double bf = (0.79 * Math.pow(dib, 2) - 2 * dib - 4) * (length / 16);
-		bf = Math.round(bf / 10) * 10;
-		return bf;
+		return Precision.round(bf, 2);
 	}
 }

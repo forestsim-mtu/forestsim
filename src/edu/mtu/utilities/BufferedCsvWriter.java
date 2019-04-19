@@ -65,4 +65,11 @@ public class BufferedCsvWriter {
 	public void write(double value) throws IOException {
 		writer.write(value + ",");
 	}	
+	
+	/**
+	 * Write the indicated value to the file as a cell, note that it is NOT escaped.
+	 */
+	public void write(String value) throws IOException {
+		writer.write(value + ",");
+	}
 }
