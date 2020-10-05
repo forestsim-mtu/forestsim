@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ForestSim</groupId>
 	<artifactId>ForestSim</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 
 	<build>
 		<sourceDirectory>.</sourceDirectory>
@@ -53,7 +53,7 @@
 		<dependency>
 		    <groupId>commons-beanutils</groupId>
 		    <artifactId>commons-beanutils</artifactId>
-		    <version>1.9.3</version>
+		    <version>1.9.4</version>
 		</dependency>	
 		<dependency>
 			<groupId>colt</groupId>
@@ -66,9 +66,9 @@
 			<version>1.13</version>
 		</dependency>
 		<dependency>
-			<groupId>itext</groupId>
-			<artifactId>itext</artifactId>
-			<version>1.2.3</version>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.media</groupId>
