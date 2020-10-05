@@ -38,7 +38,7 @@ Currently only one example model is included in the repository. The relevant GIS
 
 # Branches
 
-master is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches and 1.0.2 is the current development branch. Contributors are encouraged to fork the repository and submit pull requests with stable code.
+`master` is the primary stable branch for ForestSim. Development by the author(s) will generally take place on feature branches or `development` as a general development branch. Contributors are encouraged to fork the repository and submit pull requests with stable code.
 
 # Versioning
 
