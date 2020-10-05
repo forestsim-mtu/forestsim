@@ -24,6 +24,14 @@ Additionally, the following Eclipse plug-ins are recommended for developers:
 
 - ObjectAid UML Explorer for Eclipse (1.1.11)
 
+### Building
+
+Two pom files are provided for building ForestSim:
+
+`pom.xml` builds the core library and produces one output with all dependencies and one without. In Eclipse suggested goals for Maven Build are `clean package`
+
+`pom-examples.xml` is an alternative POM that builds the examples as part of the JAR. In Eclipse it can be run using the Maven Build configuration `-f pom-examples.xml clean package`
+
 ## Examples
 
 Currently only one example model is included in the repository. The relevant GIS files are not distributed with the code base and interested parties should contact the research group for access if desired. All of the code required to run the example is present in the /examples directory and /run contains example code for running the model from the command line. 
