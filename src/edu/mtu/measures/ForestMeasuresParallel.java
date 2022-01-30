@@ -50,10 +50,10 @@ public class ForestMeasuresParallel {
 	public static synchronized double calculateBiomass(List<ParcelAgent> agents) throws InterruptedException {
 		// Prepare
 		instance.prepareAgentThreads(agents);
-		
+				
 		// Map
 		instance.sums = new double[instance.threadCount];
-		instance.agents = (ParcelAgent[])agents.toArray();
+		instance.agents = agents.toArray(new ParcelAgent[0]);
 		instance.service.invokeAll(instance.agentThreads);
 		
 		// Reduce
