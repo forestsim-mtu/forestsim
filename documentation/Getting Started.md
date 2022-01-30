@@ -18,8 +18,8 @@ Once complete, the ForestSim project will appear in the "Package Explorer" and E
 
 | JAR | Artifact ID | Group ID |
 | --- | --- | --- |
-| geomason-1.6.jar | GeoMason | GeoMason |
-| mason.20.jar | Mason | Mason |
+| geomason-1.5.jar | GeoMason | GeoMason |
+| mason-17.jar | Mason | Mason |
 | quaqua-colorchooser-only.jar | quaqua-colorchooser-only | quaqua-colorchooser-only |
 
 

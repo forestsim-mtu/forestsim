@@ -20,7 +20,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Robert/git/forestsim/lib/geomason-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/mason.20.jar"/>
+	<classpathentry kind="lib" path="lib/geomason-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/mason-17.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
