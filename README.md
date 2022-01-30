@@ -34,7 +34,7 @@ Two pom files are provided for building ForestSim:
 
 ## Examples
 
-Currently only one example model is included in the repository. The relevant GIS files are not distributed with the code base and interested parties should contact the research group for access if desired. All of the code required to run the example is present in the /examples directory and /run contains example code for running the model from the command line. 
+Currently only one example model is included in the repository and detailed directions for running it can be found under [documentation/Getting Started.md](documentation/Getting Started.md) All of the code required to run the example is present in the /examples directory and /run contains example code for running the model from the command line. 
 
 # Branches
 
