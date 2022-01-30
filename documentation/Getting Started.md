@@ -14,7 +14,7 @@ The ForestSim environment can be downloaded from GitHub natively within Eclipse:
 6. The directory you wish to download the repository to, or leave the default suggestion in place and click "Next".
 7. Eclipse will work for a bit downloading the repository, once it is complete the option to "Import Existing Eclipse Projects" will appear, click "Next" and then "Finish".
 
-Once complete, the ForestSim project will appear in the "Package Explorer" and Eclipse will start attempting to build the project. A red exclamation mark (<span style="color:red">!</span>) may appear indicating that the project still needs to be configured. The first step is to ensure that the libraries supplied are registered with Eclipse and the build environment:
+Once complete, the ForestSim project will appear in the "Package Explorer" and Eclipse will start attempting to build the project. A red exclamation mark (!) may appear indicating that the project still needs to be configured. The first step is to ensure that the libraries supplied are registered with Eclipse and the build environment:
 
 | JAR | Artifact ID | Group ID |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ Once complete, the ForestSim project will appear in the "Package Explorer" and E
 4. Enter the appropriate Artifact ID and Group ID based upon the JAR file and click "Finish".
 5. The dialog will the close, repeat this process for each of the JAR files.
 6. Once all JAR files have been imported, right click on `pom.xml` and select "Maven > Update Project" a new dialog will appear.
-7. Ensure "ForestSim" is listed as a Maven project and click "OK", the project will be updated in the background and the red exclamation mark (<span style="color:red">!</span>) should disappear.
+7. Ensure "ForestSim" is listed as a Maven project and click "OK", the project will be updated in the background and the red exclamation mark should disappear.
 
 ## Running the Houghton County Demonstration Project
 
@@ -37,7 +37,7 @@ The ForestSim repository includes a simple demonstration project of Houghton Cou
 
 ![Screenshot of the Eclipse Package Explorer with data directory expanded](images/demo-package-explorer.png)
 
-With the files properly organized right click on the `examples` directory under the ForestSim project and click "Run As > Java Application". The first time you do this Eclipse will scan the directory, after which ForstSim will launch. You will be presented with two dialog windows: the display and the model control. When clicking on the pause button on the display (||) the button will turn green (<span style="color:green">||</span>) and after a couple seconds, scattered boxes will appear in the display. These are the forested parcels and have agents assigned to them. 
+With the files properly organized right click on the `examples` directory under the ForestSim project and click "Run As > Java Application". The first time you do this Eclipse will scan the directory, after which ForstSim will launch. You will be presented with two dialog windows: the display and the model control. When clicking on the pause button on the display (||) the button will turn green and after a couple seconds, scattered boxes will appear in the display. These are the forested parcels and have agents assigned to them. 
 
 ![Screenshot of the ForestSim display with parcels loaded](images/demo-display.png)
 
@@ -51,6 +51,6 @@ With the raster and agents now loaded, the simulation can be started. Since the 
 
 ![Screenshot of the ForestSim UI settings display](images/demo-ui-settings.png)
 
-After changing the final time step the simulation can be started by clicking the "Pause" button again. The "Run" button will turn blue (<span style="color:blue">▶</span>) and the numbers next to the stop button (⬛) will start to increase until the end of the simulation when the stop button turns red (<span style="color:red">⬛</span>) and the "Run" button reverts back to black. You will note that an `out` directory has been created under the ForestSim project, this contains various data files created during the model execution and any raster files created will be stored here as well.
+After changing the final time step the simulation can be started by clicking the "Pause" button again. The "Run" button will turn blue and the numbers next to the stop button  will start to increase until the end of the simulation when the stop button turns red and the "Run" button reverts back to black. You will note that an `out` directory has been created under the ForestSim project, this contains various data files created during the model execution and any raster files created will be stored here as well.
 
 
