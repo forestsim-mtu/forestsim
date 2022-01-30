@@ -75,7 +75,8 @@ public class TimberMeasures {
 		// Is the DIB too small?
 		if (dib < 6) { return 0; }
 		
-		double bf = (0.79 * Math.pow(dib, 2) - 2 * dib - 4) * (length / 16);
-		return Precision.round(bf, 2);
+		double bf = ((0.79 * Math.pow(dib, 2)) - (2 * dib) - 4) * (length / 16);
+		double result = Math.round(bf / 10.0) * 10;
+		return result;
 	}
 }
