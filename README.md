@@ -13,7 +13,7 @@ Zupko, R., & Rouleau, M. (2019). ForestSim: Spatially explicit agent-based model
 
 ## Development Environment
 
-The following is the development environment:
+The following is the orginal development environment:
 
 - Eclipse IDE Neon Release (4.6.0 or 4.6.1)
 - Java SE SDK 7 (JavaSE-1.7)
