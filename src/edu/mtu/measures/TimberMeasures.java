@@ -2,7 +2,6 @@ package edu.mtu.measures;
 
 import edu.mtu.simulation.ForestSimException;
 import edu.mtu.utilities.Constants;
-import edu.mtu.utilities.Precision;
 
 public class TimberMeasures {
 
